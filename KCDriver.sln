@@ -7,7 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KCDriver.Android", "KCDrive
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KCDriver.iOS", "KCDriver\KCDriver.iOS\KCDriver.iOS.csproj", "{E5DB9400-31CA-4EBA-AE30-DA92474FB6BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KCDriver", "KCDriver\KCDriver\KCDriver.csproj", "{44CDE81A-37C3-45A1-918B-F90DD8EFB3FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KCDriver", "KCDriver\KCDriver\KCDriver.csproj", "{44CDE81A-37C3-45A1-918B-F90DD8EFB3FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{808C4E3C-937A-4A3C-857A-DD70E0580DC3}"
+	ProjectSection(SolutionItems) = preProject
+		logo2-small.png = logo2-small.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

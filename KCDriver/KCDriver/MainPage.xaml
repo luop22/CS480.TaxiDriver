@@ -5,10 +5,22 @@
              x:Class="KCDriver.MainPage">
 
     <StackLayout>
-        <!-- Place new controls here -->
-        <Label Text="Welcome to Xamarin.Forms!" 
-           HorizontalOptions="Center"
-           VerticalOptions="CenterAndExpand" />
+        <Entry Text=""
+            FontSize="Large"
+            Margin="0, 100, 0, 0"
+            Placeholder="Username"
+            HorizontalOptions="Center"
+            VerticalOptions="Start" />
+        <Entry Text=""
+            FontSize="Large"
+            IsPassword="True"
+            Placeholder="Password"
+            HorizontalOptions="Center"
+            VerticalOptions="Start" />
+        <Button Text="Sign in" 
+            Clicked="SignInClicked"
+            HorizontalOptions="Center"
+            VerticalOptions="StartAndExpand" />
     </StackLayout>
 
 </ContentPage>

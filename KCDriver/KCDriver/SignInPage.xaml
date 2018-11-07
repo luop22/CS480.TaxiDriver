@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KCDriver.SignInPage">
+    <ContentPage.Content>
+        <StackLayout>
+            
+            <Entry Text=""
+                FontSize="Large"
+                Placeholder="Username"
+                Margin="0,50,0,0"
+                VerticalOptions="Start" 
+                HorizontalOptions="CenterAndExpand" />
+            <Entry Text=""
+                FontSize="Large"
+                Placeholder="Password"
+                IsPassword="True"
+                VerticalOptions="Start" 
+                HorizontalOptions="CenterAndExpand" />
+            <Button Text="Sign in"
+                FontSize="Large"
+                Clicked="SignInClicked"
+                VerticalOptions="Start" 
+                HorizontalOptions="CenterAndExpand" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
