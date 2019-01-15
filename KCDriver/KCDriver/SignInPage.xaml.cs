@@ -18,7 +18,7 @@ namespace KCDriver
 		}
         private void SignInClicked(object sender, EventArgs e)
         {
-            Navigation.PushModalAsync(new MapPage());
+            Navigation.PushAsync(new AcceptPage());
         }
     }
 }

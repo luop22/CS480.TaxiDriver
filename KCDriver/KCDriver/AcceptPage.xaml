@@ -1,12 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="KCDriver.AcceptPage">
+             x:Class="KCDriver.AcceptPage"
+			 Title="K.C CAB"
+			 >
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
+            <Label Text="Next Available Job"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
+			<Button Text="Accept Job" Clicked="Button_Clicked"> 
+			</Button>
+		</StackLayout>
     </ContentPage.Content>
 </ContentPage>

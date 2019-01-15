@@ -157,4 +157,7 @@
       <Name>KCDriver</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\cab.PNG" />
+  </ItemGroup>
 </Project>
