@@ -10,7 +10,7 @@ namespace KCDriver
         public App()
         {
             InitializeComponent();
-            MainPage = new SignInPage();
+            new NavigationPage(new WelcomePage());
         }
 
         protected override void OnStart()
