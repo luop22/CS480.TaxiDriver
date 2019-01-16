@@ -3,10 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KCDriver.AcceptPage"
 			 Title="K.C CAB"
+			 BackgroundImage="taxivans.PNG"
 			 >
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Next Available Job"
+		<StackLayout Padding="100">
+			<Label Text="Next Available Job"
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
 			<Button Text="Accept Job" Clicked="Button_Clicked"> 

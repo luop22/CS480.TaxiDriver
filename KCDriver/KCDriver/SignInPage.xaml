@@ -3,27 +3,29 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KCDriver.SignInPage"
 			 Title="K.C CAB"
+			 BackgroundColor="Black"
 			 >
     <ContentPage.Content>
-        <StackLayout>
-            
-            <Entry Text=""
+		<StackLayout>
+			<Entry Text=""
+				BackgroundColor="White"
                 FontSize="Large"
                 Placeholder="Username"
                 Margin="0,50,0,0"
                 VerticalOptions="Start" 
                 HorizontalOptions="CenterAndExpand" />
             <Entry Text=""
+				BackgroundColor="White"
                 FontSize="Large"
                 Placeholder="Password"
                 IsPassword="True"
                 VerticalOptions="Start" 
                 HorizontalOptions="CenterAndExpand" />
-            <Button Text="Sign in"
+			<Button Text="Sign in"
                 FontSize="Large"
                 Clicked="SignInClicked"
                 VerticalOptions="Start" 
                 HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
+		</StackLayout>
     </ContentPage.Content>
 </ContentPage>

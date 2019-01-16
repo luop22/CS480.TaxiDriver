@@ -160,4 +160,13 @@
   <ItemGroup>
     <BundleResource Include="Resources\cab.PNG" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\info.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\taxipic.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\taxivans.PNG" />
+  </ItemGroup>
 </Project>
