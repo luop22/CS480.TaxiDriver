@@ -25,7 +25,10 @@
                 FontSize="Large"
                 Clicked="SignInClicked"
                 VerticalOptions="Start" 
-                HorizontalOptions="CenterAndExpand" />
+                HorizontalOptions="CenterAndExpand"
+				BackgroundColor="Yellow"
+				TextColor="Black"
+				/>
 		</StackLayout>
     </ContentPage.Content>
 </ContentPage>

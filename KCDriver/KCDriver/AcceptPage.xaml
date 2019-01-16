@@ -9,8 +9,11 @@
 		<StackLayout Padding="100">
 			<Label Text="Next Available Job"
                 VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-			<Button Text="Accept Job" Clicked="Button_Clicked"> 
+                HorizontalOptions="CenterAndExpand"
+				TextColor="White"/>
+			<Button Text="Accept" Clicked="Button_Clicked" 
+					BackgroundColor="Green"
+					TextColor="White"> 
 			</Button>
 		</StackLayout>
     </ContentPage.Content>
