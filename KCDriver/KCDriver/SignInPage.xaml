@@ -7,6 +7,11 @@
 			 >
     <ContentPage.Content>
 		<StackLayout>
+			<Image 
+				Source="cabpic.png"
+				Aspect="AspectFill"
+				RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
+				RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}"/>
 			<Entry Text=""
 				BackgroundColor="White"
                 FontSize="Large"

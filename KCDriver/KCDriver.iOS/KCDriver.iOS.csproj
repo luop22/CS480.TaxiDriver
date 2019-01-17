@@ -167,9 +167,9 @@
     <BundleResource Include="Resources\info.PNG" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\taxipic.PNG" />
+    <BundleResource Include="Resources\taxicabs.png" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\taxivans.PNG" />
+    <BundleResource Include="Resources\cabpic.png" />
   </ItemGroup>
 </Project>

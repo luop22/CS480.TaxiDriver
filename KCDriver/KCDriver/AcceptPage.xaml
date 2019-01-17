@@ -3,18 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KCDriver.AcceptPage"
 			 Title="K.C CAB"
-			 BackgroundImage="taxivans.PNG"
 			 >
     <ContentPage.Content>
-		<StackLayout Padding="100">
-			<Label Text="Next Available Job"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand"
+		<RelativeLayout>
+			<Image Source="taxicabs.png"
+				   Aspect="AspectFill"
+				   RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
+				   RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}"/>
+			
+			<Grid RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
+				  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}">
+
+				<Label Text="Next Available Job"
+				FontSize="Large"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center"
 				TextColor="White"/>
-			<Button Text="Accept" Clicked="Button_Clicked" 
+
+				<Button Text="Accept" Clicked="Button_Clicked" 
+					Margin="20,300,20,150"
+					HorizontalOptions="Center"
 					BackgroundColor="Green"
-					TextColor="White"> 
-			</Button>
-		</StackLayout>
+					TextColor="White"/>
+
+			</Grid>
+
+		</RelativeLayout>
     </ContentPage.Content>
 </ContentPage>
