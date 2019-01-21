@@ -13,14 +13,17 @@
 				RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
 				RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}"/>
 			<Entry Text=""
+                x:Name="usernameEntry"
 				BackgroundColor="White"
                 FontSize="Large"
                 Placeholder="Username"
                 Margin="0,50,0,0"
                 VerticalOptions="Start" 
-                HorizontalOptions="CenterAndExpand" />
+                HorizontalOptions="CenterAndExpand"
+                IsTextPredictionEnabled="false"/>
             <Entry Text=""
-				BackgroundColor="White"
+                x:Name="passwordEntry"
+                BackgroundColor="White"
                 FontSize="Large"
                 Placeholder="Password"
                 IsPassword="True"
