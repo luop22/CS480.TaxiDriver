@@ -19,18 +19,20 @@ namespace KCDriver
         private void SignInClicked(object sender, EventArgs e)
         {
             //only allow the user to get to the next page if the username and password are corrent.
-            if (Authenticate()) {
+           // if (Authenticate()) {
                 Navigation.PushAsync(new AcceptPage());
-            }
+          //  }
         }
 
         //this function will send the usename and password to the server to be authenticated.
+        /*
         private bool Authenticate() {
             string userName = usernameEntry.Text;
             string password = passwordEntry.Text;
             
             return true;
         }
+        */
 
     }
 }
