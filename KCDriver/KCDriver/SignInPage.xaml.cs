@@ -12,13 +12,25 @@ namespace KCDriver
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class SignInPage : ContentPage
 	{
-		public SignInPage ()
+        public SignInPage ()
 		{
 			InitializeComponent ();
         }
         private void SignInClicked(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new AcceptPage());
+            //only allow the user to get to the next page if the username and password are corrent.
+            if (Authenticate()) {
+                Navigation.PushAsync(new AcceptPage());
+            }
         }
+
+        //this function will send the usename and password to the server to be authenticated.
+        private bool Authenticate() {
+            string userName = usernameEntry.Text;
+            string password = passwordEntry.Text;
+            
+            return true;
+        }
+
     }
 }
