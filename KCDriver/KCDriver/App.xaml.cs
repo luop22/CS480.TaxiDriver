@@ -10,7 +10,13 @@ namespace KCDriver
         public App()
         {
             InitializeComponent();
-            MainPage = new NavigationPage(new WelcomePage());
+            
+            MainPage = new NavigationPage(new WelcomePage())
+            {
+                BarTextColor = Color.Yellow
+            };
+            
+
         }
 
         protected override void OnStart()

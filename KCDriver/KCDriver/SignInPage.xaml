@@ -5,35 +5,29 @@
 			 Title="K.C CAB"
 			 BackgroundColor="Black"
 			 >
-    <ContentPage.Content>
-		<StackLayout>
-			<Image 
-				Source="cabpic.png"
-				Aspect="AspectFill"
-				RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
-				RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}"/>
-			<Entry Text=""
-				BackgroundColor="White"
-                FontSize="Large"
-                Placeholder="Username"
-                Margin="0,50,0,0"
-                VerticalOptions="Start" 
-                HorizontalOptions="CenterAndExpand" />
-            <Entry Text=""
-				BackgroundColor="White"
-                FontSize="Large"
-                Placeholder="Password"
-                IsPassword="True"
-                VerticalOptions="Start" 
-                HorizontalOptions="CenterAndExpand" />
-			<Button Text="Sign in"
-                FontSize="Large"
-                Clicked="SignInClicked"
-                VerticalOptions="Start" 
-                HorizontalOptions="CenterAndExpand"
-				BackgroundColor="Yellow"
-				TextColor="Black"
-				/>
-		</StackLayout>
-    </ContentPage.Content>
+	<ContentPage.Content>
+		<ScrollView>
+			<StackLayout>
+				<Grid Grid.Row="1" Margin="20,0,20,0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="80"/>
+						<RowDefinition Height="40"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+				
+				<Image Grid.Row="1" Source="taxi_sign.PNG" Aspect="Fill" />
+				<Entry Grid.Row="2" Placeholder="Username" PlaceholderColor="White" 
+					   FontSize="16" TextColor="White" BackgroundColor="#202020"/>
+				<Entry Grid.Row="3" Placeholder="Password" PlaceholderColor="White" 
+					   FontSize="16" TextColor="White" BackgroundColor="#202020" IsPassword="True"/>
+				<Button Grid.Row="4" Text="Continue" BackgroundColor="Yellow" TextColor="Black" 
+						HeightRequest="50" VerticalOptions="Start" Clicked="SignInClicked"/>
+				</Grid>
+				<Label Text="Forgot Username/Password?" VerticalOptions="Start" 
+					   HorizontalOptions="Center" TextColor="White"/>
+			</StackLayout>
+		</ScrollView>
+	</ContentPage.Content>
 </ContentPage>
