@@ -36,13 +36,15 @@ namespace KCDriver.Droid
 
         public KCApp()
         {
-            var navPage = new NavigationPage(new ContentPage());
-            MainPage = navPage;
-
             if (Task.Run(async () => await this.GetLocationPermissionAsync()).Result)
             {
-                Task.Run(async () => await navPage.PushAsync(new MapPage())).Wait();
+                var navPage = new NavigationPage(new WelcomePage())
+                {
+                    BarTextColor = Color.Yellow
+                };
+                MainPage = navPage;
             }
+            else return; // Display notice that location is needed. Disable navigation entirely? Camera still needs to be interpolated either way.
         }
 
         async Task<bool> GetLocationPermissionAsync()

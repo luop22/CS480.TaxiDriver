@@ -49,8 +49,8 @@ namespace KCDriver.Droid
             updatePositionTimer.AutoReset = true;
 
             interpolateTimer = new System.Timers.Timer(16.66f);
-            interpolateTimer.Elapsed += Interpolate;
-            interpolateTimer.AutoReset = true;
+            //interpolateTimer.Elapsed += Interpolate;
+            //interpolateTimer.AutoReset = true;
         }
 
         // Timer calls this
@@ -86,6 +86,7 @@ namespace KCDriver.Droid
             }
         }
 
+        // Work in Progress
         private static void Interpolate(Object source, ElapsedEventArgs e)
         {
             // 1. Determine speed
@@ -105,9 +106,13 @@ namespace KCDriver.Droid
 
         public static void Start(Position rider, string destination)
         {
-            while (Properties.RouteCoordinates.Count == 0)
-                Properties.RouteCoordinates = GetPolyline(KCApi.GenerateRequest(rider, destination));
+            while (!Properties.MapReady && !Properties.RenderReady) { }
 
+            List<Position> temp = new List<Position>();
+            while (temp.Count == 0)
+                temp = GetPolyline(KCApi.GenerateRequest(rider, destination));
+
+            Properties.RouteCoordinates = temp;
             updatePositionTimer.Enabled = true;
             interpolateTimer.Enabled = true;
         }

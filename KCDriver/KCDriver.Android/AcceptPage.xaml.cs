@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace KCDriver
+namespace KCDriver.Droid
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AcceptPage : ContentPage
@@ -21,6 +21,5 @@ namespace KCDriver
         {
             Navigation.PushAsync(new MapPage());
         }
-  
     }
 }

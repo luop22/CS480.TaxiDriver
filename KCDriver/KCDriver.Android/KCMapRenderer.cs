@@ -53,13 +53,13 @@ namespace KCDriver.Droid
                     });
                     break;
 
-                    /*case "InterpolatedPosition":
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            Position temp = KCApi.Properties.InterpolatedPosition;
-                            AnimateCameraTo(temp.Latitude, temp.Longitude);
-                        });
-                        break;*/
+                /*case "InterpolatedPosition":
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Position temp = KCApi.Properties.InterpolatedPosition;
+                        AnimateCameraTo(temp.Latitude, temp.Longitude);
+                    });
+                    break;*/
             }
         }
 
@@ -83,7 +83,6 @@ namespace KCDriver.Droid
         {
             if (mapDrawn)
             {
-                //KCApi.CenterOnCurrentPosition();
                 return;
             }
 
@@ -95,6 +94,7 @@ namespace KCDriver.Droid
 
             KCApi.Properties.RenderReady = true;
             KCApi.Properties.Renderer = this;
+
             KCApi.Start(Test.a, "326 Alder St, Everett, WA 98204");
 
             mapDrawn = true;
@@ -104,10 +104,13 @@ namespace KCDriver.Droid
         // The max appears to be 20.f for whatever fucking reason
         public void AnimateCameraTo(double lat, double lon)
         {
-            lock (nativeMapLock)
+            if (KCApi.Properties.MapReady && KCApi.Properties.RenderReady)
             {
-                NativeMap.MoveCamera(CameraUpdateFactory.NewLatLng(new LatLng(lat, lon)));
-                NativeMap.MoveCamera(CameraUpdateFactory.ZoomTo(18.500f));
+                lock (nativeMapLock)
+                {
+                    NativeMap.MoveCamera(CameraUpdateFactory.NewLatLng(new LatLng(lat, lon)));
+                    NativeMap.MoveCamera(CameraUpdateFactory.ZoomTo(18.500f));
+                }
             }
         }
 

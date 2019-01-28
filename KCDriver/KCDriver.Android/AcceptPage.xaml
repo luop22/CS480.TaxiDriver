@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KCDriver.Droid.AcceptPage"
+			 Title="K.C CAB">
+    <ContentPage.Content>
+		<RelativeLayout>
+			<Image Source="taxicabs.png"
+				   Aspect="AspectFill"
+				   RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
+				   RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}"/>
+
+            <Grid RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
+				  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}">
+
+                <Label Text="Next Available Job"
+				    FontSize="Large"
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center"
+				    TextColor="White"/>
+
+                <Button Text="Accept" Clicked="Button_Clicked" 
+				    BackgroundColor="White"
+                    BorderRadius="10"
+                    BorderWidth="2"
+                    BorderColor="Black"
+                    HorizontalOptions="Center"/>
+            </Grid>
+        </RelativeLayout>
+    </ContentPage.Content>
+</ContentPage>
