@@ -20,11 +20,10 @@
 				    TextColor="White"/>
 
                 <Button Text="Accept" Clicked="Button_Clicked" 
-				    BackgroundColor="White"
-                    BorderRadius="10"
-                    BorderWidth="2"
-                    BorderColor="Black"
-                    HorizontalOptions="Center"/>
+				    Margin="20,300,20,150"
+					HorizontalOptions="Center"
+					BackgroundColor="Green"
+					TextColor="White"/>
             </Grid>
         </RelativeLayout>
     </ContentPage.Content>
