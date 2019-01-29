@@ -123,11 +123,6 @@ namespace KCDriver.Droid
             interpolateTimer.Enabled = false;
         }
 
-        public static void AddPositionToRoute(Position p)
-        {
-            Properties.RouteCoordinates.Add(p);
-        }
-
         public static Position GetCurrentPosition()
         {
             Plugin.Geolocator.Abstractions.Position position = new Plugin.Geolocator.Abstractions.Position(0, 0);
@@ -156,7 +151,8 @@ namespace KCDriver.Droid
             }
             catch (Exception ex)
             {
-                throw ex;
+                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
             }
 
             return new Position(position.Latitude, position.Longitude);
@@ -164,27 +160,38 @@ namespace KCDriver.Droid
 
         public static string GenerateRequest(Position pointA, string pointB)
         {
-            Xamarin.Forms.Maps.Geocoder g = new Xamarin.Forms.Maps.Geocoder();
-            var origin = GetCurrentPosition();
+            string s = "";
 
-            List<Position> pointBPossible = Task.Run(async () => await g.GetPositionsForAddressAsync(pointB)).Result.ToList<Position>();
-            Position pointBConverted;
-
-            if (pointBPossible.Count > 0)
+            try
             {
-                pointBConverted = pointBPossible.ElementAt<Position>(0);
-                return "https://maps.googleapis.com/maps/api/directions/json?" +
-                "origin=" + origin.Latitude + "," + origin.Longitude + "&destination=" + pointBConverted.Latitude + "," + pointBConverted.Longitude +
-                "&waypoints=" + pointA.Latitude + "," + pointA.Longitude +
-                "&key=AIzaSyAgdPpZhmK2UGsVKkJ5UWGp-w46aSt2Npo";
+                Xamarin.Forms.Maps.Geocoder g = new Xamarin.Forms.Maps.Geocoder();
+                var origin = GetCurrentPosition();
+
+                List<Position> pointBPossible = Task.Run(async () => await g.GetPositionsForAddressAsync(pointB)).Result.ToList<Position>();
+                Position pointBConverted;
+
+                if (pointBPossible.Count > 0)
+                {
+                    pointBConverted = pointBPossible.ElementAt<Position>(0);
+                    return "https://maps.googleapis.com/maps/api/directions/json?" +
+                    "origin=" + origin.Latitude + "," + origin.Longitude + "&destination=" + pointBConverted.Latitude + "," + pointBConverted.Longitude +
+                    "&waypoints=" + pointA.Latitude + "," + pointA.Longitude +
+                    "&key=AIzaSyAgdPpZhmK2UGsVKkJ5UWGp-w46aSt2Npo";
+                }
+                else
+                {
+                    return "https://maps.googleapis.com/maps/api/directions/json?" +
+                    "origin=" + origin.Latitude + "," + origin.Longitude + "&destination=" + pointA.Latitude + "," + pointA.Longitude +
+                    "&key=AIzaSyAgdPpZhmK2UGsVKkJ5UWGp-w46aSt2Npo";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return "https://maps.googleapis.com/maps/api/directions/json?" +
-                "origin=" + origin.Latitude + "," + origin.Longitude + "&destination=" + pointA.Latitude + "," + pointA.Longitude +
-                "&key=AIzaSyAgdPpZhmK2UGsVKkJ5UWGp-w46aSt2Npo";
+                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
             }
 
+            return s;
         }
 
         // This code is modeled off of a post by gtleal here: https://forums.xamarin.com/discussion/85684/how-can-i-draw-polyline-for-an-encoded-points-string
@@ -252,6 +259,8 @@ namespace KCDriver.Droid
 
         public static List<Position> GetPolyline(string request)
         {
+            if (request == "") return new List<Position>();
+
             string s = client.DownloadString(request);
             List<Position> path = new List<Position>();
 
