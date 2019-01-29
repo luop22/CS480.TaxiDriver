@@ -15,6 +15,7 @@ namespace KCDriver.Droid
         public SignInPage ()
 		{
 			InitializeComponent ();
+            NavigationPage.SetHasNavigationBar(this, true);
         }
         private void SignInClicked(object sender, EventArgs e)
         {
