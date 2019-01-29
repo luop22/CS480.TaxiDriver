@@ -13,29 +13,17 @@
             <Grid RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
 				  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}">
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="100"/>
-                    <RowDefinition Height="100"/>
-                </Grid.RowDefinitions>
-                
-                <Label Grid.Row="1"
-                    Grid.Column="0"
-                    Text="Next Available Job"
+                <Label Text="Next Available Job"
 				    FontSize="Large"
-                    VerticalOptions="End" 
+                    VerticalOptions="Center" 
                     HorizontalOptions="Center"
 				    TextColor="White"/>
 
-                <Button Grid.Row="2"
-                    Grid.Column="0"
-                    Text="Accept" Clicked="Button_Clicked" 
-				    BackgroundColor="Green"
-                    BorderRadius="10"
-                    BorderWidth="2"
-                    BorderColor="Black"
-                    HorizontalOptions="Center"
-                    VerticalOptions="End"/>
+                <Button Text="Accept" Clicked="Button_Clicked" 
+				    Margin="20,300,20,150"
+					HorizontalOptions="Center"
+					BackgroundColor="Green"
+					TextColor="White"/>
             </Grid>
         </RelativeLayout>
     </ContentPage.Content>
