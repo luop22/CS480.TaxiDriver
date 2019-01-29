@@ -29,6 +29,7 @@ namespace KCDriver.Droid
 
         protected override bool OnBackButtonPressed()
         {
+            KCApi.Stop();
             return false;
         }
     }

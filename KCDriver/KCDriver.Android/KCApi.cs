@@ -36,7 +36,9 @@ namespace KCDriver.Droid
         private static System.Timers.Timer updatePositionTimer;
         private static System.Timers.Timer interpolateTimer;
         private static WebClient client = new WebClient();
+        private static List<Exception> exceptions = new List<Exception>();
 
+        // Set default values and start timers
         public static void Initialize()
         {
             Properties.MapReady = false;
@@ -53,7 +55,8 @@ namespace KCDriver.Droid
             //interpolateTimer.AutoReset = true;
         }
 
-        // Timer calls this
+        // A timer calls this 60 times per second. It checks for updates in position and updates the route list to reflect when 
+        // the driver has gone farther than a certain point still in the que.
         public static void UpdatePosition(Object source, ElapsedEventArgs e)
         {
             Position p = GetCurrentPosition();
@@ -104,6 +107,7 @@ namespace KCDriver.Droid
             Properties.InterpolatedPosition = new Position(Properties.CurrentPosition.Longitude + deltaX / magnitude * speed, Properties.CurrentPosition.Latitude + deltaY / magnitude * speed);
         }
 
+        // Starts navigation functions. Takes riders position and destination address string.
         public static void Start(Position rider, string destination)
         {
             while (!Properties.MapReady && !Properties.RenderReady) { }
@@ -117,12 +121,27 @@ namespace KCDriver.Droid
             interpolateTimer.Enabled = true;
         }
 
+        // Stops navigation, does cleanup, and outputs recorded exceptions in debug.
         public static void Stop()
         {
             updatePositionTimer.Enabled = false;
             interpolateTimer.Enabled = false;
+
+            //Debug
+            Debug.WriteLine("------------------------- Exception Output ------------------------");
+            foreach (Exception e in exceptions)
+            {
+                Debug.WriteLine("Error ------");
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
+                Debug.WriteLine(e.TargetSite);
+                Debug.WriteLine("End --------");
+
+            }
+            Debug.WriteLine("------------------------- End -------------------------------------");
         }
 
+        // Plugin example function to get the current position.
         public static Position GetCurrentPosition()
         {
             Plugin.Geolocator.Abstractions.Position position = new Plugin.Geolocator.Abstractions.Position(0, 0);
@@ -147,17 +166,18 @@ namespace KCDriver.Droid
                 }
 
                 position = Task.Run(async () => await locator.GetPositionAsync(TimeSpan.FromSeconds(20), null, true)).Result;
-
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 Debug.WriteLine(ex.StackTrace);
+                exceptions.Add(ex);
             }
 
             return new Position(position.Latitude, position.Longitude);
         }
 
+        // Creates the HTTP request to be sent to Google using the start lat and long and the destination address.
         public static string GenerateRequest(Position pointA, string pointB)
         {
             string s = "";
@@ -180,6 +200,7 @@ namespace KCDriver.Droid
                 }
                 else
                 {
+                    // Navigate without the destination, just the person
                     return "https://maps.googleapis.com/maps/api/directions/json?" +
                     "origin=" + origin.Latitude + "," + origin.Longitude + "&destination=" + pointA.Latitude + "," + pointA.Longitude +
                     "&key=AIzaSyAgdPpZhmK2UGsVKkJ5UWGp-w46aSt2Npo";
@@ -189,6 +210,7 @@ namespace KCDriver.Droid
             {
                 Debug.WriteLine(ex.Message);
                 Debug.WriteLine(ex.StackTrace);
+                exceptions.Add(ex);
             }
 
             return s;
@@ -196,6 +218,7 @@ namespace KCDriver.Droid
 
         // This code is modeled off of a post by gtleal here: https://forums.xamarin.com/discussion/85684/how-can-i-draw-polyline-for-an-encoded-points-string
         // and based on information here: https://developers.google.com/maps/documentation/utilities/polylinealgorithm
+        // Turns a Google Maps encoded polyline into a list of positions.
         private static List<Position> DecodePolyline(string encodedPoints)
         {
             if (string.IsNullOrWhiteSpace(encodedPoints))
@@ -257,6 +280,7 @@ namespace KCDriver.Droid
             return poly;
         }
 
+        // Adds every point of the path to the route to be drawn
         public static List<Position> GetPolyline(string request)
         {
             if (request == "") return new List<Position>();

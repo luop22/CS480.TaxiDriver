@@ -44,12 +44,17 @@ namespace KCDriver.Droid
 
         #endregion
 
+        // The Map object which holds the google map with thread-safe get and set.
+        // Thread lock
         private static readonly object mapLock = new object();
+        // Private-facing
         private KCMap map;
+        // Public facing
         public KCMap Map
         {
             get
             {
+                // Thread safe get
                 lock (mapLock)
                 {
                     return map;
@@ -65,6 +70,7 @@ namespace KCDriver.Droid
             }
         }
 
+        // Custom renderer object used for drawing on the map
         private readonly object renderLock = new object();
         private KCMapRenderer renderer;
         public KCMapRenderer Renderer
@@ -86,6 +92,7 @@ namespace KCDriver.Droid
             }
         }
 
+        // Coordinates of the current route to be drawn.
         // This particular property shoots events when it is changed. See KCMapRenderer for catching
         private readonly object routeLock = new object();
         private List<Position> routeCoordinates;
@@ -111,6 +118,7 @@ namespace KCDriver.Droid
             }
         }
 
+        // Single lock for values tracking when the map and renderer call OnReady()
         private readonly object boolLock = new object();
         private bool mapReady;
         public bool MapReady
@@ -132,6 +140,7 @@ namespace KCDriver.Droid
             }
         }
 
+        // See above
         private bool renderReady;
         public bool RenderReady
         {
@@ -152,6 +161,7 @@ namespace KCDriver.Droid
             }
         }
 
+        // Current GPS position
         private readonly object positionLock = new object();
         private Position currentPosition;
         public Position CurrentPosition
@@ -168,6 +178,8 @@ namespace KCDriver.Droid
             {
                 lock (positionLock)
                 {
+                    // This block of code is supposed to establish the speed the user is going
+                    // using elapsed time and distance
                     if (PositionTimer == null) PositionTimer = new System.Diagnostics.Stopwatch();
                     if (PositionTimer.IsRunning)
                     {
@@ -183,6 +195,7 @@ namespace KCDriver.Droid
             }
         }
 
+        // Previous position for calculating speed
         private readonly object prevPositionLock = new object();
         private Position previousPosition;
         public Position PreviousPosition
@@ -204,6 +217,7 @@ namespace KCDriver.Droid
             }
         }
 
+        // Tracks smoothed/interpolated position
         private readonly object interpolatedPositionLock = new object();
         private Position interpolatedPosition;
         public Position InterpolatedPosition
@@ -225,8 +239,7 @@ namespace KCDriver.Droid
             }
         }
 
-        private readonly int DefaultSleep = 500;
-
+        // Timer for calculating speed
         private readonly object positionTimerLock = new object();
         private System.Diagnostics.Stopwatch positionTimer;
         public System.Diagnostics.Stopwatch PositionTimer
@@ -248,6 +261,7 @@ namespace KCDriver.Droid
             }
         }
 
+        // elapsed ms of last cycle
         private readonly object speedTimeLock = new object();
         private double speedTime;
         public double SpeedTime

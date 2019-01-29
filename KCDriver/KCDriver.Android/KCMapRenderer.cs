@@ -32,6 +32,7 @@ namespace KCDriver.Droid
         public KCMapRenderer(Context context) : base(context)
         {
             dataLock = new object();
+            // Add the property changed event to our event handler in KCMapRenderer
             KCApi.Properties.PropertyChanged += new PropertyChangedEventHandler(OnElementPropertyChanged);
         }
 
@@ -100,8 +101,8 @@ namespace KCDriver.Droid
             mapDrawn = true;
         }
 
-        // The number 18.500f reflects some adjustments I made and tested.
-        // The max appears to be 20.f for whatever fucking reason
+        // The number 18.5f reflects some adjustments I made and tested.
+        // The max appears to be 20.f for whatever reason
         public void AnimateCameraTo(double lat, double lon)
         {
             if (KCApi.Properties.MapReady && KCApi.Properties.RenderReady)
@@ -109,7 +110,7 @@ namespace KCDriver.Droid
                 lock (nativeMapLock)
                 {
                     NativeMap.MoveCamera(CameraUpdateFactory.NewLatLng(new LatLng(lat, lon)));
-                    NativeMap.MoveCamera(CameraUpdateFactory.ZoomTo(18.500f));
+                    NativeMap.MoveCamera(CameraUpdateFactory.ZoomTo(18.5f));
                 }
             }
         }

@@ -55,6 +55,7 @@ namespace KCDriver.Droid
             LoadApplication(new KCApp());
         }
 
+        // Permissions function required by Permissions Plugin
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);

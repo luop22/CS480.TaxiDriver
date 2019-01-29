@@ -78,7 +78,7 @@ namespace KCDriver.Droid
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
             }
         }
 
