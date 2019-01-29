@@ -20,7 +20,7 @@
 				    TextColor="White"/>
 
                 <Button Text="Accept" Clicked="Button_Clicked" 
-				    Margin="20,300,20,150"
+				    Margin="20,20,20,20"
 					HorizontalOptions="Center"
 					BackgroundColor="Green"
 					TextColor="White"/>
