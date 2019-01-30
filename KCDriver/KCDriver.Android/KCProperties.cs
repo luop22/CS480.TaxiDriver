@@ -111,8 +111,8 @@ namespace KCDriver.Droid
                 lock (routeLock)
                 {
                     // Outputs a GPX map based on the new route.
-                    DebugMapWriter dmw = new DebugMapWriter();
-                    var s = dmw.OutputGPX(value);
+                    /*DebugMapWriter dmw = new DebugMapWriter();
+                    var s = dmw.OutputGPX(value);*/
                     SetPropertyField("RouteCoordinates", ref routeCoordinates, value);
                 }
             }

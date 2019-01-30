@@ -16,6 +16,12 @@
     <item name="colorPrimaryDark">#000000</item>
     <!-- colorAccent is used as the default value for colorControlActivated
          which is used to tint widgets -->
+    <item name="colorControlNormal">#FFFFFF</item>
+    
+    <item name="colorControlActivated">#FFFFFF</item>
+    
+    <item name="colorControlHighlight">#FFFFFF</item>
+    
     <item name="colorAccent">#FFFFFF</item>
     <!-- You can also set colorControlNormal, colorControlActivated
          colorControlHighlight and colorSwitchThumbNormal. -->
@@ -27,5 +33,5 @@
   <style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
     <item name="colorAccent">#FFFFFF</item>
   </style>
-  
+
 </resources>
