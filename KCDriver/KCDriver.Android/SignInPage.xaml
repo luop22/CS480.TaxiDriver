@@ -11,22 +11,21 @@
 				<Grid Grid.Row="1" Margin="20,0,20,0">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="80"/>
-						<RowDefinition Height="40"/>
-						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="250"/>
+						<RowDefinition Height="60"/>
+						<RowDefinition Height="60"/>
 						<RowDefinition Height="*"/>
 					</Grid.RowDefinitions>
-				
-				<Image Grid.Row="1" Source="taxi_sign.PNG" Aspect="Fill" />
-				<Entry Grid.Row="2" Placeholder="Username" PlaceholderColor="White" 
-					   FontSize="16" TextColor="White" BackgroundColor="#202020"/>
-				<Entry Grid.Row="3" Placeholder="Password" PlaceholderColor="White" 
-					   FontSize="16" TextColor="White" BackgroundColor="#202020" IsPassword="True"/>
-				<Button Grid.Row="4" Text="Continue" BackgroundColor="Yellow" TextColor="Black" 
-						HeightRequest="50" VerticalOptions="Start" Clicked="SignInClicked"/>
+
+					<Image Grid.Row="1" Source="taxi_sign.PNG" Aspect="Fill" />
+					<Entry Grid.Row="2" Placeholder="Username" PlaceholderColor="White" 
+					   FontSize="20" TextColor="White" BackgroundColor="#202020"/>
+					<Entry Grid.Row="3" Placeholder="Password" PlaceholderColor="White" 
+					   FontSize="20" TextColor="White" BackgroundColor="#202020" IsPassword="True"/>
+					<Button Grid.Row="4" Text="Continue" BackgroundColor="Yellow" TextColor="Black" 
+						HeightRequest="50" VerticalOptions="Start" Clicked="SignInClicked"
+						FontSize="20"/>
 				</Grid>
-				<Label Text="Forgot Username/Password?" VerticalOptions="Start" 
-					   HorizontalOptions="Center" TextColor="White"/>
 			</StackLayout>
 		</ScrollView>
 	</ContentPage.Content>

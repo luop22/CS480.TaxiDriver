@@ -18,7 +18,7 @@
                           RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.90}"
                           RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.1}">
 
-				<Image Source="info.PNG" Aspect="Fill" VerticalOptions="EndAndExpand" Margin="20,10,20,10">
+				<Image Source="info.PNG" Aspect="Fill" VerticalOptions="EndAndExpand" Margin="0,0,0,0">
 				</Image>
 			</StackLayout>
 		</RelativeLayout>

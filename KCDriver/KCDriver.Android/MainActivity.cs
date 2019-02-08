@@ -29,7 +29,7 @@ using Android.Content;
 namespace KCDriver.Droid
 {
     // Code here taken from Permission Plugin intstructions
-    [Activity(Label = "MapTest2", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "K.C Driver App", Icon = "@drawable/taxiIcon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
 
