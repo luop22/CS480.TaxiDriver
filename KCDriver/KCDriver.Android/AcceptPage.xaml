@@ -9,12 +9,12 @@
 				   Aspect="AspectFill"
 				   RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
 				   RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}"/>
-			
+
 			<Grid RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
 				  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}">
 
 				<Label Text="Next Available Job"
-				    FontSize="Large"
+				    FontSize="36"
                     VerticalOptions="Center" 
                     HorizontalOptions="Center"
 				    TextColor="White"/>
@@ -23,10 +23,9 @@
 					HorizontalOptions="FillAndExpand"
 					VerticalOptions="End"
 					BackgroundColor="Green"
-					TextColor="White"/>
-
+					TextColor="White"
+				    FontSize="28"/>
 			</Grid>
-
 		</RelativeLayout>
 	</ContentPage.Content>
 </ContentPage>
