@@ -21,12 +21,11 @@
 
 					<Image Grid.Row="1" Source="taxi_sign.PNG" Aspect="Fill" />
 					<Entry Grid.Row="2" Placeholder="Username" PlaceholderColor="White" 
-					   FontSize="20" TextColor="White" BackgroundColor="#202020"/>
+					   FontSize="20" TextColor="White" BackgroundColor="#202020" x:Name="username"/>
 					<Entry Grid.Row="3" Placeholder="Password" PlaceholderColor="White" 
-					   FontSize="20" TextColor="White" BackgroundColor="#202020" IsPassword="True"/>
+					   FontSize="20" TextColor="White" BackgroundColor="#202020" IsPassword="True" x:Name="password"/>
 					<Button Grid.Row="4" Text="Continue" BackgroundColor="Yellow" TextColor="Black" 
-						HeightRequest="50" VerticalOptions="Start" Clicked="SignInClicked"
-						FontSize="24"/>
+						HeightRequest="50" VerticalOptions="Start" FontSize="24" Clicked="SignInClicked"/>
 					<Label Grid.Row="5" Text="Forgot Username/Password?" TextColor="Yellow" Font="30" VerticalOptions="End" 
 						   HorizontalOptions="Center" Margin="0,30,0,30"/>
 					<Label Grid.Row="6" Text="Call: (509)929-3055" TextColor="White" Font="50" VerticalOptions="End" 

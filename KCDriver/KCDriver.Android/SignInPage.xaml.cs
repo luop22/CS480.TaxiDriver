@@ -15,25 +15,22 @@ namespace KCDriver.Droid
         public SignInPage ()
 		{
 			InitializeComponent ();
+
             NavigationPage.SetHasNavigationBar(this, true);
         }
+
         private void SignInClicked(object sender, EventArgs e)
         {
-            //only allow the user to get to the next page if the username and password are corrent.
-           // if (Authenticate()) {
-                Navigation.PushAsync(new AcceptPage());
-          //  }
-        }
-
-        //this function will send the usename and password to the server to be authenticated.
-        /*
-        private bool Authenticate() {
-            string userName = usernameEntry.Text;
-            string password = passwordEntry.Text;
             
-            return true;
-        }
-        */
+            ServerRequests request = new ServerRequests();
 
+            if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && request.Authenticate(password.Text, username.Text)) {
+                Navigation.PushAsync(new AcceptPage());
+            } else {
+                //The username and password is incorrect.
+                //add a message on the sign in page giving an error.
+            }
+
+        }
     }
 }
