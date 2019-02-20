@@ -40,7 +40,7 @@ namespace KCDriver.Droid
 
             // if (Authenticate()) {
             if (KCApi.Properties.HaveLocationPermission)
-                Navigation.PushAsync(new AcceptPage());
+                Navigation.PushAsync(new AcceptPage(null));
             else
             {
                 var alertDialog = new Android.App.AlertDialog.Builder(CrossCurrentActivity.Current.Activity);

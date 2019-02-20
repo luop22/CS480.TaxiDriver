@@ -13,11 +13,13 @@ namespace KCDriver.Droid
     public partial class AcceptPage : ContentPage
     {
         Driver_Id driver;
+        MapPage mapPage;
 
         public AcceptPage(Driver_Id driver)
         {
             this.driver = driver;
             InitializeComponent();
+            mapPage = new MapPage();
         }
 
         void Button_Clicked(object sender, EventArgs e)
@@ -25,7 +27,9 @@ namespace KCDriver.Droid
 
             //call to 
             //if (there is a ride ) {
-                Navigation.PushAsync(new MapPage());
+                //Start takes only a position, which will come from the database
+                KCApi.Start(Test.a);
+                Navigation.PushAsync(mapPage);
             //}
         }
     }

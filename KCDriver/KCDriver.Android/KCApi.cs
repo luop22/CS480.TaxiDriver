@@ -103,7 +103,7 @@ namespace KCDriver.Droid
         }
 
         // Starts navigation functions. Takes riders position and destination address string.
-        public static void Start(Position rider, string destination)
+        public static void Start(Position rider, string destination = "")
         {
             // Not sure if this is useful
             ThreadPool.QueueUserWorkItem(o => { 
@@ -178,7 +178,7 @@ namespace KCDriver.Droid
         }
 
         // Creates the HTTP request to be sent to Google using the start lat and long and the destination address.
-        public static string GenerateRequest(Position pointA, string pointB)
+        public static string GenerateRequest(Position pointA, string pointB = "")
         {
             string s = "";
 
@@ -186,11 +186,16 @@ namespace KCDriver.Droid
             {
                 Xamarin.Forms.Maps.Geocoder g = new Xamarin.Forms.Maps.Geocoder();
                 var origin = GetCurrentPosition();
-
-                List<Position> pointBPossible = Task.Run(async () => await g.GetPositionsForAddressAsync(pointB)).Result.ToList<Position>();
+                List<Position> pointBPossible = null;
                 Position pointBConverted;
 
-                if (pointBPossible.Count > 0)
+                if (pointB != "")
+                {
+                    pointBPossible = Task.Run(async () => await g.GetPositionsForAddressAsync(pointB)).Result.ToList<Position>();
+                }
+                
+
+                if (pointBPossible != null && pointBPossible.Count > 0)
                 {
                     pointBConverted = pointBPossible.ElementAt<Position>(0);
                     return "https://maps.googleapis.com/maps/api/directions/json?" +
