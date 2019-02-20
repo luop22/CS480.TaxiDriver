@@ -11,23 +11,19 @@ namespace KCDriver {
 
         //authentication functions
         //returns true if the user is authenticated with the server
-        public bool Authenticate(String password, String userName) {
+        public Droid.Driver_Id Authenticate(String password, String userName) {
 
             String message = "http://148.72.40.62/driver/auth/authenticate.php?username=" + userName + "&pwHsh=" + GetHash(password, userName);
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
             // Get the response.
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Display the status.
-            Console.WriteLine(response.StatusDescription);
             // Get the stream containing content returned by the server.
             Stream dataStream = response.GetResponseStream();
             // Open the stream using a StreamReader for easy access.
             StreamReader reader = new StreamReader(dataStream);
             // Read the content.
             string responseFromServer = reader.ReadToEnd();
-            // Display the content.
-            Console.WriteLine(responseFromServer);
             // Cleanup the streams and the response.
             reader.Close();
             dataStream.Close();
@@ -36,10 +32,9 @@ namespace KCDriver {
             if (!responseFromServer.Contains("error")) {
                 String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
 
-                String token = data[6];
-                return true;
+                return new Droid.Driver_Id(Int32.Parse(data[4]), data[6]);
             } else {
-                return false;
+                return null;
             }
         }
 
@@ -67,7 +62,6 @@ namespace KCDriver {
         //gets the salt of a user
         public static String GetSalt(String userName) {
             String message = "http://148.72.40.62/driver/auth/getSalt.php?username=" + userName;
-            //Console.WriteLine("Message = " + message);
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
             // Get the response.
@@ -80,7 +74,6 @@ namespace KCDriver {
             // Read the content.
             string responseFromServer = reader.ReadToEnd();
             // Display the content.
-            //Console.WriteLine(responseFromServer);
             // Cleanup the streams and the response.
             reader.Close();
             dataStream.Close();

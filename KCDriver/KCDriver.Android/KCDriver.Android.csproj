@@ -91,6 +91,7 @@
       <DependentUpon>AcceptPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="DebugMapWriter.cs" />
+    <Compile Include="Driver_Id.cs" />
     <Compile Include="GoogleDirectionsResponse.cs" />
     <Compile Include="KCApi.cs" />
     <Compile Include="KCApp.cs" />

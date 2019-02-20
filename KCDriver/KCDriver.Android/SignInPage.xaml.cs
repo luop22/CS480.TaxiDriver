@@ -24,8 +24,10 @@ namespace KCDriver.Droid
             
             ServerRequests request = new ServerRequests();
 
-            if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && request.Authenticate(password.Text, username.Text)) {
-                Navigation.PushAsync(new AcceptPage());
+            Driver_Id driver = request.Authenticate(password.Text, username.Text);
+
+            if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && driver != null) {
+                Navigation.PushAsync(new AcceptPage(driver));
             } else {
                 //The username and password is incorrect.
                 //add a message on the sign in page giving an error.
