@@ -106,8 +106,6 @@ namespace KCDriver.Droid
         public static void Start(Position rider, string destination)
         {
             // Not sure if this is useful
-            //while (!Properties.MapReady && !Properties.RenderReady) { }
-
             ThreadPool.QueueUserWorkItem(o => { 
 
                 List<Position> temp = new List<Position>();
@@ -115,6 +113,8 @@ namespace KCDriver.Droid
                     temp = GetPolyline(KCApi.GenerateRequest(rider, destination));
 
                 Properties.RouteCoordinates = temp;
+
+                KCApi.Properties.RiderPosition = Test.b;
             });
 
             updatePositionTimer.Enabled = true;

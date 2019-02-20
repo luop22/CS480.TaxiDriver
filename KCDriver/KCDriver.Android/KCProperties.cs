@@ -118,6 +118,30 @@ namespace KCDriver.Droid
             }
         }
 
+        private readonly object riderPosLock = new object();
+        private Position riderPosition;
+        public Position RiderPosition
+        {
+            get
+            {
+                lock (routeLock)
+                {
+                    return riderPosition;
+                }
+            }
+
+            set
+            {
+                lock (routeLock)
+                {
+                    // Outputs a GPX map based on the new route.
+                    /*DebugMapWriter dmw = new DebugMapWriter();
+                    var s = dmw.OutputGPX(value);*/
+                    SetPropertyField("RiderPosition", ref riderPosition, value);
+                }
+            }
+        }
+
         // Single lock for values tracking when the map and renderer call OnReady()
         private readonly object boolLock = new object();
         private bool mapReady;
