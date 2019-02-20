@@ -34,5 +34,9 @@ namespace KCDriver.Droid
             }
 
         }
+        private void callSelect(object sender, EventArgs e)
+        {
+            Device.OpenUri(new Uri("tel:" + "5099293055"));
+        }
     }
 }

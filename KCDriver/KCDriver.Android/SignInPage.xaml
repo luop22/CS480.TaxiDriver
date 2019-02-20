@@ -26,10 +26,10 @@
 					   FontSize="20" TextColor="White" BackgroundColor="#202020" IsPassword="True" x:Name="password"/>
 					<Button Grid.Row="4" Text="Continue" BackgroundColor="Yellow" TextColor="Black" 
 						HeightRequest="50" VerticalOptions="Start" FontSize="24" Clicked="SignInClicked"/>
-					<Label Grid.Row="5" Text="Forgot Username/Password?" TextColor="Yellow" Font="30" VerticalOptions="End" 
+					<Label Grid.Row="5" Text="NEED HELP?" TextColor="Yellow" Font="30" VerticalOptions="End" 
 						   HorizontalOptions="Center" Margin="0,30,0,30"/>
-					<Label Grid.Row="6" Text="Call: (509)929-3055" TextColor="White" Font="50" VerticalOptions="End" 
-						   HorizontalOptions="Center"/>
+					<Button Grid.Row="6" Text="Call:(509)929-3055" TextColor="White" Font="30" VerticalOptions="End" 
+						   HorizontalOptions="CenterAndExpand" BackgroundColor="Black" Clicked="callSelect"  />
 				</Grid>
 				
 			</StackLayout>
