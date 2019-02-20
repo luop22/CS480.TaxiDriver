@@ -14,6 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		logo2-small.png = logo2-small.png
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{0A8ACBC6-0B46-463D-BE8A-92359B1B9007}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\..\Downloads\webserver summary.txt = ..\..\..\..\Downloads\webserver summary.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU

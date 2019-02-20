@@ -6,9 +6,11 @@ using Android.OS;
 
 using Xamarin.Forms;
 
+//Splash screen. Currently broken.
+
 namespace KCDriver.Droid
 {
-    [Activity(Theme = "@style/KCTheme.Splash", MainLauncher = true, NoHistory = true)]
+    [Activity(Theme = "@style/KCTheme.Splash", NoHistory = true)]
     public class SplashActivity : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)

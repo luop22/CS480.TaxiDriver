@@ -13,11 +13,11 @@ using Plugin.Permissions.Abstractions;
 namespace KCDriver.Droid
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class SignInPage : ContentPage
-	{
+    public partial class SignInPage : ContentPage
+    {
         public SignInPage()
-		{
-            InitializeComponent ();
+        {
+            InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, true);
 
             KCApi.Properties.AskingLocationPermission = false;
@@ -51,8 +51,11 @@ namespace KCDriver.Droid
                 {
                     //The username and password is incorrect.
                     //add a message on the sign in page giving an error.
+
+                    var text = "Incorrect credentials.";
+                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                 }
-            }   
+            }
             else
             {
                 var alertDialog = new Android.App.AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
@@ -67,8 +70,7 @@ namespace KCDriver.Droid
                     System.Diagnostics.Process.GetCurrentProcess().Kill();
                 });
                 alertDialog.Create().Show();
-            };
-            //}
+            }
         }
 
         //this function will send the usename and password to the server to be authenticated.
@@ -107,3 +109,4 @@ namespace KCDriver.Droid
             Device.OpenUri(new Uri("tel:" + "5099293055"));
         }
     }
+}
