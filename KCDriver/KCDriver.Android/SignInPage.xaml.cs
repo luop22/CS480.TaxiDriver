@@ -36,11 +36,23 @@ namespace KCDriver.Droid
 
         private void SignInClicked(object sender, EventArgs e)
         {
-            //only allow the user to get to the next page if the username and password are corrent.
-
-            // if (Authenticate()) {
+            //only allow the user to get to the next page if the username and password are correct.
             if (KCApi.Properties.HaveLocationPermission)
-                Navigation.PushAsync(new AcceptPage(null));
+            {
+                ServerRequests request = new ServerRequests();
+
+                Driver_Id driver = request.Authenticate(password.Text, username.Text);
+
+                if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && driver != null)
+                {
+                    Navigation.PushAsync(new AcceptPage(driver));
+                }
+                else
+                {
+                    //The username and password is incorrect.
+                    //add a message on the sign in page giving an error.
+                }
+            }   
             else
             {
                 var alertDialog = new Android.App.AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
@@ -89,5 +101,9 @@ namespace KCDriver.Droid
                 return false;
             }
         }
+
+        private void callSelect(object sender, EventArgs e)
+        {
+            Device.OpenUri(new Uri("tel:" + "5099293055"));
+        }
     }
-}
