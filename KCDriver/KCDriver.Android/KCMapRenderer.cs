@@ -68,9 +68,10 @@ namespace KCDriver.Droid
 
             switch (e.PropertyName)
             {
-                case "RouteCoordinates":
+                //Causes crashes atm
+                /*case "RouteCoordinates":
                     DrawPolylineFromRouteCoordinates();
-                    break;
+                    break;*/
 
                 /*case "CurrentPosition":
                     Position temp = KCApi.Properties.CurrentPosition;
