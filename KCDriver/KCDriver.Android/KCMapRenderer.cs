@@ -22,11 +22,37 @@ using KCDriver.Droid;
 [assembly: ExportRenderer(typeof(KCMap), typeof(KCMapRenderer))]
 namespace KCDriver.Droid
 {
+    public class KCPin : Pin
+    {
+        public static KCPin CreateRiderPin(Position pos)
+        {
+            var pin = new KCPin
+            {
+                Type = PinType.Place,
+                Position = new Position(pos.Latitude, pos.Longitude),
+                Id = "Next Rider"
+            };
+
+            return pin;
+        }
+
+        public MarkerOptions CreateMarker()
+        {
+            var marker = new MarkerOptions();
+            marker.SetPosition(new LatLng(this.Position.Latitude, this.Position.Longitude));
+            marker.SetTitle(this.Label);
+            marker.SetSnippet(this.Address);
+            marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.taxiIcon));
+            return marker;
+        }
+    }
+
     public class KCMapRenderer : MapRenderer
     {
         private readonly object dataLock;
         private readonly object nativeMapLock = new object();
         Android.Gms.Maps.Model.Polyline CurrentLine;
+        KCPin riderPin;
         bool mapDrawn = false;
 
         public KCMapRenderer(Context context) : base(context)
@@ -46,13 +72,10 @@ namespace KCDriver.Droid
                     DrawPolylineFromRouteCoordinates();
                     break;
 
-                case "CurrentPosition":
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        Position temp = KCApi.Properties.CurrentPosition;
-                        AnimateCameraTo(temp.Latitude, temp.Longitude);
-                    });
-                    break;
+                /*case "CurrentPosition":
+                    Position temp = KCApi.Properties.CurrentPosition;
+                    AnimateCameraTo(temp.Latitude, temp.Longitude);
+                    break;*/
 
                 /*case "InterpolatedPosition":
                     Device.BeginInvokeOnMainThread(() =>
@@ -61,6 +84,10 @@ namespace KCDriver.Droid
                         AnimateCameraTo(temp.Latitude, temp.Longitude);
                     });
                     break;*/
+
+                case "RiderPosition":
+                    UpdateMarker();
+                    break;
             }
         }
 
@@ -96,8 +123,6 @@ namespace KCDriver.Droid
             KCApi.Properties.RenderReady = true;
             KCApi.Properties.Renderer = this;
 
-            KCApi.Start(Test.a, "326 Alder St, Everett, WA 98204");
-
             mapDrawn = true;
         }
 
@@ -105,13 +130,23 @@ namespace KCDriver.Droid
         // The max appears to be 20.f for whatever reason
         public void AnimateCameraTo(double lat, double lon)
         {
-            if (KCApi.Properties.MapReady && KCApi.Properties.RenderReady)
+            try
             {
-                lock (nativeMapLock)
+                Device.BeginInvokeOnMainThread(() =>
                 {
-                    NativeMap.MoveCamera(CameraUpdateFactory.NewLatLng(new LatLng(lat, lon)));
-                    NativeMap.MoveCamera(CameraUpdateFactory.ZoomTo(18.5f));
-                }
+                    if (KCApi.Properties.MapReady && KCApi.Properties.RenderReady)
+                    {
+                        lock (nativeMapLock)
+                        {
+                            NativeMap.MoveCamera(CameraUpdateFactory.NewLatLng(new LatLng(lat, lon)));
+                            NativeMap.MoveCamera(CameraUpdateFactory.ZoomTo(18.5f));
+                        }
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                KCApi.OutputException(e);
             }
         }
 
@@ -132,6 +167,17 @@ namespace KCDriver.Droid
                 }
 
                 CurrentLine = NativeMap.AddPolyline(polylineOptions);
+            });
+        }
+
+        public void UpdateMarker()
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                NativeMap.Clear();
+                riderPin = KCPin.CreateRiderPin(KCApi.Properties.RiderPosition);
+                MarkerOptions mo = riderPin.CreateMarker();
+                NativeMap.AddMarker(mo);
             });
         }
     }

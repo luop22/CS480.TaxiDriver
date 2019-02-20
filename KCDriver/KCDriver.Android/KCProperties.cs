@@ -46,7 +46,7 @@ namespace KCDriver.Droid
 
         // The Map object which holds the google map with thread-safe get and set.
         // Thread lock
-        private static readonly object mapLock = new object();
+        private readonly object mapLock = new object();
         // Private-facing
         private KCMap map;
         // Public facing
@@ -114,6 +114,30 @@ namespace KCDriver.Droid
                     /*DebugMapWriter dmw = new DebugMapWriter();
                     var s = dmw.OutputGPX(value);*/
                     SetPropertyField("RouteCoordinates", ref routeCoordinates, value);
+                }
+            }
+        }
+
+        private readonly object riderPosLock = new object();
+        private Position riderPosition;
+        public Position RiderPosition
+        {
+            get
+            {
+                lock (routeLock)
+                {
+                    return riderPosition;
+                }
+            }
+
+            set
+            {
+                lock (routeLock)
+                {
+                    // Outputs a GPX map based on the new route.
+                    /*DebugMapWriter dmw = new DebugMapWriter();
+                    var s = dmw.OutputGPX(value);*/
+                    SetPropertyField("RiderPosition", ref riderPosition, value);
                 }
             }
         }
@@ -279,6 +303,46 @@ namespace KCDriver.Droid
                 lock (positionTimerLock)
                 {
                     speedTime = value;
+                }
+            }
+        }
+
+        private readonly object permissionLock = new object();
+        private bool askingLocationPermission;
+        public bool AskingLocationPermission
+        {
+            get
+            {
+                lock (permissionLock)
+                {
+                    return askingLocationPermission;
+                }
+            }
+
+            set
+            {
+                lock (permissionLock)
+                {
+                    askingLocationPermission = value;
+                }
+            }
+        }
+        private bool haveLocationPermission;
+        public bool HaveLocationPermission
+        {
+            get
+            {
+                lock (permissionLock)
+                {
+                    return haveLocationPermission;
+                }
+            }
+
+            set
+            {
+                lock (permissionLock)
+                {
+                    haveLocationPermission = value;
                 }
             }
         }

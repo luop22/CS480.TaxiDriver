@@ -11,6 +11,7 @@ using System.Threading;
 using System.Diagnostics;
 using Android.Gms.Maps.Model;
 using KCDriver.Droid;
+using Xamarin.Forms;
 
 namespace KCDriver.Droid
 {
@@ -35,7 +36,6 @@ namespace KCDriver.Droid
         public static KCProperties Properties = new KCProperties();
         private static System.Timers.Timer updatePositionTimer;
         private static System.Timers.Timer interpolateTimer;
-        private static WebClient client = new WebClient();
         private static List<Exception> exceptions = new List<Exception>();
 
         // Set default values and start timers
@@ -46,9 +46,8 @@ namespace KCDriver.Droid
             Properties.RouteCoordinates = new List<Position>();
 
             // The timer automatically updates the camera and position every interval.
-            updatePositionTimer = new System.Timers.Timer(100);
+            updatePositionTimer = new System.Timers.Timer(16.66f);
             updatePositionTimer.Elapsed += UpdatePosition;
-            updatePositionTimer.AutoReset = true;
 
             interpolateTimer = new System.Timers.Timer(16.66f);
             //interpolateTimer.Elapsed += Interpolate;
@@ -59,64 +58,65 @@ namespace KCDriver.Droid
         // the driver has gone farther than a certain point still in the que.
         public static void UpdatePosition(Object source, ElapsedEventArgs e)
         {
-            Position p = GetCurrentPosition();
+            ThreadPool.QueueUserWorkItem(o => {
 
-            if (Properties.CurrentPosition != p)
-            {
-                Properties.CurrentPosition = p;
+                updatePositionTimer.Stop();
+                Position p = GetCurrentPosition();
 
-                if (Properties.RouteCoordinates.Count > 1)
+                if (Properties.CurrentPosition != p)
                 {
-                    int closestIndex = 0;
-                    Xamarin.Forms.Maps.Distance smallest = DistanceTo(Properties.CurrentPosition, Properties.RouteCoordinates.First());
-                    for (int i = 0; i < Properties.RouteCoordinates.Count; ++i)
+                    Properties.CurrentPosition = p;
+
+                    if (Properties.RouteCoordinates.Count > 1)
                     {
-                        if (DistanceTo(Properties.CurrentPosition, Properties.RouteCoordinates.ElementAt(i)).Miles < smallest.Miles)
+                        int closestIndex = 0;
+                        Xamarin.Forms.Maps.Distance smallest = DistanceTo(Properties.CurrentPosition, Properties.RouteCoordinates.First());
+                        for (int i = 0; i < Properties.RouteCoordinates.Count; ++i)
                         {
-                            smallest = DistanceTo(Properties.CurrentPosition, Properties.RouteCoordinates.ElementAt(i));
-                            closestIndex = i;
+                            if (DistanceTo(Properties.CurrentPosition, Properties.RouteCoordinates.ElementAt(i)).Miles < smallest.Miles)
+                            {
+                                smallest = DistanceTo(Properties.CurrentPosition, Properties.RouteCoordinates.ElementAt(i));
+                                closestIndex = i;
+                            }
+                        }
+
+                        if (closestIndex > 0)
+                        {
+                            List<Position> temp = new List<Position>();
+                            temp.AddRange(Properties.RouteCoordinates);
+                            temp.RemoveRange(0, closestIndex + 1);
+                            Properties.RouteCoordinates = temp;
                         }
                     }
-
-                    if (closestIndex > 0)
-                    {
-                        List<Position> temp = new List<Position>();
-                        temp.AddRange(Properties.RouteCoordinates);
-                        temp.RemoveRange(0, closestIndex + 1);
-                        Properties.RouteCoordinates = temp;
-                    }
                 }
-            }
-        }
 
-        // Work in Progress
-        private static void Interpolate(Object source, ElapsedEventArgs e)
-        {
-            // 1. Determine speed
-            // 2. Determine direction
-            // 3. Determine time interval
-            // 4. i n t e r p o l a t e (change position directly)
+                //Keeps the camera locked on the user
+                /*Device.BeginInvokeOnMainThread(() =>
+                {
+                    Position temp = KCApi.Properties.CurrentPosition;
+                    KCApi.Properties.Renderer.AnimateCameraTo(temp.Latitude, temp.Longitude);
+                });*/
 
-            double deltaX = Properties.CurrentPosition.Longitude - Properties.PreviousPosition.Longitude;
-            double deltaY = Properties.CurrentPosition.Latitude - Properties.PreviousPosition.Latitude;
-            double magnitude = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-            double totalDistance = Properties.CurrentPosition.DistanceTo(Properties.PreviousPosition).Miles;
-
-            double speed = (totalDistance / Properties.SpeedTime) * 16.66; // Degrees / ms * ms = Degrees
-
-            Properties.InterpolatedPosition = new Position(Properties.CurrentPosition.Longitude + deltaX / magnitude * speed, Properties.CurrentPosition.Latitude + deltaY / magnitude * speed);
+                updatePositionTimer.Interval = 16.66f;
+                updatePositionTimer.Start();
+            });
         }
 
         // Starts navigation functions. Takes riders position and destination address string.
         public static void Start(Position rider, string destination)
         {
-            while (!Properties.MapReady && !Properties.RenderReady) { }
+            // Not sure if this is useful
+            ThreadPool.QueueUserWorkItem(o => { 
 
-            List<Position> temp = new List<Position>();
-            while (temp.Count == 0)
-                temp = GetPolyline(KCApi.GenerateRequest(rider, destination));
+                List<Position> temp = new List<Position>();
+                while (temp.Count == 0)
+                    temp = GetPolyline(KCApi.GenerateRequest(rider, destination));
 
-            Properties.RouteCoordinates = temp;
+                Properties.RouteCoordinates = temp;
+
+                KCApi.Properties.RiderPosition = Test.b;
+            });
+
             updatePositionTimer.Enabled = true;
             interpolateTimer.Enabled = true;
         }
@@ -206,11 +206,9 @@ namespace KCDriver.Droid
                     "&key=AIzaSyAgdPpZhmK2UGsVKkJ5UWGp-w46aSt2Npo";
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Debug.WriteLine(ex.Message);
-                Debug.WriteLine(ex.StackTrace);
-                exceptions.Add(ex);
+                OutputException(e);
             }
 
             return s;
@@ -285,6 +283,7 @@ namespace KCDriver.Droid
         {
             if (request == "") return new List<Position>();
 
+            WebClient client = new WebClient();
             string s = client.DownloadString(request);
             List<Position> path = new List<Position>();
 
@@ -321,6 +320,31 @@ namespace KCDriver.Droid
 
             // Multiply by the Earth's radius to get the actual distance.
             return Xamarin.Forms.Maps.Distance.FromKilometers(6371 * radians);
+        }
+
+        // Work in Progress
+        private static void Interpolate(Object source, ElapsedEventArgs e)
+        {
+            // 1. Determine speed
+            // 2. Determine direction
+            // 3. Determine time interval
+            // 4. i n t e r p o l a t e (change position directly)
+
+            double deltaX = Properties.CurrentPosition.Longitude - Properties.PreviousPosition.Longitude;
+            double deltaY = Properties.CurrentPosition.Latitude - Properties.PreviousPosition.Latitude;
+            double magnitude = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+            double totalDistance = Properties.CurrentPosition.DistanceTo(Properties.PreviousPosition).Miles;
+
+            double speed = (totalDistance / Properties.SpeedTime) * 16.66; // Degrees / ms * ms = Degrees
+
+            Properties.InterpolatedPosition = new Position(Properties.CurrentPosition.Longitude + deltaX / magnitude * speed, Properties.CurrentPosition.Latitude + deltaY / magnitude * speed);
+        }
+
+        public static void OutputException(Exception e)
+        {
+            Debug.WriteLine(e.Message);
+            Debug.WriteLine(e.StackTrace);
+            exceptions.Add(e);
         }
     }
 }

@@ -1,13 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-			 xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
+             xmlns:map="clr-namespace:KCDriver.Droid"
              x:Class="KCDriver.Droid.MapPage"
 			 Title="K.C CAB"
 			 BackgroundColor="Black">
     <ContentPage.Content>
-		<StackLayout VerticalOptions="StartAndExpand" Padding="30">
-			
-		</StackLayout>
-	</ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <map:KCMap Grid.RowSpan="2"
+                IsShowingUser="true"
+                MapType="Street"/>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" TextColor="#FFFFFF" LineBreakMode="CharacterWrap" Text="Address: 100 Willow St, Everett, WA 98204" />
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Button Text="b1" Grid.Row="0" Grid.Column="0" />
+                    <Button Text="b2" Grid.Row="1" Grid.Column="0" />
+                    <Button Text="b3" Grid.Row="0" Grid.Column="1" />
+                    <Button Text="b4" Grid.Row="1" Grid.Column="1" />
+                </Grid>
+            </Grid>
+        </Grid>
+    </ContentPage.Content>
 </ContentPage> 
