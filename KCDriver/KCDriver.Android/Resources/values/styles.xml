@@ -22,7 +22,7 @@
     
     <item name="colorControlHighlight">#FFFFFF</item>
     
-    <item name="colorAccent">#FFFFFF</item>
+    <item name="colorAccent">#000000</item>
     <!-- You can also set colorControlNormal, colorControlActivated
          colorControlHighlight and colorSwitchThumbNormal. -->
     <item name="windowActionModeOverlay">true</item>
@@ -32,6 +32,18 @@
 
   <style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
     <item name="colorAccent">#FFFFFF</item>
+  </style>
+
+  <style name="KCTheme.Base" parent="Theme.AppCompat.Light">
+  </style>
+
+  <style name="KCTheme" parent="KCTheme.Base">
+  </style>
+
+  <style name="KCTheme.Splash" parent ="Theme.AppCompat.Light.NoActionBar">
+    <item name="android:windowBackground">@drawable/splash_screen</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:windowFullscreen">true</item>
   </style>
 
 </resources>

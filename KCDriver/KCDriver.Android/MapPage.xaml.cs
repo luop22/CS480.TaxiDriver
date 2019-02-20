@@ -16,15 +16,7 @@ namespace KCDriver.Droid
 		public MapPage ()
 		{
 			InitializeComponent();
-            var map = new KCMap()
-            {
-                MapType = MapType.Street,
-                WidthRequest = KCApp.ScreenWidth,
-                HeightRequest = KCApp.ScreenHeight,
-                IsShowingUser = true
-            };
-
-            Content = map;
+            NavigationPage.SetHasNavigationBar(this, false);
         }
 
         protected override bool OnBackButtonPressed()
