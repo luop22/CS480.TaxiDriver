@@ -11,17 +11,10 @@ using Android.Views;
 using Android.Widget;
 
 namespace KCDriver.Droid {
-    public class Driver_Id {
+    public static class Driver_Id {
 
-        public int driver_Id { get; set; }
-        public String token { get; set; }
-
-        public Driver_Id(int driver_Id,String token) {
-
-            this.driver_Id = driver_Id;
-            this.token = token;
-
-        }
+        public static int driver_Id { get; set; }
+        public static String token { get; set; }
 
     }
 }

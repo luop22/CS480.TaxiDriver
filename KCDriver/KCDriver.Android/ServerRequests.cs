@@ -6,12 +6,12 @@ using System.Security.Cryptography;
 using System.Text;
 
 //class which handles calls to the server including authentication and ride requestes
-namespace KCDriver {
+namespace KCDriver.Droid {
     class ServerRequests {
 
         //authentication functions
         //returns true if the user is authenticated with the server
-        public Droid.Driver_Id Authenticate(String password, String userName) {
+        public bool Authenticate(String password, String userName) {
 
             String message = "http://148.72.40.62/driver/auth/authenticate.php?username=" + userName + "&pwHsh=" + GetHash(password, userName);
             // Create a request for the URL. 		
@@ -32,10 +32,12 @@ namespace KCDriver {
             if (!responseFromServer.Contains("error")) {
                 String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
 
-                return new Droid.Driver_Id(Int32.Parse(data[4]), data[6]);
-            } else {
-                return null;
+                Driver_Id.driver_Id = Int32.Parse(data[4]);
+                Driver_Id.token = data[6]);
+                return true;
             }
+
+            return false;
         }
 
         //calculates the hash of the password with the salt
@@ -117,5 +119,7 @@ namespace KCDriver {
                 return "error";
             }
         }
+
+
     }
 }

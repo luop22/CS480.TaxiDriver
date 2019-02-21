@@ -47,7 +47,7 @@ namespace KCDriver.Droid
 
             // The timer automatically updates the camera and position every interval.
             updatePositionTimer = new System.Timers.Timer(16.66f);
-            updatePositionTimer.Elapsed += UpdatePosition;
+            updatePositionTimer.Elapsed += (o,e) => Task.Factory.StartNew( () => UpdatePosition(o,e));
 
             interpolateTimer = new System.Timers.Timer(16.66f);
             //interpolateTimer.Elapsed += Interpolate;
