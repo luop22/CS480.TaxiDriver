@@ -1,0 +1,54 @@
+All methods return status unless stated otherwise
+Server IP: http://148.72.40.62
+
+
+added checkQueue to the ServerRequest class.
+adding function to display whether there is a ride avalible on the accept page.
+
+
+Request ride: (returns rideID)
+IP/client/reqRide.php?RiderID=idTESTVL&RiderNM=Sam&RiderPN=123123&lat=456.456&lon=789.789
+
+Add/remove email, view Email list:
+client/removeEmail.php?email=testEmail@domain.net
+client/addEmail.php?email=testEmail@domain.net
+client/getEmails.php
+
+Cancel Ride:
+client/cancelRide.php?rideID=6
+
+Check Ride Status: (returns '{"driver":null}' or a driver Object. JSON)
+client/rideStatus.php?rideID=7
+
+Debug method to force-assign the debug driver to the ride
+client/debugAcceptRide.php?rideID=1
+
+------------------------------------------------------------
+
+Accept the top ride: (returns rideID)
+driver/acceptRide.php?rideID=3&token=token&driverID=1
+
+Completes the ride, moves it to the hist table:
+driver/completeRide.php?token=token&driverID=1&rideID=6
+
+Check ride status:
+driver/rideStatus.php?token=token&driverID=1&lat=111.222&lon=555.5555&rideID=6
+
+Checks queue:
+driver/checkQueue.php
+
+Decouple driver from selected ride (analagous to cancel)
+driver/decouple.php?rideID=6&token=token&driverID=1
+
+Updates location in server
+driver/updateLocation.php?token=token&driverID=1&lat=123.123&lon=456.456
+
+
+____________________________________________________________
+
+DB has 1 test driver:
++----------+----------+------------+----------+----------+-----------+---------+----------+
+| driverID | userNM   | phone      | pwHsh    | pwSlt    | authToken | gpsLat  | gpsLon   |
++----------+----------+------------+----------+----------+-----------+---------+----------+
+|        1 | testName | 1234567890 | PWHSHVAL | PWSLTVAL | token     | 111.222 | 555.5555 |
++----------+----------+------------+----------+----------+-----------+---------+----------+
