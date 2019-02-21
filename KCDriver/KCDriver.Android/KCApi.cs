@@ -103,18 +103,16 @@ namespace KCDriver.Droid
         }
 
         // Starts navigation functions. Takes riders position and destination address string.
-        public static void Start(Position rider, string destination = "")
+        public static void Start(Ride ride, string destination = "")
         {
-            // Not sure if this is useful
+            Properties.CurrentRide = ride;
             ThreadPool.QueueUserWorkItem(o => { 
 
                 List<Position> temp = new List<Position>();
                 while (temp.Count == 0)
-                    temp = GetPolyline(KCApi.GenerateRequest(rider, destination));
+                    temp = GetPolyline(KCApi.GenerateRequest(new Position(Properties.CurrentRide.ClientLat, Properties.CurrentRide.ClientLong), destination));
 
                 Properties.RouteCoordinates = temp;
-
-                KCApi.Properties.RiderPosition = Test.b;
             });
 
             updatePositionTimer.Enabled = true;

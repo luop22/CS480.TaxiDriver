@@ -12,27 +12,24 @@ namespace KCDriver.Droid
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AcceptPage : ContentPage
     {
-        Driver_Id driver;
         Ride ride;
         MapPage mapPage;
 
-        public AcceptPage(Driver_Id driver)
+        public AcceptPage()
         {
             BindingContext = new AcceptUpdater();
-            this.driver = driver;
             InitializeComponent();
-            mapPage = new MapPage(driver, ride);
+            mapPage = new MapPage();
         }
 
         void Button_Clicked(object sender, EventArgs e)
-        {
-
-            //call to 
-            //if (there is a ride ) {
+        { 
+            if (KCApi.AcceptNextRide(ride) 
+                && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
                 //Start takes only a position, which will come from the database
-                KCApi.Start(Test.a);
+                KCApi.Start(ride);
                 Navigation.PushAsync(mapPage);
-            //}
+            }
         }
     }
 }

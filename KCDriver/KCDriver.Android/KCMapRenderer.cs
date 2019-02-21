@@ -86,7 +86,7 @@ namespace KCDriver.Droid
                     });
                     break;*/
 
-                case "RiderPosition":
+                case "CurrentRide":
                     UpdateMarker();
                     break;
             }
@@ -176,7 +176,8 @@ namespace KCDriver.Droid
             Device.BeginInvokeOnMainThread(() =>
             {
                 NativeMap.Clear();
-                riderPin = KCPin.CreateRiderPin(KCApi.Properties.RiderPosition);
+                riderPin = KCPin.CreateRiderPin(new Position(KCApi.Properties.CurrentRide.ClientLat,
+                                                            KCApi.Properties.CurrentRide.ClientLong));
                 MarkerOptions mo = riderPin.CreateMarker();
                 NativeMap.AddMarker(mo);
             });

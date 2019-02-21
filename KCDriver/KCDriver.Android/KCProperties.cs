@@ -118,26 +118,23 @@ namespace KCDriver.Droid
             }
         }
 
-        private readonly object riderPosLock = new object();
-        private Position riderPosition;
-        public Position RiderPosition
+        private readonly object rideLock = new object();
+        private Ride currentRide;
+        public Ride CurrentRide
         {
             get
             {
-                lock (routeLock)
+                lock (rideLock)
                 {
-                    return riderPosition;
+                    return currentRide;
                 }
             }
 
             set
             {
-                lock (routeLock)
+                lock (rideLock)
                 {
-                    // Outputs a GPX map based on the new route.
-                    /*DebugMapWriter dmw = new DebugMapWriter();
-                    var s = dmw.OutputGPX(value);*/
-                    SetPropertyField("RiderPosition", ref riderPosition, value);
+                    SetPropertyField("CurrentRide", ref currentRide, value);
                 }
             }
         }

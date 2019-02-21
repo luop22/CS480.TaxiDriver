@@ -7,11 +7,11 @@ using System.Text;
 
 //class which handles calls to the server including authentication and ride requestes
 namespace KCDriver.Droid {
-    class ServerRequests {
+    partial class KCApi {
 
         //authentication functions
         //returns true if the user is authenticated with the server
-        public bool Authenticate(String password, String userName) {
+        public static bool Authenticate(String password, String userName) {
 
             String message = "http://148.72.40.62/driver/auth/authenticate.php?username=" + userName + "&pwHsh=" + GetHash(password, userName);
             // Create a request for the URL. 		
@@ -33,7 +33,7 @@ namespace KCDriver.Droid {
                 String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
 
                 Driver_Id.driver_Id = Int32.Parse(data[4]);
-                Driver_Id.token = data[6]);
+                Driver_Id.token = data[6];
                 return true;
             }
 
@@ -89,7 +89,7 @@ namespace KCDriver.Droid {
             }
         }
 
-        public String CheckQueue() {
+        public static String CheckQueue() {
 
             String message = "http://148.72.40.62/driver/checkQueue.php";
             // Create a request for the URL. 		
@@ -120,7 +120,7 @@ namespace KCDriver.Droid {
             }
         }
 
-        public bool AcceptNextRide(Ride ride)
+        public static bool AcceptNextRide(Ride ride)
         {
             string message = "http://148.72.40.62/driver/acceptRide.php?token=" + Driver_Id.token + "&driverID=" + Driver_Id.driver_Id;
             // Create a request for the URL. 		
@@ -155,7 +155,7 @@ namespace KCDriver.Droid {
             return false;
         }
 
-        public bool SetRideLocation(Ride ride, double latitude, double longitude)
+        public static bool SetRideLocation(Ride ride, double latitude, double longitude)
         {
             string message = "driver/rideStatus.php?token=" + Driver_Id.token 
                 + "&driverID=" + Driver_Id.driver_Id + "&lat =" + latitude + "&lon=" + longitude + "&rideID=" + ride.RideId;
@@ -195,7 +195,7 @@ namespace KCDriver.Droid {
             return false;
         }
 
-        public bool CompleteRide(Ride ride)
+        public static bool CompleteRide(Ride ride)
         {
             string message = "http://148.72.40.62/driver/completeRide.php?token=&" + Driver_Id.token + "&driverID=" 
                 + Driver_Id.driver_Id + "rideID=" + ride.RideId;
@@ -223,10 +223,38 @@ namespace KCDriver.Droid {
             return false;
         }
 
-        public bool SetDriverLocation(double latitude, double longitude)
+        public static bool SetDriverLocation(double latitude, double longitude)
         {
             string message = "driver/rideStatus.php?token=" + Driver_Id.token
                 + "&driverID=" + Driver_Id.driver_Id + "&lat =" + latitude + "&lon=" + longitude;
+
+            // Create a request for the URL. 		
+            WebRequest request = WebRequest.Create(message);
+            // Get the response.
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            // Get the stream containing content returned by the server.
+            Stream dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.
+            string responseFromServer = reader.ReadToEnd();
+            // Cleanup the streams and the response.
+            reader.Close();
+            dataStream.Close();
+            response.Close();
+
+            if (!responseFromServer.Contains("error"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool CancelRide(Ride ride)
+        {
+            string message = "driver/decouple.php?" + "rideID=" + ride.RideId + "&token=" + Driver_Id.token +
+                 "&driverID=" + Driver_Id.driver_Id;
 
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
