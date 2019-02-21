@@ -32,6 +32,11 @@ namespace KCDriver
             Device.OpenUri(new Uri("tel:" + PhoneNum));
         }
 
+        public void SetRideID(int newID)
+        {
+            RideId = newID;
+        }
+
         public void SetPosition(double newLat, double newLong)
         {
             ClientLat = newLat;

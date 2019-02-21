@@ -120,7 +120,7 @@ namespace KCDriver.Droid {
             }
         }
 
-        public int AcceptNextRide()
+        public bool AcceptNextRide(Ride ride)
         {
             string message = "http://148.72.40.62/driver/acceptRide.php?token=" + Driver_Id.token + "&driverID=" + Driver_Id.driver_Id;
             // Create a request for the URL. 		
@@ -140,12 +140,19 @@ namespace KCDriver.Droid {
 
             if (!responseFromServer.Contains("error"))
             {
-                String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
-
-                return Int32.Parse(data[3]);
+                try
+                {
+                    String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    ride.SetRideID(Int32.Parse(data[3]));
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
             }
 
-            return -1;
+            return false;
         }
 
         public bool SetRideLocation(Ride ride, double latitude, double longitude)
@@ -185,6 +192,62 @@ namespace KCDriver.Droid {
                 }
             }
             
+            return false;
+        }
+
+        public bool CompleteRide(Ride ride)
+        {
+            string message = "http://148.72.40.62/driver/completeRide.php?token=&" + Driver_Id.token + "&driverID=" 
+                + Driver_Id.driver_Id + "rideID=" + ride.RideId;
+
+            // Create a request for the URL. 		
+            WebRequest request = WebRequest.Create(message);
+            // Get the response.
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            // Get the stream containing content returned by the server.
+            Stream dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.
+            string responseFromServer = reader.ReadToEnd();
+            // Cleanup the streams and the response.
+            reader.Close();
+            dataStream.Close();
+            response.Close();
+
+            if (!responseFromServer.Contains("error"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool SetDriverLocation(double latitude, double longitude)
+        {
+            string message = "driver/rideStatus.php?token=" + Driver_Id.token
+                + "&driverID=" + Driver_Id.driver_Id + "&lat =" + latitude + "&lon=" + longitude;
+
+            // Create a request for the URL. 		
+            WebRequest request = WebRequest.Create(message);
+            // Get the response.
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            // Get the stream containing content returned by the server.
+            Stream dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.
+            string responseFromServer = reader.ReadToEnd();
+            // Cleanup the streams and the response.
+            reader.Close();
+            dataStream.Close();
+            response.Close();
+
+            if (!responseFromServer.Contains("error"))
+            {
+                return true;
+            }
+
             return false;
         }
     }
