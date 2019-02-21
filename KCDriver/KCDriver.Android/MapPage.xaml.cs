@@ -13,7 +13,7 @@ namespace KCDriver.Droid
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MapPage : ContentPage
 	{
-		public MapPage ()
+		public MapPage (Driver_Id driver, Ride ride)
 		{
 			InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);

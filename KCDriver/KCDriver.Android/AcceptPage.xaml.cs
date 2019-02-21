@@ -13,13 +13,15 @@ namespace KCDriver.Droid
     public partial class AcceptPage : ContentPage
     {
         Driver_Id driver;
+        Ride ride;
         MapPage mapPage;
 
         public AcceptPage(Driver_Id driver)
         {
+            BindingContext = new AcceptUpdater();
             this.driver = driver;
             InitializeComponent();
-            mapPage = new MapPage();
+            mapPage = new MapPage(driver, ride);
         }
 
         void Button_Clicked(object sender, EventArgs e)

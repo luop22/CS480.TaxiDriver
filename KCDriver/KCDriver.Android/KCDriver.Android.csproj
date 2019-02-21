@@ -90,6 +90,7 @@
     <Compile Include="AcceptPage.xaml.cs">
       <DependentUpon>AcceptPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AcceptUpdater.cs" />
     <Compile Include="DebugMapWriter.cs" />
     <Compile Include="Driver_Id.cs" />
     <Compile Include="GoogleDirectionsResponse.cs" />
