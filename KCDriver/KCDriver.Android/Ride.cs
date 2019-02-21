@@ -7,14 +7,16 @@ namespace KCDriver
 {
     public class Ride
     {
-        private int RideId { get; set; }
-        private int NumberOfRiders { get; set; }
-        private String ClientName { get; set; }
-        private double ClientLat { get; set; }
-        private double ClientLong { get; set; }
-        private DateTime StartTime { get; set; }
-        private DateTime EndTime { get; set; }
-        private String PhoneNum { get; set; }
+        public int RideId { get; private set; }
+        public int NumberOfRiders { get; private set; }
+        public String ClientName { get; private set; }
+        public double ClientLat { get; private set; }
+        public double ClientLong { get; private set; }
+        public DateTime StartTime { get; private set; }
+        public DateTime EndTime { get; private set; }
+        public String PhoneNum { get; private set; }
+
+        Ride() { }
 
         Ride(int RideId, int NumberOfRiders, String ClientName, double ClientLat, double ClientLong, DateTime StartTime, String PhoneNum) {
             this.RideId = RideId;
@@ -26,9 +28,14 @@ namespace KCDriver
             this.PhoneNum = PhoneNum;
         }
 
-        public void callClient() {
+        public void CallClient() {
             Device.OpenUri(new Uri("tel:" + PhoneNum));
         }
 
+        public void SetPosition(double newLat, double newLong)
+        {
+            ClientLat = newLat;
+            ClientLong = newLong;
+        }
     }
 }
