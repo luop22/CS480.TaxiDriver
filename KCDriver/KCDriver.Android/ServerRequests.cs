@@ -86,5 +86,36 @@ namespace KCDriver {
                 return "error";
             }
         }
+
+        public String CheckQueue() {
+
+            String message = "http://148.72.40.62/driver/checkQueue.php";
+            // Create a request for the URL. 		
+            WebRequest request = WebRequest.Create(message);
+            // Get the response.
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            // Display the status.
+            // Get the stream containing content returned by the server.
+            Stream dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.
+            string responseFromServer = reader.ReadToEnd();
+            // Display the content.
+            // Cleanup the streams and the response.
+            reader.Close();
+            dataStream.Close();
+            response.Close();
+
+            if (responseFromServer.Contains("Rides are available")) {
+                return "Rides are available";
+            } else if (responseFromServer.Contains("No available rides")) {
+                return "No available rides";
+            } else if ((responseFromServer.Contains("error"))) {
+                return "error";
+            } else {
+                return "error";
+            }
+        }
     }
 }
