@@ -16,9 +16,9 @@ namespace KCDriver.Droid
         public DateTime EndTime { get; private set; }
         public String PhoneNum { get; private set; }
 
-        Ride() { }
+        public Ride() { }
 
-        Ride(int RideId, int NumberOfRiders, String ClientName, double ClientLat, double ClientLong, DateTime StartTime, String PhoneNum) {
+        public Ride(int RideId, int NumberOfRiders, String ClientName, double ClientLat, double ClientLong, DateTime StartTime, String PhoneNum) {
             this.RideId = RideId;
             this.NumberOfRiders = NumberOfRiders;
             this.ClientName = ClientName;

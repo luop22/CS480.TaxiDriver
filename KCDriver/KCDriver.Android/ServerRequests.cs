@@ -143,7 +143,7 @@ namespace KCDriver.Droid {
                 try
                 {
                     String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
-                    ride.SetRideID(Int32.Parse(data[3]));
+                    ride.SetRideID(Int32.Parse(data[2]));
                     return true;
                 }
                 catch (Exception e)
@@ -157,8 +157,8 @@ namespace KCDriver.Droid {
 
         public static bool SetRideLocation(Ride ride, double latitude, double longitude)
         {
-            string message = "driver/rideStatus.php?token=" + Driver_Id.token 
-                + "&driverID=" + Driver_Id.driver_Id + "&lat =" + latitude + "&lon=" + longitude + "&rideID=" + ride.RideId;
+            string message = "http://148.72.40.62/driver/rideStatus.php?driverID=" + Driver_Id.driver_Id
+                + "&token=" + Driver_Id.token + "&rideID=" + ride.RideId + "&lat=" + latitude + "&lon=" + longitude;
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
             // Get the response.
@@ -178,12 +178,13 @@ namespace KCDriver.Droid {
             {
                 try
                 {
-                    String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    String[] data = responseFromServer.Split(new char[] { '"', ',', ':', '}' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    double rideLat = Double.Parse(data[2]);
-                    double rideLong = Double.Parse(data[4]);
+                    double rideLat = Double.Parse(data[4]);
+                    double rideLong = Double.Parse(data[6]);
 
                     ride.SetPosition(rideLat, rideLong);
+                    return true;
                 }
                 catch (Exception e)
                 {
@@ -191,8 +192,8 @@ namespace KCDriver.Droid {
                     return false;
                 }
             }
-            
-            return false;
+
+            return true;
         }
 
         public static bool CompleteRide(Ride ride)
@@ -225,7 +226,7 @@ namespace KCDriver.Droid {
 
         public static bool SetDriverLocation(double latitude, double longitude)
         {
-            string message = "driver/rideStatus.php?token=" + Driver_Id.token
+            string message = "http://148.72.40.62/driver/rideStatus.php?token=" + Driver_Id.token
                 + "&driverID=" + Driver_Id.driver_Id + "&lat =" + latitude + "&lon=" + longitude;
 
             // Create a request for the URL. 		
@@ -253,7 +254,7 @@ namespace KCDriver.Droid {
 
         public static bool CancelRide(Ride ride)
         {
-            string message = "driver/decouple.php?" + "rideID=" + ride.RideId + "&token=" + Driver_Id.token +
+            string message = "http://148.72.40.62/driver/decouple.php?" + "rideID=" + ride.RideId + "&token=" + Driver_Id.token +
                  "&driverID=" + Driver_Id.driver_Id;
 
             // Create a request for the URL. 		

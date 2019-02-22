@@ -21,7 +21,7 @@ namespace KCDriver.Droid
 
         protected override bool OnBackButtonPressed()
         {
-            
+            KCApi.CancelRide(KCApi.Properties.CurrentRide);
             KCApi.Stop();
             return false;
         }

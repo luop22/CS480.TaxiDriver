@@ -44,6 +44,7 @@ namespace KCDriver.Droid
             Properties.MapReady = false;
             Properties.RenderReady = false;
             Properties.RouteCoordinates = new List<Position>();
+            Properties.CurrentRide = new Ride();
 
             // The timer automatically updates the camera and position every interval.
             updatePositionTimer = new System.Timers.Timer(16.66f);
