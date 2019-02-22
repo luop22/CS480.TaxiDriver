@@ -13,7 +13,7 @@
 			<Grid RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
 				  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}">
 
-				<Label Text="{Binding Ride_Status}"
+				<Label Text="Next Available Job"
 				    FontSize="36"
                     VerticalOptions="Center" 
                     HorizontalOptions="Center"
