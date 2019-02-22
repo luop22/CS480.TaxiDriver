@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
+  <style name="Theme.Splash"
+         parent="Theme.AppCompat.Light.DarkActionBar">
 
+    <item name="android:windowBackground">@drawable/layers</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="colorPrimary">#000000</item>
+    <item name="colorPrimaryDark">#000000</item>
+    <item name="colorAccent">#000000</item>
+    <item name="windowNoTitle">true</item>
+  </style>
+  
   <style name="MainTheme" parent="MainTheme.Base">
   </style>
   <!-- Base theme applied no matter what API -->
@@ -16,7 +26,7 @@
     <item name="colorPrimaryDark">#000000</item>
     <!-- colorAccent is used as the default value for colorControlActivated
          which is used to tint widgets -->
-    <item name="colorControlNormal">#FFFFFF</item>
+    <item name="colorControlNormal">#FFFF00</item>
     
     <item name="colorControlActivated">#FFFFFF</item>
     
@@ -38,12 +48,6 @@
   </style>
 
   <style name="KCTheme" parent="KCTheme.Base">
-  </style>
-
-  <style name="KCTheme.Splash" parent ="Theme.AppCompat.Light.NoActionBar">
-    <item name="android:windowBackground">@drawable/splash_screen</item>
-    <item name="android:windowNoTitle">true</item>
-    <item name="android:windowFullscreen">true</item>
   </style>
 
 </resources>
