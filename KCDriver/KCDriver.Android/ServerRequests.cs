@@ -138,18 +138,23 @@ namespace KCDriver.Droid {
             dataStream.Close();
             response.Close();
 
-            if (!responseFromServer.Contains("error"))
+            try
             {
-                try
+                String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                if (!responseFromServer.Contains("error"))
                 {
-                    String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
                     ride.SetRideID(Int32.Parse(data[2]));
-                    return true;
                 }
-                catch (Exception e)
+                else
                 {
-                    return false;
+                    ride.SetRideID(Int32.Parse(data[6]));
                 }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
             }
 
             return false;
@@ -198,8 +203,8 @@ namespace KCDriver.Droid {
 
         public static bool CompleteRide(Ride ride)
         {
-            string message = "http://148.72.40.62/driver/completeRide.php?token=&" + Driver_Id.token + "&driverID=" 
-                + Driver_Id.driver_Id + "rideID=" + ride.RideId;
+            string message = "http://148.72.40.62/driver/completeRide.php?token=" + Driver_Id.token + "&driverID=" 
+                + Driver_Id.driver_Id + "&rideID=" + ride.RideId;
 
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
