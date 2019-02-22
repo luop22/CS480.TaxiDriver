@@ -44,10 +44,11 @@ namespace KCDriver.Droid
             Properties.MapReady = false;
             Properties.RenderReady = false;
             Properties.RouteCoordinates = new List<Position>();
+            Properties.CurrentRide = new Ride();
 
             // The timer automatically updates the camera and position every interval.
             updatePositionTimer = new System.Timers.Timer(16.66f);
-            updatePositionTimer.Elapsed += UpdatePosition;
+            updatePositionTimer.Elapsed += (o,e) => Task.Factory.StartNew( () => UpdatePosition(o,e));
 
             interpolateTimer = new System.Timers.Timer(16.66f);
             //interpolateTimer.Elapsed += Interpolate;
@@ -103,18 +104,16 @@ namespace KCDriver.Droid
         }
 
         // Starts navigation functions. Takes riders position and destination address string.
-        public static void Start(Position rider, string destination = "")
+        public static void Start(Ride ride, string destination = "")
         {
-            // Not sure if this is useful
+            Properties.CurrentRide = ride;
             ThreadPool.QueueUserWorkItem(o => { 
 
                 List<Position> temp = new List<Position>();
                 while (temp.Count == 0)
-                    temp = GetPolyline(KCApi.GenerateRequest(rider, destination));
+                    temp = GetPolyline(KCApi.GenerateRequest(new Position(Properties.CurrentRide.ClientLat, Properties.CurrentRide.ClientLong), destination));
 
                 Properties.RouteCoordinates = temp;
-
-                KCApi.Properties.RiderPosition = Test.b;
             });
 
             updatePositionTimer.Enabled = true;

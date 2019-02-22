@@ -39,13 +39,9 @@ namespace KCDriver.Droid
             //only allow the user to get to the next page if the username and password are correct.
             if (KCApi.Properties.HaveLocationPermission)
             {
-                ServerRequests request = new ServerRequests();
-
-                Driver_Id driver = request.Authenticate(password.Text, username.Text);
-
-                if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && driver != null)
+                if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && KCApi.Authenticate(password.Text, username.Text))
                 {
-                    Navigation.PushAsync(new AcceptPage(driver));
+                    Navigation.PushAsync(new AcceptPage());
                 }
                 else
                 {

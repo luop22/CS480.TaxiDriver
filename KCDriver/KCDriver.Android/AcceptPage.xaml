@@ -13,7 +13,8 @@
 			<Grid RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
 				  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}">
 
-				<Label Text="Next Available Job"
+				<Label Text="Accessing Server"
+                    x:Name="Status"
 				    FontSize="36"
                     VerticalOptions="Center" 
                     HorizontalOptions="Center"

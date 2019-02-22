@@ -34,7 +34,7 @@ namespace KCDriver.Droid
 
         public KCApp()
         { 
-            var navPage = new NavigationPage(new WelcomePage())
+            var navPage = new NavigationPage(new SignInPage())
             {
                 BarTextColor = Color.Yellow
             };
