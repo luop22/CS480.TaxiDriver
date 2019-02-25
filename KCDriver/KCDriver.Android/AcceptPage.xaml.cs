@@ -22,7 +22,22 @@ namespace KCDriver.Droid
         {
             InitializeComponent();
             mapPage = new MapPage();
-            SetTimer();
+        }
+
+        //executes everytime the page appears.
+        protected override void OnAppearing() {
+            //if the update timer is null start the timer.
+            if (updater == null) {
+                SetTimer();
+            }
+            base.OnAppearing();
+        }
+        //executes everytime the page dissapears.
+        protected override void OnDisappearing() {
+            //When the page dissapears the update timer is stoped.
+            updater.Stop();
+            updater = null;
+            base.OnDisappearing();
         }
 
         void Button_Clicked(object sender, EventArgs e)
@@ -30,8 +45,6 @@ namespace KCDriver.Droid
             Ride ride = new Ride();
             if (KCApi.AcceptNextRide(ride) 
                 && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
-                //updater.Enabled = false;
-                updater.Stop();
                 //Start takes only a position, which will come from the database
                 KCApi.Start(ride);
                 Navigation.PushAsync(mapPage);
