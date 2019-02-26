@@ -34,6 +34,7 @@ namespace KCDriver.Droid {
 
                 Driver_Id.driver_Id = Int32.Parse(data[4]);
                 Driver_Id.token = data[6];
+                Driver_Id.authenticated = true;
                 return true;
             }
 
@@ -144,6 +145,10 @@ namespace KCDriver.Droid {
                 if (!responseFromServer.Contains("error"))
                 {
                     ride.SetRideID(Int32.Parse(data[2]));
+                }
+                //If the response comes back as Authentication failure then set the driver as not authenticated.
+                else if (responseFromServer.Contains("Authentication failure")) {
+                    Driver_Id.authenticated = false;
                 }
                 else
                 {

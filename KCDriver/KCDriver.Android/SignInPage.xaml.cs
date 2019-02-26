@@ -49,8 +49,6 @@ namespace KCDriver.Droid
                 else
                 {
                     //The username and password is incorrect.
-                    //add a message on the sign in page giving an error.
-
                     var text = "Incorrect credentials.";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                 }

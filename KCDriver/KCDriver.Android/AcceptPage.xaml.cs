@@ -50,7 +50,11 @@ namespace KCDriver.Droid
                 KCApi.Start(ride);
                 Navigation.PushAsync(mapPage);
             }
-            else
+            else if (!Driver_Id.authenticated) {
+                var text = "Authentication Failure";
+                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                Navigation.PopAsync();
+            } else
             {
                 var text = "Accept ride failed.";
                 Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
@@ -60,7 +64,7 @@ namespace KCDriver.Droid
 
         public void SetTimer() {
             // Create a timer with a two second interval.
-            updater = new System.Timers.Timer(16.66f);
+            updater = new System.Timers.Timer(2000);
             // Hook up the Elapsed event for the timer. 
             updater.Elapsed += Timer;
             updater.AutoReset = false;
@@ -74,7 +78,7 @@ namespace KCDriver.Droid
             Device.BeginInvokeOnMainThread(() => {
                 Status.Text = status;
             });
-            updater.Interval = 16.66f;
+            updater.Interval = 2000;
             updater.Start();
         }
     }
