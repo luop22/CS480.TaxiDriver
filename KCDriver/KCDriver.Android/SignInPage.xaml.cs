@@ -48,7 +48,7 @@ namespace KCDriver.Droid
                 }
                 else
                 {
-                    //The username and password is incorrect.
+                    //The username or password is incorrect.
                     var text = "Incorrect credentials.";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                 }
@@ -69,16 +69,6 @@ namespace KCDriver.Droid
                 alertDialog.Create().Show();
             }
         }
-
-        //this function will send the usename and password to the server to be authenticated.
-        /*
-        private bool Authenticate() {
-            string userName = usernameEntry.Text;
-            string password = passwordEntry.Text;
-            
-            return true;
-        }
-        */
 
         public async Task<bool> RequestPermission(Plugin.Permissions.Abstractions.Permission permission)
         {
