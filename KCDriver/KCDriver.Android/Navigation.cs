@@ -1,5 +1,6 @@
 ﻿/* Legacy Navigation code */
 
+using Android.Gms.Maps.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
 namespace KCDriver.Droid
@@ -240,4 +242,27 @@ namespace KCDriver.Droid
             Properties.InterpolatedPosition = new Position(Properties.CurrentPosition.Longitude + deltaX / magnitude * speed, Properties.CurrentPosition.Latitude + deltaY / magnitude * speed);*/
         }
     };
+
+    partial class KCMapRenderer
+    {
+        // In order to change the UI, you must invoke from the main (UI) thread!
+        public void DrawPolylineFromRouteCoordinates()
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                if (CurrentLine != null)
+                    CurrentLine.Remove();
+
+                var polylineOptions = new PolylineOptions();
+                polylineOptions.InvokeColor(0x66FF0000);
+
+                foreach (var position in KCApi.Properties.RouteCoordinates)
+                {
+                    polylineOptions.Add(new LatLng(position.Latitude, position.Longitude));
+                }
+
+                CurrentLine = NativeMap.AddPolyline(polylineOptions);
+            });
+        }
+    }
 }

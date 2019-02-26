@@ -48,7 +48,7 @@ namespace KCDriver.Droid
         }
     }
 
-    public class KCMapRenderer : MapRenderer
+    public partial class KCMapRenderer : MapRenderer
     {
         private readonly object dataLock;
         private readonly object nativeMapLock = new object();
@@ -123,7 +123,6 @@ namespace KCDriver.Droid
                         lock (nativeMapLock)
                         {
                             NativeMap.MoveCamera(CameraUpdateFactory.NewLatLng(new LatLng(lat, lon)));
-                            NativeMap.MoveCamera(CameraUpdateFactory.ZoomTo(18.5f));
                         }
                     }
                 });
@@ -132,26 +131,6 @@ namespace KCDriver.Droid
             {
                 KCApi.OutputException(e);
             }
-        }
-
-        // In order to change the UI, you must invoke from the main (UI) thread!
-        public void DrawPolylineFromRouteCoordinates()
-        {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                if (CurrentLine != null)
-                    CurrentLine.Remove();
-
-                var polylineOptions = new PolylineOptions();
-                polylineOptions.InvokeColor(0x66FF0000);
-
-                foreach (var position in KCApi.Properties.RouteCoordinates)
-                {
-                    polylineOptions.Add(new LatLng(position.Latitude, position.Longitude));
-                }
-
-                CurrentLine = NativeMap.AddPolyline(polylineOptions);
-            });
         }
 
         public void UpdateMarker()
