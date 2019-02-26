@@ -20,16 +20,21 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Label Grid.Row="0" TextColor="#FFFFFF" LineBreakMode="CharacterWrap" Text="Address: 100 Willow St, Everett, WA 98204" FontSize="Large"/>
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="3*" />
+                <Label Grid.Row="0" TextColor="#FFFFFF" LineBreakMode="CharacterWrap" 
+					   Text="Address: 100 Willow St, Everett, WA 98204" FontSize="Large"/>
+				<Grid Grid.Row="1">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="3*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Button Text="Call" Grid.Column="0" Clicked="ButtonCallRide" TextColor="Black"/>
-					<Button Text="Ride Complete" Grid.Column="1" Clicked="ButtonCompleteRide" BackgroundColor="Green"/>
-					<Button Text="Cancel" Grid.Column="2" Clicked="ButtonCancelRide" BackgroundColor="Red" FontSize="10"/>
+
+					<ImageButton Source="phone2.jpg" Grid.Column="0" Clicked="ButtonCallRide" HeightRequest = "50"
+            WidthRequest = "50" VerticalOptions="CenterAndExpand"/>
+					<Button Text="Ride Complete" Grid.Column="1" Clicked="ButtonCompleteRide" 
+							BackgroundColor="Green" TextColor="White"/>
+					<Button Text="Cancel" Grid.Column="2" Clicked="ButtonCancelRide" BackgroundColor="Red" 
+							FontSize="10" TextColor="White"/>
                 </Grid>
             </Grid>
         </Grid>
