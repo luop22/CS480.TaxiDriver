@@ -50,6 +50,11 @@ namespace KCDriver.Droid
 
         public void ButtonCallRide(object sender, EventArgs e)
         {
+
+            //KCApi.SetPhoneNum(KCApi.Properties.CurrentRide);
+            KCApi.Properties.CurrentRide.SetRidePhoneNum("509312");
+            DisplayAlert("Client Number", KCApi.Properties.CurrentRide.PhoneNum, "OK");
+         
             //KCApi.Properties.CurrentRide.CallClient();
         }
     }

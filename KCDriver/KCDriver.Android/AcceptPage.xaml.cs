@@ -42,6 +42,7 @@ namespace KCDriver.Droid
 
         void Button_Clicked(object sender, EventArgs e)
         {
+            /*
             Ride ride = new Ride();
             if (KCApi.AcceptNextRide(ride) 
                 && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
@@ -54,6 +55,10 @@ namespace KCDriver.Droid
                 var text = "Accept ride failed.";
                 Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
             }
+            */
+            Ride ride = new Ride();
+            KCApi.Start(ride);
+            Navigation.PushAsync(mapPage);
         }
 
         public void SetTimer() {

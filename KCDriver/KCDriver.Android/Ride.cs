@@ -32,6 +32,11 @@ namespace KCDriver.Droid
             Device.OpenUri(new Uri("tel:" + PhoneNum));
         }
 
+        public void SetRidePhoneNum(String num)
+        {
+            PhoneNum = num;
+        }
+
         public void SetRideID(int newID)
         {
             RideId = newID;
