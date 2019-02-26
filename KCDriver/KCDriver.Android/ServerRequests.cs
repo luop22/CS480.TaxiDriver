@@ -138,24 +138,68 @@ namespace KCDriver.Droid {
             dataStream.Close();
             response.Close();
 
-            if (!responseFromServer.Contains("error"))
+            try
             {
-                try
+                String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                if (!responseFromServer.Contains("error"))
                 {
-                    String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
                     ride.SetRideID(Int32.Parse(data[2]));
-                    return true;
                 }
-                catch (Exception e)
+                else
                 {
-                    return false;
+                    ride.SetRideID(Int32.Parse(data[6]));
                 }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
             }
 
             return false;
         }
 
-        public static bool SetRideLocation(Ride ride, double latitude, double longitude)
+        public static bool SetPhoneNum(Ride ride)
+        {
+            string message = "http://148.72.40.62/client/reqRide.php?RiderID=" + ride.RideId + "&RiderNM" + ride.ClientName + 
+                "&RiderPN" + ride.PhoneNum + "&lat" + ride.ClientLat + "&lon" + ride.ClientLong;
+            // Create a request for the URL. 		
+            WebRequest request = WebRequest.Create(message);
+            // Get the response.
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            // Get the stream containing content returned by the server.
+            Stream dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.
+            string responseFromServer = reader.ReadToEnd();
+            // Cleanup the streams and the response.
+            reader.Close();
+            dataStream.Close();
+            response.Close();
+
+            if (!responseFromServer.Contains("error"))
+            {
+                try
+                {
+                    String[] data = responseFromServer.Split(new char[] { '"', ',', ':', '}' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    String num = data[2];
+               
+                    ride.SetRidePhoneNum(ride.PhoneNum);
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    KCApi.OutputException(e);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+            public static bool SetRideLocation(Ride ride, double latitude, double longitude)
         {
             string message = "http://148.72.40.62/driver/rideStatus.php?driverID=" + Driver_Id.driver_Id
                 + "&token=" + Driver_Id.token + "&rideID=" + ride.RideId + "&lat=" + latitude + "&lon=" + longitude;
@@ -198,8 +242,8 @@ namespace KCDriver.Droid {
 
         public static bool CompleteRide(Ride ride)
         {
-            string message = "http://148.72.40.62/driver/completeRide.php?token=&" + Driver_Id.token + "&driverID=" 
-                + Driver_Id.driver_Id + "rideID=" + ride.RideId;
+            string message = "http://148.72.40.62/driver/completeRide.php?token=" + Driver_Id.token + "&driverID=" 
+                + Driver_Id.driver_Id + "&rideID=" + ride.RideId;
 
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);

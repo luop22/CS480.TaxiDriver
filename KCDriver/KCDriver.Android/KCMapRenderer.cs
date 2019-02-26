@@ -121,8 +121,8 @@ namespace KCDriver.Droid
             map.UiSettings.RotateGesturesEnabled = false;
             map.UiSettings.MapToolbarEnabled = false;
 
-            KCApi.Properties.RenderReady = true;
             KCApi.Properties.Renderer = this;
+            KCApi.Properties.RenderReady = true;
 
             mapDrawn = true;
         }
@@ -173,6 +173,8 @@ namespace KCDriver.Droid
 
         public void UpdateMarker()
         {
+            if (NativeMap == null) return;
+
             Device.BeginInvokeOnMainThread(() =>
             {
                 NativeMap.Clear();

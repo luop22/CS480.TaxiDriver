@@ -41,6 +41,9 @@ namespace KCDriver.Droid
             {
                 if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && KCApi.Authenticate(password.Text, username.Text))
                 {
+                    //reset the username and password fields.
+                    username.Text = "";
+                    password.Text = "";
                     Navigation.PushAsync(new AcceptPage());
                 }
                 else
