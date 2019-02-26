@@ -19,6 +19,7 @@ namespace KCDriver.Droid
     {
         public static KCProperties Properties = new KCProperties();
         private static System.Timers.Timer updatePositionTimer;
+        private static System.Timers.Timer updateCameraTimer;
         private static List<Exception> exceptions = new List<Exception>();
 
         // Set default values and start timers
@@ -26,39 +27,80 @@ namespace KCDriver.Droid
         {
             Properties.MapReady = false;
             Properties.RenderReady = false;
-            Properties.RouteCoordinates = new List<Position>();
+            Properties.CameraOnDriver = true;
+            Properties.CameraOnRider = false;
+
             Properties.CurrentRide = new Ride();
 
             // The timer automatically updates the camera and position every interval.
             updatePositionTimer = new System.Timers.Timer(100.0f);
             updatePositionTimer.Elapsed += (o,e) => Task.Factory.StartNew( () => UpdatePosition(o,e));
+
+            updateCameraTimer = new System.Timers.Timer(16.66f);
+            updateCameraTimer.Elapsed += (o, e) => Task.Factory.StartNew(() => UpdateCamera(o, e));
         }
 
-        // A timer calls this 60 times per second. It checks for updates in position and updates the route list to reflect when 
-        // the driver has gone farther than a certain point still in the que.
+        // A timer calls this 10 times per second. Updates the db on where the driver is.
         public static void UpdatePosition(Object source, ElapsedEventArgs e)
         {
             ThreadPool.QueueUserWorkItem(o => {
 
                 updatePositionTimer.Stop();
-                Position p = GetCurrentPosition();
 
-                if (!SetDriverLocation(p.Latitude, p.Longitude))
+                if (!SetDriverLocation(Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude))
                 {
                     Debug.WriteLine("Setting driver location failed.");
                 }
 
+                Ride temp = new Ride(Properties.CurrentRide);
+
+                if (!SetRideLocation(temp, Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude))
+                {
+                    Debug.WriteLine("Getting rider location.");
+                }
+                else Properties.CurrentRide = temp;
+
                 // TODO: Check if rider has cancelled here
 
-                //Keeps the camera locked on the user
-                /*Device.BeginInvokeOnMainThread(() =>
-                {
-                    Position temp = KCApi.Properties.CurrentPosition;
-                    KCApi.Properties.Renderer.AnimateCameraTo(temp.Latitude, temp.Longitude);
-                });*/
+                // TODO: Check if driver is still authenticated
 
                 updatePositionTimer.Interval = 100.0f;
                 updatePositionTimer.Start();
+            });
+        }
+
+        public static void UpdateCamera(Object source, ElapsedEventArgs e)
+        {
+            if (!Properties.MapReady || !Properties.RenderReady)
+                return;
+
+            ThreadPool.QueueUserWorkItem(o => {
+
+                updateCameraTimer.Stop();
+                Properties.CurrentPosition = GetCurrentPosition();
+
+                //Keeps the camera locked on where it is supposed to be.
+                Device.BeginInvokeOnMainThread( () =>
+                {
+                    Position temp = new Position();
+
+                    if (Properties.CameraOnDriver)
+                        temp = KCApi.Properties.CurrentPosition;
+                    else if (Properties.CameraOnRider)
+                        temp = new Position(Properties.CurrentRide.ClientLat, Properties.CurrentRide.ClientLong);
+
+                    if (Properties.CameraOnDriver || Properties.CameraOnRider)
+                    {
+                        if (temp != null)
+                            KCApi.Properties.Renderer.AnimateCameraTo(temp.Latitude, temp.Longitude);
+
+                        KCApi.Properties.Map.HasScrollEnabled = false;
+                    }
+                    else KCApi.Properties.Map.HasScrollEnabled = true;
+                });
+
+                updateCameraTimer.Interval = 16.66;
+                updateCameraTimer.Start();
             });
         }
 
@@ -67,12 +109,14 @@ namespace KCDriver.Droid
         {
             Properties.CurrentRide = ride;
             updatePositionTimer.Enabled = true;
+            updateCameraTimer.Enabled = true;
         }
 
         // Stops navigation, does cleanup, and outputs recorded exceptions in debug.
         public static void Stop()
         {
             updatePositionTimer.Enabled = false;
+            updateCameraTimer.Enabled = false;
 
             //Debug
             Debug.WriteLine("------------------------- Exception Output ------------------------");
