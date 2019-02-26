@@ -7,7 +7,8 @@ using System.Text;
 
 //class which handles calls to the server including authentication and ride requestes
 namespace KCDriver.Droid {
-    partial class KCApi {
+
+    static partial class KCApi {
 
         //authentication functions
         //returns true if the user is authenticated with the server
@@ -89,8 +90,8 @@ namespace KCDriver.Droid {
             }
         }
 
-        public static String CheckQueue() {
-
+        public static String CheckQueue()
+        {
             String message = "http://148.72.40.62/driver/checkQueue.php";
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
@@ -156,6 +157,7 @@ namespace KCDriver.Droid {
             {
                 return false;
             }
+
         }
 
         public static bool SetRideLocation(Ride ride, double latitude, double longitude)

@@ -15,8 +15,6 @@ using Xamarin.Forms;
 
 namespace KCDriver.Droid
 {
-    
-
     static partial class KCApi
     {
         public static KCProperties Properties = new KCProperties();
@@ -44,6 +42,7 @@ namespace KCDriver.Droid
 
                 updatePositionTimer.Stop();
                 Position p = GetCurrentPosition();
+
                 if (!SetDriverLocation(p.Latitude, p.Longitude))
                 {
                     Debug.WriteLine("Setting driver location failed.");
@@ -124,8 +123,6 @@ namespace KCDriver.Droid
 
             return new Position(position.Latitude, position.Longitude);
         }
-
-        
 
         public static void OutputException(Exception e)
         {
