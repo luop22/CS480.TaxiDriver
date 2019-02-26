@@ -21,7 +21,6 @@ namespace KCDriver.Droid
     {
         public static KCProperties Properties = new KCProperties();
         private static System.Timers.Timer updatePositionTimer;
-        private static System.Timers.Timer interpolateTimer;
         private static List<Exception> exceptions = new List<Exception>();
 
         // Set default values and start timers
@@ -33,7 +32,7 @@ namespace KCDriver.Droid
             Properties.CurrentRide = new Ride();
 
             // The timer automatically updates the camera and position every interval.
-            updatePositionTimer = new System.Timers.Timer(16.66f);
+            updatePositionTimer = new System.Timers.Timer(100.0f);
             updatePositionTimer.Elapsed += (o,e) => Task.Factory.StartNew( () => UpdatePosition(o,e));
         }
 
@@ -45,8 +44,12 @@ namespace KCDriver.Droid
 
                 updatePositionTimer.Stop();
                 Position p = GetCurrentPosition();
+                if (!SetDriverLocation(p.Latitude, p.Longitude))
+                {
+                    Debug.WriteLine("Setting driver location failed.");
+                }
 
-                
+                // TODO: Check if rider has cancelled here
 
                 //Keeps the camera locked on the user
                 /*Device.BeginInvokeOnMainThread(() =>
@@ -55,7 +58,7 @@ namespace KCDriver.Droid
                     KCApi.Properties.Renderer.AnimateCameraTo(temp.Latitude, temp.Longitude);
                 });*/
 
-                updatePositionTimer.Interval = 16.66f;
+                updatePositionTimer.Interval = 100.0f;
                 updatePositionTimer.Start();
             });
         }
@@ -64,16 +67,13 @@ namespace KCDriver.Droid
         public static void Start(Ride ride)
         {
             Properties.CurrentRide = ride;
-
             updatePositionTimer.Enabled = true;
-            interpolateTimer.Enabled = true;
         }
 
         // Stops navigation, does cleanup, and outputs recorded exceptions in debug.
         public static void Stop()
         {
             updatePositionTimer.Enabled = false;
-            interpolateTimer.Enabled = false;
 
             //Debug
             Debug.WriteLine("------------------------- Exception Output ------------------------");

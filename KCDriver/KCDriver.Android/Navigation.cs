@@ -70,7 +70,6 @@ namespace KCDriver.Droid
             });
 
             updatePositionTimer.Enabled = true;
-            interpolateTimer.Enabled = true;
         }
 
         // Creates the HTTP request to be sent to Google using the start lat and long and the destination address.
