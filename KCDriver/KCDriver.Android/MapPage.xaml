@@ -30,11 +30,11 @@
                     </Grid.ColumnDefinitions>
 
 					<ImageButton Source="phone2.jpg" Grid.Column="0" Clicked="ButtonCallRide" HeightRequest = "50"
-            WidthRequest = "50" VerticalOptions="CenterAndExpand"/>
+							WidthRequest = "50" VerticalOptions="CenterAndExpand"/>
 					<Button Text="Ride Complete" Grid.Column="1" Clicked="ButtonCompleteRide" 
 							BackgroundColor="Green" TextColor="White"/>
-					<Button Text="Cancel" Grid.Column="2" Clicked="ButtonCancelRide" BackgroundColor="Red" 
-							FontSize="10" TextColor="White"/>
+					<ImageButton Source="cancel.png" Grid.Column="2" Clicked="ButtonCancelRide" HeightRequest = "50"
+							WidthRequest = "50" VerticalOptions="CenterAndExpand"/>
                 </Grid>
             </Grid>
         </Grid>
