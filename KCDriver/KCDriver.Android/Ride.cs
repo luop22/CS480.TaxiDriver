@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 
 namespace KCDriver.Droid
@@ -17,6 +15,17 @@ namespace KCDriver.Droid
         public String PhoneNum { get; private set; }
 
         public Ride() { }
+
+        public Ride(Ride other)
+        {
+            RideId = other.RideId;
+            NumberOfRiders = other.NumberOfRiders;
+            ClientName = other.ClientName;
+            ClientLat = other.ClientLat;
+            ClientLong = other.ClientLong;
+            StartTime = other.StartTime;
+            PhoneNum = other.PhoneNum;
+        }
 
         public Ride(int RideId, int NumberOfRiders, String ClientName, double ClientLat, double ClientLong, DateTime StartTime, String PhoneNum) {
             this.RideId = RideId;

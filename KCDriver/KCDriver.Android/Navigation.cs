@@ -230,14 +230,14 @@ namespace KCDriver.Droid
             // 3. Determine time interval
             // 4. i n t e r p o l a t e (change position directly)
 
-            double deltaX = Properties.CurrentPosition.Longitude - Properties.PreviousPosition.Longitude;
+            /*double deltaX = Properties.CurrentPosition.Longitude - Properties.PreviousPosition.Longitude;
             double deltaY = Properties.CurrentPosition.Latitude - Properties.PreviousPosition.Latitude;
             double magnitude = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
             double totalDistance = Properties.CurrentPosition.DistanceTo(Properties.PreviousPosition).Miles;
 
             double speed = (totalDistance / Properties.SpeedTime) * 16.66; // Degrees / ms * ms = Degrees
 
-            Properties.InterpolatedPosition = new Position(Properties.CurrentPosition.Longitude + deltaX / magnitude * speed, Properties.CurrentPosition.Latitude + deltaY / magnitude * speed);
+            Properties.InterpolatedPosition = new Position(Properties.CurrentPosition.Longitude + deltaX / magnitude * speed, Properties.CurrentPosition.Latitude + deltaY / magnitude * speed);*/
         }
     };
 }

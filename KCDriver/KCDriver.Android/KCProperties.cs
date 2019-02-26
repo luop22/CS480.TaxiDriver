@@ -199,107 +199,7 @@ namespace KCDriver.Droid
             {
                 lock (positionLock)
                 {
-                    // This block of code is supposed to establish the speed the user is going
-                    // using elapsed time and distance
-                    if (PositionTimer == null) PositionTimer = new System.Diagnostics.Stopwatch();
-                    if (PositionTimer.IsRunning)
-                    {
-                        PositionTimer.Stop();
-                        SpeedTime = PositionTimer.ElapsedMilliseconds;
-                        PositionTimer.Restart();
-                    }
-                    else PositionTimer.Start();
-
-                    PreviousPosition = currentPosition;
                     SetPropertyField("CurrentPosition", ref currentPosition, value);
-                }
-            }
-        }
-
-        // Previous position for calculating speed
-        private readonly object prevPositionLock = new object();
-        private Position previousPosition;
-        public Position PreviousPosition
-        {
-            get
-            {
-                lock (prevPositionLock)
-                {
-                    return previousPosition;
-                }
-            }
-
-            set
-            {
-                lock (prevPositionLock)
-                {
-                    previousPosition = value;
-                }
-            }
-        }
-
-        // Tracks smoothed/interpolated position
-        private readonly object interpolatedPositionLock = new object();
-        private Position interpolatedPosition;
-        public Position InterpolatedPosition
-        {
-            get
-            {
-                lock (interpolatedPositionLock)
-                {
-                    return interpolatedPosition;
-                }
-            }
-
-            set
-            {
-                lock (interpolatedPositionLock)
-                {
-                    SetPropertyField("InterpolatedPosition", ref interpolatedPosition, value);
-                }
-            }
-        }
-
-        // Timer for calculating speed
-        private readonly object positionTimerLock = new object();
-        private System.Diagnostics.Stopwatch positionTimer;
-        public System.Diagnostics.Stopwatch PositionTimer
-        {
-            get
-            {
-                lock (positionTimerLock)
-                {
-                    return positionTimer;
-                }
-            }
-
-            set
-            {
-                lock (positionTimerLock)
-                {
-                    positionTimer = value;
-                }
-            }
-        }
-
-        // elapsed ms of last cycle
-        private readonly object speedTimeLock = new object();
-        private double speedTime;
-        public double SpeedTime
-        {
-            get
-            {
-                lock (positionTimerLock)
-                {
-                    return speedTime;
-                }
-            }
-
-            set
-            {
-                lock (positionTimerLock)
-                {
-                    speedTime = value;
                 }
             }
         }
@@ -340,6 +240,52 @@ namespace KCDriver.Droid
                 lock (permissionLock)
                 {
                     haveLocationPermission = value;
+                }
+            }
+        }
+
+        private readonly object cameraDriverLock = new object();
+        private bool cameraOnDriver;
+        public bool CameraOnDriver
+        {
+            get
+            {
+                lock (cameraDriverLock)
+                {
+                    return cameraOnDriver;
+                }
+            }
+
+            set
+            {
+                lock (cameraDriverLock)
+                {
+                    if (value == true)
+                        CameraOnRider = false;
+                    cameraOnDriver = value;
+                }
+            }
+        }
+
+        private readonly object cameraRiderLock = new object();
+        private bool cameraOnRider;
+        public bool CameraOnRider
+        {
+            get
+            {
+                lock (cameraRiderLock)
+                {
+                    return cameraOnRider;
+                }
+            }
+
+            set
+            {
+                lock (cameraRiderLock)
+                {
+                    if (value == true)
+                        CameraOnDriver = false;
+                    cameraOnRider = value;
                 }
             }
         }

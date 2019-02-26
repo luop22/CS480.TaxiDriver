@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Android.Locations;
 using System.ComponentModel;
 using KCDriver.Droid;
+using Android.Views;
 
 // Source: https://docs.microsoft.com/en-us/xamarin/android/platform/maps-and-location/maps/maps-api
 [assembly: ExportRenderer(typeof(KCMap), typeof(KCMapRenderer))]
@@ -68,24 +69,6 @@ namespace KCDriver.Droid
 
             switch (e.PropertyName)
             {
-                //Causes crashes atm
-                /*case "RouteCoordinates":
-                    DrawPolylineFromRouteCoordinates();
-                    break;*/
-
-                /*case "CurrentPosition":
-                    Position temp = KCApi.Properties.CurrentPosition;
-                    AnimateCameraTo(temp.Latitude, temp.Longitude);
-                    break;*/
-
-                /*case "InterpolatedPosition":
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        Position temp = KCApi.Properties.InterpolatedPosition;
-                        AnimateCameraTo(temp.Latitude, temp.Longitude);
-                    });
-                    break;*/
-
                 case "CurrentRide":
                     UpdateMarker();
                     break;
@@ -135,7 +118,7 @@ namespace KCDriver.Droid
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    if (KCApi.Properties.MapReady && KCApi.Properties.RenderReady)
+                    if (KCApi.Properties.MapReady && KCApi.Properties.RenderReady && NativeMap != null)
                     {
                         lock (nativeMapLock)
                         {
@@ -173,10 +156,10 @@ namespace KCDriver.Droid
 
         public void UpdateMarker()
         {
-            if (NativeMap == null) return;
-
             Device.BeginInvokeOnMainThread(() =>
             {
+                if (NativeMap == null) return;
+
                 NativeMap.Clear();
                 riderPin = KCPin.CreateRiderPin(new Position(KCApi.Properties.CurrentRide.ClientLat,
                                                             KCApi.Properties.CurrentRide.ClientLong));
