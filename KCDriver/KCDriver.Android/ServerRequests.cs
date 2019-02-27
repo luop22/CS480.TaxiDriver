@@ -15,6 +15,8 @@ namespace KCDriver.Droid {
         public static bool Authenticate(String password, String userName) {
 
             String message = "http://148.72.40.62/driver/auth/authenticate.php?username=" + userName + "&pwHsh=" + GetHash(password, userName);
+            string responseFromServer = "";
+            try {
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
             // Get the response.
@@ -24,11 +26,14 @@ namespace KCDriver.Droid {
             // Open the stream using a StreamReader for easy access.
             StreamReader reader = new StreamReader(dataStream);
             // Read the content.
-            string responseFromServer = reader.ReadToEnd();
+            responseFromServer = reader.ReadToEnd();
             // Cleanup the streams and the response.
             reader.Close();
             dataStream.Close();
             response.Close();
+            } catch (Exception e) {
+                return false;
+            }
 
             if (!responseFromServer.Contains("error")) {
                 String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
@@ -66,22 +71,27 @@ namespace KCDriver.Droid {
         //gets the salt of a user
         public static String GetSalt(String userName) {
             String message = "http://148.72.40.62/driver/auth/getSalt.php?username=" + userName;
-            // Create a request for the URL. 		
-            WebRequest request = WebRequest.Create(message);
-            // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Display the status.
-            // Get the stream containing content returned by the server.
-            Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
-            string responseFromServer = reader.ReadToEnd();
-            // Display the content.
-            // Cleanup the streams and the response.
-            reader.Close();
-            dataStream.Close();
-            response.Close();
+            string responseFromServer = "";
+            try {
+                // Create a request for the URL. 		
+                WebRequest request = WebRequest.Create(message);
+                // Get the response.
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                // Display the status.
+                // Get the stream containing content returned by the server.
+                Stream dataStream = response.GetResponseStream();
+                // Open the stream using a StreamReader for easy access.
+                StreamReader reader = new StreamReader(dataStream);
+                // Read the content.
+                responseFromServer = reader.ReadToEnd();
+                // Display the content.
+                // Cleanup the streams and the response.
+                reader.Close();
+                dataStream.Close();
+                response.Close();
+            } catch (Exception e) {
+                return "Error Connecting to Server";
+            }
 
             if (!responseFromServer.Contains("error")) {
                 String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
@@ -94,22 +104,28 @@ namespace KCDriver.Droid {
         public static String CheckQueue()
         {
             String message = "http://148.72.40.62/driver/checkQueue.php";
+            string responseFromServer = "";
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
-            // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Display the status.
-            // Get the stream containing content returned by the server.
-            Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
-            string responseFromServer = reader.ReadToEnd();
-            // Display the content.
-            // Cleanup the streams and the response.
-            reader.Close();
-            dataStream.Close();
-            response.Close();
+            try {
+                // Get the response.
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                // Display the status.
+                // Get the stream containing content returned by the server.
+                Stream dataStream = response.GetResponseStream();
+                // Open the stream using a StreamReader for easy access.
+                StreamReader reader = new StreamReader(dataStream);
+                // Read the content.
+                responseFromServer = reader.ReadToEnd();
+                // Display the content.
+                // Cleanup the streams and the response.
+                reader.Close();
+                dataStream.Close();
+                response.Close();
+            } catch (Exception e) {
+                return "Error Connecting to Server";
+            }
+            //If
 
             if (responseFromServer.Contains("Rides are available")) {
                 return "Rides are available";
@@ -128,20 +144,24 @@ namespace KCDriver.Droid {
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
             // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Get the stream containing content returned by the server.
-            Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
-            string responseFromServer = reader.ReadToEnd();
-            // Cleanup the streams and the response.
-            reader.Close();
-            dataStream.Close();
-            response.Close();
-
-            try
-            {
+            string responseFromServer = "";
+            try {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                // Get the stream containing content returned by the server.
+                Stream dataStream = response.GetResponseStream();
+                // Open the stream using a StreamReader for easy access.
+                StreamReader reader = new StreamReader(dataStream);
+                // Read the content.
+                responseFromServer = reader.ReadToEnd();
+                // Cleanup the streams and the response.
+                reader.Close();
+                dataStream.Close();
+                response.Close();
+            } catch (Exception e) {
+                return false;
+            }
+            
+            try {
                 String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
                 if (!responseFromServer.Contains("error"))
                 {
@@ -150,6 +170,7 @@ namespace KCDriver.Droid {
                 //If the response comes back as Authentication failure then set the driver as not authenticated.
                 else if (responseFromServer.Contains("Authentication failure")) {
                     Driver_Id.authenticated = false;
+                    return false;
                 }
                 else
                 {
@@ -172,22 +193,33 @@ namespace KCDriver.Droid {
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
             // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Get the stream containing content returned by the server.
-            Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
-            string responseFromServer = reader.ReadToEnd();
-            // Cleanup the streams and the response.
-            reader.Close();
-            dataStream.Close();
-            response.Close();
-
-            if (!responseFromServer.Contains("error"))
+            string responseFromServer = "";
+            try { 
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                // Get the stream containing content returned by the server.
+                Stream dataStream = response.GetResponseStream();
+                // Open the stream using a StreamReader for easy access.
+                StreamReader reader = new StreamReader(dataStream);
+                // Read the content.
+                responseFromServer = reader.ReadToEnd();
+                // Cleanup the streams and the response.
+                reader.Close();
+                dataStream.Close();
+                response.Close();
+            } catch (Exception e) {
+                return false;
+            }
+            //If the response comes back as Authentication failure then set the driver as not authenticated.
+            if (responseFromServer.Contains("Authentication failure") || responseFromServer.Contains("Unable to authenticate")) {
+                Driver_Id.authenticated = false;
+                return false;
+            }
+            //check if there are any other errors
+            else if (!responseFromServer.Contains("error"))
             {
                 try
                 {
+                    //If there are no errors add the lat and long to the ride class and return true.
                     String[] data = responseFromServer.Split(new char[] { '"', ',', ':', '}' }, StringSplitOptions.RemoveEmptyEntries);
 
                     double rideLat = Double.Parse(data[4]);
@@ -238,22 +270,30 @@ namespace KCDriver.Droid {
         {
             string message = "http://148.72.40.62/driver/updateLocation.php?driverID=" +  Driver_Id.driver_Id
                 + "&token=" + Driver_Id.token + "&lat=" + latitude + "&lon=" + longitude;
-
-            // Create a request for the URL. 		
-            WebRequest request = WebRequest.Create(message);
-            // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Get the stream containing content returned by the server.
-            Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
-            string responseFromServer = reader.ReadToEnd();
-            // Cleanup the streams and the response.
-            reader.Close();
-            dataStream.Close();
-            response.Close();
-
+            string responseFromServer = "";
+            try {
+                // Create a request for the URL. 		
+                WebRequest request = WebRequest.Create(message);
+                // Get the response.
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                // Get the stream containing content returned by the server.
+                Stream dataStream = response.GetResponseStream();
+                // Open the stream using a StreamReader for easy access.
+                StreamReader reader = new StreamReader(dataStream);
+                // Read the content.
+                responseFromServer = reader.ReadToEnd();
+                // Cleanup the streams and the response.
+                reader.Close();
+                dataStream.Close();
+                response.Close();
+            } catch (Exception e) {
+                return false;
+            }
+            //If the response comes back as Authentication failure then set the driver as not authenticated.
+            if (responseFromServer.Contains("Authentication failure") || responseFromServer.Contains("Unable to authenticate")) {
+                Driver_Id.authenticated = false;
+                return false;
+            }
             if (!responseFromServer.Contains("error"))
             {
                 return true;
@@ -266,21 +306,26 @@ namespace KCDriver.Droid {
         {
             string message = "http://148.72.40.62/driver/decouple.php?" + "rideID=" + ride.RideId + "&token=" + Driver_Id.token +
                  "&driverID=" + Driver_Id.driver_Id;
-
+            string responseFromServer = "";
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
-            // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Get the stream containing content returned by the server.
-            Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
-            string responseFromServer = reader.ReadToEnd();
-            // Cleanup the streams and the response.
-            reader.Close();
-            dataStream.Close();
-            response.Close();
+            try {
+                // Get the response.
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                // Get the stream containing content returned by the server.
+                Stream dataStream = response.GetResponseStream();
+                // Open the stream using a StreamReader for easy access.
+                StreamReader reader = new StreamReader(dataStream);
+                // Read the content.
+                responseFromServer = reader.ReadToEnd();
+                // Cleanup the streams and the response.
+                reader.Close();
+                dataStream.Close();
+                response.Close();
+            } catch (Exception e) {
+                return false;
+            }
+
 
             if (!responseFromServer.Contains("error"))
             {
