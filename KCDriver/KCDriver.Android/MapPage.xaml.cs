@@ -90,12 +90,14 @@ namespace KCDriver.Droid
         }
 
         //Timer which checks if the driver is still authenticated if they arn't it kicks them back to the login page.
-        public async void checkAuth(Object source, ElapsedEventArgs e) {
+        public void checkAuth(Object source, ElapsedEventArgs e) {
             if (!Driver_Id.authenticated) {
-                for (int i = 0; i < 2; i++) {
-                    Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
-                }
-                await Navigation.PopAsync();
+                Navigation.RemovePage(this.Navigation.NavigationStack[this.Navigation.NavigationStack.Count - 2]);
+
+                Device.BeginInvokeOnMainThread(() => {
+                   KCApi.Stop();
+                   Navigation.PopAsync();
+                });
             }
             authTimer.Interval = 2000;
             authTimer.Start();
