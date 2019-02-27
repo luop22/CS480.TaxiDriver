@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Android.Locations;
 using System.ComponentModel;
 using KCDriver.Droid;
+using Android.Views;
 
 // Source: https://docs.microsoft.com/en-us/xamarin/android/platform/maps-and-location/maps/maps-api
 [assembly: ExportRenderer(typeof(KCMap), typeof(KCMapRenderer))]
@@ -47,7 +48,7 @@ namespace KCDriver.Droid
         }
     }
 
-    public class KCMapRenderer : MapRenderer
+    public partial class KCMapRenderer : MapRenderer
     {
         private readonly object dataLock;
         private readonly object nativeMapLock = new object();
@@ -68,24 +69,6 @@ namespace KCDriver.Droid
 
             switch (e.PropertyName)
             {
-                //Causes crashes atm
-                /*case "RouteCoordinates":
-                    DrawPolylineFromRouteCoordinates();
-                    break;*/
-
-                /*case "CurrentPosition":
-                    Position temp = KCApi.Properties.CurrentPosition;
-                    AnimateCameraTo(temp.Latitude, temp.Longitude);
-                    break;*/
-
-                /*case "InterpolatedPosition":
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        Position temp = KCApi.Properties.InterpolatedPosition;
-                        AnimateCameraTo(temp.Latitude, temp.Longitude);
-                    });
-                    break;*/
-
                 case "CurrentRide":
                     UpdateMarker();
                     break;
@@ -135,12 +118,11 @@ namespace KCDriver.Droid
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    if (KCApi.Properties.MapReady && KCApi.Properties.RenderReady)
+                    if (KCApi.Properties.MapReady && KCApi.Properties.RenderReady && NativeMap != null)
                     {
                         lock (nativeMapLock)
                         {
                             NativeMap.MoveCamera(CameraUpdateFactory.NewLatLng(new LatLng(lat, lon)));
-                            NativeMap.MoveCamera(CameraUpdateFactory.ZoomTo(18.5f));
                         }
                     }
                 });
@@ -151,32 +133,12 @@ namespace KCDriver.Droid
             }
         }
 
-        // In order to change the UI, you must invoke from the main (UI) thread!
-        public void DrawPolylineFromRouteCoordinates()
-        {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                if (CurrentLine != null)
-                    CurrentLine.Remove();
-
-                var polylineOptions = new PolylineOptions();
-                polylineOptions.InvokeColor(0x66FF0000);
-
-                foreach (var position in KCApi.Properties.RouteCoordinates)
-                {
-                    polylineOptions.Add(new LatLng(position.Latitude, position.Longitude));
-                }
-
-                CurrentLine = NativeMap.AddPolyline(polylineOptions);
-            });
-        }
-
         public void UpdateMarker()
         {
-            if (NativeMap == null) return;
-
             Device.BeginInvokeOnMainThread(() =>
             {
+                if (NativeMap == null) return;
+
                 NativeMap.Clear();
                 riderPin = KCPin.CreateRiderPin(new Position(KCApi.Properties.CurrentRide.ClientLat,
                                                             KCApi.Properties.CurrentRide.ClientLong));
