@@ -9,16 +9,36 @@ using Xamarin.Forms.Xaml;
 using Xamarin.Forms.Maps;
 using Android.Widget;
 using Plugin.CurrentActivity;
+using System.Timers;
 
 namespace KCDriver.Droid
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MapPage : ContentPage
 	{
-		public MapPage ()
+        //the timer which checks the ride queue.
+        static System.Timers.Timer authTimer;
+
+        public MapPage ()
 		{
 			InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
+        }
+
+        //executes everytime the page appears.
+        protected override void OnAppearing() {
+            //if the authentication timer is null start the timer.
+            if (authTimer == null) {
+                SetTimer();
+            }
+            base.OnAppearing();
+        }
+        //executes everytime the page dissapears.
+        protected override void OnDisappearing() {
+            //When the page dissapears the authentication timer is stoped.
+            authTimer.Stop();
+            authTimer = null;
+            base.OnDisappearing();
         }
 
         protected override bool OnBackButtonPressed()
@@ -27,6 +47,7 @@ namespace KCDriver.Droid
             KCApi.Stop();
             return false;
         }
+
 
         public void ButtonCancelRide(object sender, EventArgs e)
         {
@@ -57,5 +78,29 @@ namespace KCDriver.Droid
          
             //KCApi.Properties.CurrentRide.CallClient();
         }
+
+
+        public void SetTimer() {
+            // Create a timer with a two second interval.
+            authTimer = new System.Timers.Timer(2000);
+            // Hook up the Elapsed event for the timer. 
+            authTimer.Elapsed += checkAuth;
+            authTimer.AutoReset = false;
+            authTimer.Enabled = true;
+        }
+
+        //Timer which checks if the driver is still authenticated if they arn't it kicks them back to the login page.
+        public async void checkAuth(Object source, ElapsedEventArgs e) {
+            if (!Driver_Id.authenticated) {
+                for (int i = 0; i < 2; i++) {
+                    Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                }
+                await Navigation.PopAsync();
+            }
+            authTimer.Interval = 2000;
+            authTimer.Start();
+        }
+
+
     }
 }
