@@ -79,6 +79,19 @@ namespace KCDriver.Droid
             //KCApi.Properties.CurrentRide.CallClient();
         }
 
+        public void ButtonSetRiderCameraLock(object sender, EventArgs e)
+        {
+
+            KCApi.Properties.CameraOnRider = !KCApi.Properties.CameraOnRider;
+
+        }
+
+        public void ButtonSetDriverCameraLock(object sender, EventArgs e)
+        {
+
+            KCApi.Properties.CameraOnDriver = !KCApi.Properties.CameraOnDriver;
+        }
+
 
         public void SetTimer() {
             // Create a timer with a two second interval.
