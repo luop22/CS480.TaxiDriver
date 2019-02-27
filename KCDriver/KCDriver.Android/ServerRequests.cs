@@ -152,7 +152,7 @@ namespace KCDriver.Droid {
                 // Open the stream using a StreamReader for easy access.
                 StreamReader reader = new StreamReader(dataStream);
                 // Read the content.
-                string responseFromServer = reader.ReadToEnd();
+                responseFromServer = reader.ReadToEnd();
                 // Cleanup the streams and the response.
                 reader.Close();
                 dataStream.Close();
