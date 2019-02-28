@@ -54,7 +54,8 @@ namespace KCDriver.Droid
                 var text = "Authentication Failure";
                 Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                 Navigation.PopAsync();
-            } else
+            }
+            else
             {
                 var text = "Accept ride failed.";
                 Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();

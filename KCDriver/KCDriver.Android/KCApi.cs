@@ -58,7 +58,11 @@ namespace KCDriver.Droid
                 {
                     Debug.WriteLine("Getting rider location.");
                 }
-                else Properties.CurrentRide = temp;
+                else
+                {
+                    Properties.CurrentRide = temp;
+                    Properties.Renderer.UpdateMarker();
+                }
 
                 // TODO: Check if rider has cancelled here
 

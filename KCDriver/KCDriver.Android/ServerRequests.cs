@@ -235,7 +235,7 @@ namespace KCDriver.Droid {
                 }
             }
 
-            return true;
+            return false;
         }
 
         public static bool CompleteRide(Ride ride)
