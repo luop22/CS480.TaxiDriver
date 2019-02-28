@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
 
 namespace KCDriver.Droid
@@ -47,6 +48,7 @@ namespace KCDriver.Droid
             if (KCApi.AcceptNextRide(ride) 
                 && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
                 //Start takes only a position, which will come from the database
+                ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
                 KCApi.Start(ride);
                 Navigation.PushAsync(mapPage);
             }
@@ -54,6 +56,11 @@ namespace KCDriver.Droid
                 var text = "Authentication Failure";
                 Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                 Navigation.PopAsync();
+            }
+            else if (Status.Text == "No available rides")
+            {
+                var text = "No available rides.";
+                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
             }
             else
             {

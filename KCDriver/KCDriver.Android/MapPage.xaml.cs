@@ -32,6 +32,8 @@ namespace KCDriver.Droid
                 SetTimer();
             }
             base.OnAppearing();
+
+            RiderCardText.Text = KCApi.Properties.CurrentRide.ClientName + ": " + KCApi.Properties.CurrentRide.DisplayAddress;
         }
         //executes everytime the page dissapears.
         protected override void OnDisappearing() {
@@ -72,11 +74,8 @@ namespace KCDriver.Droid
         public void ButtonCallRide(object sender, EventArgs e)
         {
 
-            //KCApi.SetPhoneNum(KCApi.Properties.CurrentRide);
-            KCApi.Properties.CurrentRide.SetRidePhoneNum("509312");
             DisplayAlert("Client Number", KCApi.Properties.CurrentRide.PhoneNum, "OK");
          
-            //KCApi.Properties.CurrentRide.CallClient();
         }
 
         public void ButtonSetRiderCameraLock(object sender, EventArgs e)
@@ -84,12 +83,32 @@ namespace KCDriver.Droid
 
             KCApi.Properties.CameraOnRider = !KCApi.Properties.CameraOnRider;
 
+            if (KCApi.Properties.CameraOnRider)
+            {
+                ButtonSetRiderCamera.BorderColor = Color.Yellow;
+                ButtonSetDriverCamera.BorderColor = Color.Black;
+            }
+            else
+            {
+                ButtonSetRiderCamera.BorderColor = Color.Black;
+            }
+
         }
 
         public void ButtonSetDriverCameraLock(object sender, EventArgs e)
         {
 
             KCApi.Properties.CameraOnDriver = !KCApi.Properties.CameraOnDriver;
+
+            if (KCApi.Properties.CameraOnDriver)
+            {
+                ButtonSetDriverCamera.BorderColor = Color.Yellow;
+                ButtonSetRiderCamera.BorderColor = Color.Black;
+            }
+            else
+            {
+                ButtonSetDriverCamera.BorderColor = Color.Black;
+            }
         }
 
 
@@ -115,7 +134,5 @@ namespace KCDriver.Droid
             authTimer.Interval = 2000;
             authTimer.Start();
         }
-
-
     }
 }

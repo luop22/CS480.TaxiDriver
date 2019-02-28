@@ -32,6 +32,7 @@ namespace KCDriver.Droid {
             dataStream.Close();
             response.Close();
             } catch (Exception e) {
+                KCApi.OutputException(e);
                 return false;
             }
 
@@ -90,6 +91,7 @@ namespace KCDriver.Droid {
                 dataStream.Close();
                 response.Close();
             } catch (Exception e) {
+                KCApi.OutputException(e);
                 return "Error Connecting to Server";
             }
 
@@ -123,6 +125,7 @@ namespace KCDriver.Droid {
                 dataStream.Close();
                 response.Close();
             } catch (Exception e) {
+                KCApi.OutputException(e);
                 return "Error Connecting to Server";
             }
             //If
@@ -158,6 +161,7 @@ namespace KCDriver.Droid {
                 dataStream.Close();
                 response.Close();
             } catch (Exception e) {
+                KCApi.OutputException(e);
                 return false;
             }
             
@@ -165,7 +169,9 @@ namespace KCDriver.Droid {
                 String[] data = responseFromServer.Split(new char[] { '"', ',', ':' }, StringSplitOptions.RemoveEmptyEntries);
                 if (!responseFromServer.Contains("error"))
                 {
-                    ride.SetRideID(Int32.Parse(data[2]));
+                    ride.SetRideID(Int32.Parse(data[4]));
+                    ride.SetRidePhoneNum(data[6]);
+                    ride.SetName(data[8]);
                 }
                 //If the response comes back as Authentication failure then set the driver as not authenticated.
                 else if (responseFromServer.Contains("Authentication failure")) {
@@ -181,6 +187,7 @@ namespace KCDriver.Droid {
             }
             catch (Exception e)
             {
+                KCApi.OutputException(e);
                 return false;
             }
 
@@ -207,6 +214,7 @@ namespace KCDriver.Droid {
                 dataStream.Close();
                 response.Close();
             } catch (Exception e) {
+                KCApi.OutputException(e);
                 return false;
             }
             //If the response comes back as Authentication failure then set the driver as not authenticated.
@@ -287,6 +295,7 @@ namespace KCDriver.Droid {
                 dataStream.Close();
                 response.Close();
             } catch (Exception e) {
+                KCApi.OutputException(e);
                 return false;
             }
             //If the response comes back as Authentication failure then set the driver as not authenticated.
@@ -323,6 +332,7 @@ namespace KCDriver.Droid {
                 dataStream.Close();
                 response.Close();
             } catch (Exception e) {
+                KCApi.OutputException(e);
                 return false;
             }
 

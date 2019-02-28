@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using Newtonsoft.Json;
 using Xamarin.Forms.Maps;
 using System.Threading.Tasks;
 using Plugin.Geolocator;
 using System.Timers;
 using System.Threading;
 using System.Diagnostics;
-using Android.Gms.Maps.Model;
-using KCDriver.Droid;
 using Xamarin.Forms;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace KCDriver.Droid
 {
@@ -78,34 +75,31 @@ namespace KCDriver.Droid
             if (!Properties.MapReady || !Properties.RenderReady)
                 return;
 
-            ThreadPool.QueueUserWorkItem(o => {
+            updateCameraTimer.Stop();
+            Properties.CurrentPosition = GetCurrentPosition();
 
-                updateCameraTimer.Stop();
-                Properties.CurrentPosition = GetCurrentPosition();
+            //Keeps the camera locked on where it is supposed to be.
+            Device.BeginInvokeOnMainThread( () =>
+            {
+                Position temp = new Position();
 
-                //Keeps the camera locked on where it is supposed to be.
-                Device.BeginInvokeOnMainThread( () =>
+                if (Properties.CameraOnDriver)
+                    temp = KCApi.Properties.CurrentPosition;
+                else if (Properties.CameraOnRider)
+                    temp = new Position(Properties.CurrentRide.ClientLat, Properties.CurrentRide.ClientLong);
+
+                if (Properties.CameraOnDriver || Properties.CameraOnRider)
                 {
-                    Position temp = new Position();
+                    if (temp != null)
+                        KCApi.Properties.Renderer.AnimateCameraTo(temp.Latitude, temp.Longitude);
 
-                    if (Properties.CameraOnDriver)
-                        temp = KCApi.Properties.CurrentPosition;
-                    else if (Properties.CameraOnRider)
-                        temp = new Position(Properties.CurrentRide.ClientLat, Properties.CurrentRide.ClientLong);
-
-                    if (Properties.CameraOnDriver || Properties.CameraOnRider)
-                    {
-                        if (temp != null)
-                            KCApi.Properties.Renderer.AnimateCameraTo(temp.Latitude, temp.Longitude);
-
-                        KCApi.Properties.Map.HasScrollEnabled = false;
-                    }
-                    else KCApi.Properties.Map.HasScrollEnabled = true;
-                });
-
-                updateCameraTimer.Interval = 16.66;
-                updateCameraTimer.Start();
+                    KCApi.Properties.Map.HasScrollEnabled = false;
+                }
+                else KCApi.Properties.Map.HasScrollEnabled = true;
             });
+
+            updateCameraTimer.Interval = 16.66;
+            updateCameraTimer.Start();
         }
 
         // Starts navigation functions. Takes riders position and destination address string.
@@ -170,6 +164,30 @@ namespace KCDriver.Droid
             }
 
             return new Position(position.Latitude, position.Longitude);
+        }
+
+        public static string GetAddressFromPosition(Position pos)
+        {
+            try
+            {
+                /* Prod API Key: AIzaSyDku7O-5lR0g8fOx04lPSAPA5T8-JmK1a0 - Needs to be updated with Geocoding API as of 2/28/19 */
+                /* Developer: AIzaSyAgdPpZhmK2UGsVKkJ5UWGp-w46aSt2Npo */
+                string request = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.Latitude + "," + pos.Longitude
+                    + "&key=AIzaSyAgdPpZhmK2UGsVKkJ5UWGp-w46aSt2Npo";
+
+                WebClient client = new WebClient();
+                string s = client.DownloadString(request);
+
+                var obj = JsonConvert.DeserializeObject<GoogleRevGeocoderResponse>(s);
+
+                return obj.results[0].formatted_address;
+            }
+            catch (Exception e)
+            {
+                exceptions.Add(e);
+                return "Error";
+            }
+            
         }
 
         public static void OutputException(Exception e)

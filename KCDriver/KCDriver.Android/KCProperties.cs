@@ -92,32 +92,6 @@ namespace KCDriver.Droid
             }
         }
 
-        // Coordinates of the current route to be drawn.
-        // This particular property shoots events when it is changed. See KCMapRenderer for catching
-        private readonly object routeLock = new object();
-        private List<Position> routeCoordinates;
-        public List<Position> RouteCoordinates
-        {
-            get
-            {
-                lock (routeLock)
-                {
-                    return routeCoordinates;
-                }
-            }
-
-            set
-            {
-                lock (routeLock)
-                {
-                    // Outputs a GPX map based on the new route.
-                    /*DebugMapWriter dmw = new DebugMapWriter();
-                    var s = dmw.OutputGPX(value);*/
-                    SetPropertyField("RouteCoordinates", ref routeCoordinates, value);
-                }
-            }
-        }
-
         private readonly object rideLock = new object();
         private Ride currentRide;
         public Ride CurrentRide
