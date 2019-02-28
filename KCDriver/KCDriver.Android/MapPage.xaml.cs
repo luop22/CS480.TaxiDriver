@@ -116,13 +116,13 @@ namespace KCDriver.Droid
             // Create a timer with a two second interval.
             authTimer = new System.Timers.Timer(2000);
             // Hook up the Elapsed event for the timer. 
-            authTimer.Elapsed += checkAuth;
+            authTimer.Elapsed += CheckAuth;
             authTimer.AutoReset = false;
             authTimer.Enabled = true;
         }
 
         //Timer which checks if the driver is still authenticated if they arn't it kicks them back to the login page.
-        public void checkAuth(Object source, ElapsedEventArgs e) {
+        public void CheckAuth(Object source, ElapsedEventArgs e) {
             if (!Driver_Id.authenticated) {
                 Navigation.RemovePage(this.Navigation.NavigationStack[this.Navigation.NavigationStack.Count - 2]);
 
