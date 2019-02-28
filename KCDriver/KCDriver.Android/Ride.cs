@@ -6,35 +6,35 @@ namespace KCDriver.Droid
     public class Ride
     {
         public int RideId { get; private set; }
-        public int NumberOfRiders { get; private set; }
         public String ClientName { get; private set; }
         public double ClientLat { get; private set; }
         public double ClientLong { get; private set; }
         public DateTime StartTime { get; private set; }
         public DateTime EndTime { get; private set; }
         public String PhoneNum { get; private set; }
+        public string DisplayAddress { get; private set; }
 
         public Ride() { }
 
         public Ride(Ride other)
         {
             RideId = other.RideId;
-            NumberOfRiders = other.NumberOfRiders;
             ClientName = other.ClientName;
             ClientLat = other.ClientLat;
             ClientLong = other.ClientLong;
             StartTime = other.StartTime;
             PhoneNum = other.PhoneNum;
+            DisplayAddress = other.DisplayAddress;
         }
 
-        public Ride(int RideId, int NumberOfRiders, String ClientName, double ClientLat, double ClientLong, DateTime StartTime, String PhoneNum) {
+        public Ride(int RideId, String ClientName, double ClientLat, double ClientLong, /*DateTime StartTime,*/ String PhoneNum) {
             this.RideId = RideId;
-            this.NumberOfRiders = NumberOfRiders;
             this.ClientName = ClientName;
             this.ClientLat = ClientLat;
             this.ClientLong = ClientLong;
             this.StartTime = StartTime;
             this.PhoneNum = PhoneNum;
+            DisplayAddress = "Retrieving address...";
         }
 
         public void CallClient() {
@@ -55,6 +55,16 @@ namespace KCDriver.Droid
         {
             ClientLat = newLat;
             ClientLong = newLong;
+        }
+
+        public void SetName(string newName)
+        {
+            ClientName = newName;
+        }
+
+        public void SetDisplayAddress(string address)
+        {
+            DisplayAddress = address;
         }
     }
 }

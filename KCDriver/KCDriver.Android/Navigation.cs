@@ -27,6 +27,7 @@ namespace KCDriver.Droid
             "&key=AIzaSyAgdPpZhmK2UGsVKkJ5UWGp-w46aSt2Npo";
     }
 
+    /*
     static partial class KCApi
     {
         static void UpdatePosition_old(Position p)
@@ -239,7 +240,7 @@ namespace KCDriver.Droid
 
             double speed = (totalDistance / Properties.SpeedTime) * 16.66; // Degrees / ms * ms = Degrees
 
-            Properties.InterpolatedPosition = new Position(Properties.CurrentPosition.Longitude + deltaX / magnitude * speed, Properties.CurrentPosition.Latitude + deltaY / magnitude * speed);*/
+            Properties.InterpolatedPosition = new Position(Properties.CurrentPosition.Longitude + deltaX / magnitude * speed, Properties.CurrentPosition.Latitude + deltaY / magnitude * speed);
         }
     };
 
@@ -264,5 +265,5 @@ namespace KCDriver.Droid
                 CurrentLine = NativeMap.AddPolyline(polylineOptions);
             });
         }
-    }
+    }*/
 }

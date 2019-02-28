@@ -122,7 +122,7 @@ namespace KCDriver.Droid
                     {
                         lock (nativeMapLock)
                         {
-                            NativeMap.MoveCamera(CameraUpdateFactory.NewLatLng(new LatLng(lat, lon)));
+                            NativeMap.AnimateCamera(CameraUpdateFactory.NewLatLng(new LatLng(lat, lon)), 2, null);
                         }
                     }
                 });
