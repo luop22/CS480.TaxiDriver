@@ -42,6 +42,9 @@ namespace KCDriver.Droid
         {
             ThreadPool.QueueUserWorkItem(o => {
 
+                if (!Properties.MapReady || !Properties.RenderReady)
+                    return;
+
                 updatePositionTimer.Stop();
 
                 if (!SetDriverLocation(Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude))
