@@ -43,6 +43,9 @@ namespace KCDriver.Droid
         {
             ThreadPool.QueueUserWorkItem(o => {
 
+                if (!Properties.MapReady || !Properties.RenderReady)
+                    return;
+
                 updatePositionTimer.Stop();
 
                 if (!SetDriverLocation(Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude))
@@ -56,7 +59,11 @@ namespace KCDriver.Droid
                 {
                     Debug.WriteLine("Getting rider location.");
                 }
-                else Properties.CurrentRide = temp;
+                else
+                {
+                    Properties.CurrentRide = temp;
+                    Properties.Renderer.UpdateMarker();
+                }
 
                 // TODO: Check if rider has cancelled here
 
