@@ -72,7 +72,7 @@ namespace KCDriver.Droid
 
         public void SetTimer() {
             // Create a timer with a two second interval.
-            updater = new System.Timers.Timer(2000);
+            updater = new System.Timers.Timer(1);
             // Hook up the Elapsed event for the timer. 
             updater.Elapsed += Timer;
             updater.AutoReset = false;
@@ -86,7 +86,7 @@ namespace KCDriver.Droid
             Device.BeginInvokeOnMainThread(() => {
                 Status.Text = status;
             });
-            updater.Interval = 2000;
+            updater.Interval = 500;
             updater.Start();
         }
     }

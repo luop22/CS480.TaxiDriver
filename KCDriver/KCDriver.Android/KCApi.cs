@@ -17,6 +17,7 @@ namespace KCDriver.Droid
         public static KCProperties Properties = new KCProperties();
         private static System.Timers.Timer updatePositionTimer;
         private static System.Timers.Timer updateCameraTimer;
+        private static bool animating;
         private static List<Exception> exceptions = new List<Exception>();
 
         // Set default values and start timers
@@ -87,7 +88,7 @@ namespace KCDriver.Droid
                 if (Properties.CameraOnDriver || Properties.CameraOnRider)
                 {
                     if (temp != null)
-                        KCApi.Properties.Renderer.AnimateCameraTo(temp.Latitude, temp.Longitude);
+                        KCApi.Properties.Renderer.MoveCameraTo(temp.Latitude, temp.Longitude);
 
                     KCApi.Properties.Map.HasScrollEnabled = false;
                 }

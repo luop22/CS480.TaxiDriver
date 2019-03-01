@@ -90,6 +90,8 @@ namespace KCDriver.Droid
             {
                 ButtonSetRiderCamera.BorderColor = Color.Yellow;
                 ButtonSetDriverCamera.BorderColor = Color.Black;
+
+                //KCApi.Properties.Renderer.AnimateCameraTo(KCApi.Properties.CurrentRide.ClientLat, KCApi.Properties.CurrentRide.ClientLong, 5.0f);
             }
             else
             {
@@ -107,6 +109,8 @@ namespace KCDriver.Droid
             {
                 ButtonSetDriverCamera.BorderColor = Color.Yellow;
                 ButtonSetRiderCamera.BorderColor = Color.Black;
+
+                //KCApi.Properties.Renderer.AnimateCameraTo(KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude, 5.0f);
             }
             else
             {

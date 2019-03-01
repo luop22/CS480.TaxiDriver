@@ -52,7 +52,6 @@ namespace KCDriver.Droid
     {
         private readonly object dataLock;
         private readonly object nativeMapLock = new object();
-        Android.Gms.Maps.Model.Polyline CurrentLine;
         KCPin riderPin;
         bool mapDrawn = false;
 
@@ -61,6 +60,7 @@ namespace KCDriver.Droid
             dataLock = new object();
             // Add the property changed event to our event handler in KCMapRenderer
             KCApi.Properties.PropertyChanged += new PropertyChangedEventHandler(OnElementPropertyChanged);
+
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -112,7 +112,31 @@ namespace KCDriver.Droid
 
         // The number 18.5f reflects some adjustments I made and tested.
         // The max appears to be 20.f for whatever reason
-        public void AnimateCameraTo(double lat, double lon)
+        public void AnimateCameraTo(double lat, double lon, float zoom = 0)
+        {
+            try
+            {
+                if (zoom == 0)
+                    zoom = KCApi.Properties.Renderer.NativeMap.CameraPosition.Zoom;
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    if (KCApi.Properties.MapReady && KCApi.Properties.RenderReady && NativeMap != null)
+                    {
+                        lock (nativeMapLock)
+                        {
+                            NativeMap.AnimateCamera(CameraUpdateFactory.NewLatLngZoom(new LatLng(lat, lon), zoom), 100, null);
+                        }
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                KCApi.OutputException(e);
+            }
+        }
+
+        public void MoveCameraTo(double lat, double lon)
         {
             try
             {
@@ -122,7 +146,7 @@ namespace KCDriver.Droid
                     {
                         lock (nativeMapLock)
                         {
-                            NativeMap.AnimateCamera(CameraUpdateFactory.NewLatLng(new LatLng(lat, lon)), 2, null);
+                            NativeMap.MoveCamera(CameraUpdateFactory.NewLatLng(new LatLng(lat, lon)));
                         }
                     }
                 });
