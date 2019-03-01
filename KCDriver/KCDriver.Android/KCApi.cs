@@ -61,8 +61,10 @@ namespace KCDriver.Droid
                 }
                 else
                 {
-                    Properties.CurrentRide = temp;
-                    Properties.Renderer.UpdateMarker();
+                    // Only update current ride if needed, since it will trigger a UI update.
+                    if (temp.ClientLat != Properties.CurrentRide.ClientLat
+                    || temp.ClientLong != Properties.CurrentRide.ClientLong)
+                        Properties.CurrentRide = temp;
                 }
 
                 // TODO: Check if rider has cancelled here

@@ -108,6 +108,8 @@ namespace KCDriver.Droid
             KCApi.Properties.RenderReady = true;
 
             mapDrawn = true;
+
+            UpdateMarker();
         }
 
         // The number 18.5f reflects some adjustments I made and tested.
@@ -161,7 +163,7 @@ namespace KCDriver.Droid
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                if (NativeMap == null) return;
+                if (NativeMap == null);
 
                 NativeMap.Clear();
                 riderPin = KCPin.CreateRiderPin(new Position(KCApi.Properties.CurrentRide.ClientLat,
