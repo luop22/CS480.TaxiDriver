@@ -16,6 +16,7 @@ namespace KCDriver.Droid
     public partial class AcceptPage : ContentPage
     {
         MapPage mapPage;
+        object buttonLock;
         //the timer which checks the ride queue.
         static System.Timers.Timer updater;
 
@@ -23,15 +24,33 @@ namespace KCDriver.Droid
         {
             InitializeComponent();
             mapPage = new MapPage();
+            buttonLock = new object();
         }
 
         //executes everytime the page appears.
         protected override void OnAppearing() {
+
+            Ride ride = new Ride();
+            //if the driver already has a ride
+            if (KCApi.RecoveryCheck(ride) && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
+                ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
+                KCApi.Start(ride);
+                Navigation.PushAsync(mapPage);
+            } else if (!Driver_Id.authenticated) {
+                var text = "Authentication Failure";
+                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                Navigation.PopAsync();
+            }
+
+
             //if the update timer is null start the timer.
             if (updater == null) {
+
                 SetTimer();
             }
             base.OnAppearing();
+
+            KCApi.Stop();
         }
         //executes everytime the page dissapears.
         protected override void OnDisappearing() {
@@ -41,33 +60,35 @@ namespace KCDriver.Droid
             base.OnDisappearing();
         }
 
+        //Is called when the accept button is clicked.
         void Button_Clicked(object sender, EventArgs e)
         {
-            
-            Ride ride = new Ride();
-            if (KCApi.AcceptNextRide(ride) 
-                && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
-                //Start takes only a position, which will come from the database
-                ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
-                KCApi.Start(ride);
-                Navigation.PushAsync(mapPage);
-            }
-            else if (!Driver_Id.authenticated) {
-                var text = "Authentication Failure";
-                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-                Navigation.PopAsync();
-            }
-            else if (Status.Text == "No available rides")
+            lock(buttonLock)
             {
-                var text = "No available rides.";
-                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                Ride ride = new Ride();
+                if (KCApi.AcceptNextRide(ride) 
+                    && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
+                    //Start takes only a position, which will come from the database
+                    ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
+                    KCApi.Start(ride);
+                    Navigation.PushAsync(mapPage);
+                }
+                else if (!Driver_Id.authenticated) {
+                    var text = "Authentication Failure";
+                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                    Navigation.PopAsync();
+                }
+                else if (Status.Text == "No available rides")
+                {
+                    var text = "No available rides.";
+                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                }
+                else
+                {
+                    var text = "Accept ride failed.";
+                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                }
             }
-            else
-            {
-                var text = "Accept ride failed.";
-                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-            }
-            
         }
 
         public void SetTimer() {
