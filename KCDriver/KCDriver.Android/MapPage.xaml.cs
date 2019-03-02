@@ -38,14 +38,14 @@ namespace KCDriver.Droid
                 case "RideActive":
                     if (!KCApi.Properties.RideActive)
                     {
-                        KCApi.Stop();
-                        Navigation.PopAsync();
-
                         var text = "Rider has cancelled their app.";
 
                         Device.BeginInvokeOnMainThread(() =>
                         {
                             Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+
+                            KCApi.Stop();
+                            Navigation.PopAsync();
                         });
                     }
                     break;
@@ -85,7 +85,11 @@ namespace KCDriver.Droid
                 var text = "There was a problem with cancellation.";
                 Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
             }
-            else Navigation.PopAsync();
+            else
+            {
+                KCApi.Stop();
+                Navigation.PopAsync();
+            }
         }
 
         public void ButtonCompleteRide(object sender, EventArgs e)
@@ -95,7 +99,11 @@ namespace KCDriver.Droid
                 var text = "There was a problem completing the ride.";
                 Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
             }
-            else Navigation.PopAsync();
+            else
+            {
+                KCApi.Stop();
+                Navigation.PopAsync();
+            }
         }
 
         public void ButtonCallRide(object sender, EventArgs e)
@@ -114,8 +122,6 @@ namespace KCDriver.Droid
             {
                 ButtonSetRiderCamera.BorderColor = Color.Yellow;
                 ButtonSetDriverCamera.BorderColor = Color.Black;
-
-                //KCApi.Properties.Renderer.AnimateCameraTo(KCApi.Properties.CurrentRide.ClientLat, KCApi.Properties.CurrentRide.ClientLong, 5.0f);
             }
             else
             {
@@ -133,8 +139,6 @@ namespace KCDriver.Droid
             {
                 ButtonSetDriverCamera.BorderColor = Color.Yellow;
                 ButtonSetRiderCamera.BorderColor = Color.Black;
-
-                //KCApi.Properties.Renderer.AnimateCameraTo(KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude, 5.0f);
             }
             else
             {
@@ -154,7 +158,7 @@ namespace KCDriver.Droid
 
         //Timer which checks if the driver is still authenticated if they arn't it kicks them back to the login page.
         public void CheckAuth(Object source, ElapsedEventArgs e) {
-            if (!Driver_Id.authenticated) {
+            if (!Driver_Id.authenticated && KCApi.Properties.RideActive) {
                 Navigation.RemovePage(this.Navigation.NavigationStack[this.Navigation.NavigationStack.Count - 2]);
 
                 Device.BeginInvokeOnMainThread(() => {
