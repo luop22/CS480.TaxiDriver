@@ -10,6 +10,7 @@ using Xamarin.Forms.Maps;
 using Android.Widget;
 using Plugin.CurrentActivity;
 using System.Timers;
+using System.ComponentModel;
 
 namespace KCDriver.Droid
 {
@@ -23,6 +24,17 @@ namespace KCDriver.Droid
 		{
 			InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
+            KCApi.Properties.PropertyChanged += new PropertyChangedEventHandler(OnElementPropertyChanged);
+        }
+
+        protected void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "CurrentRide":
+                    UpdateText();
+                    break;
+            }
         }
 
         //executes everytime the page appears.
@@ -33,7 +45,7 @@ namespace KCDriver.Droid
             }
             base.OnAppearing();
 
-            RiderCardText.Text = KCApi.Properties.CurrentRide.ClientName + ": " + KCApi.Properties.CurrentRide.DisplayAddress;
+            
         }
         //executes everytime the page dissapears.
         protected override void OnDisappearing() {
@@ -137,6 +149,20 @@ namespace KCDriver.Droid
             }
             authTimer.Interval = 2000;
             authTimer.Start();
+        }
+
+        public async void UpdateText()
+        {
+            await Task.Run(() =>
+            {
+                KCApi.Properties.CurrentRide.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(KCApi.Properties.CurrentRide.ClientLat,
+                                                                KCApi.Properties.CurrentRide.ClientLong)));
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    RiderCardText.Text = KCApi.Properties.CurrentRide.ClientName + ": " + KCApi.Properties.CurrentRide.DisplayAddress;
+                });
+            });       
         }
     }
 }

@@ -43,7 +43,7 @@ namespace KCDriver.Droid
             marker.SetPosition(new LatLng(this.Position.Latitude, this.Position.Longitude));
             marker.SetTitle(this.Label);
             marker.SetSnippet(this.Address);
-            marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.taxiIcon));
+            marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.kc_user_icon));
             return marker;
         }
     }
@@ -161,10 +161,10 @@ namespace KCDriver.Droid
 
         public void UpdateMarker()
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                if (NativeMap == null);
+            while (NativeMap == null) return;
 
+            Device.BeginInvokeOnMainThread( () =>
+            {
                 NativeMap.Clear();
                 riderPin = KCPin.CreateRiderPin(new Position(KCApi.Properties.CurrentRide.ClientLat,
                                                             KCApi.Properties.CurrentRide.ClientLong));

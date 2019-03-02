@@ -17,7 +17,6 @@ namespace KCDriver.Droid
         public static KCProperties Properties = new KCProperties();
         private static System.Timers.Timer updatePositionTimer;
         private static System.Timers.Timer updateCameraTimer;
-        private static bool animating;
         private static List<Exception> exceptions = new List<Exception>();
 
         // Set default values and start timers
@@ -66,10 +65,6 @@ namespace KCDriver.Droid
                     || temp.ClientLong != Properties.CurrentRide.ClientLong)
                         Properties.CurrentRide = temp;
                 }
-
-                // TODO: Check if rider has cancelled here
-
-                // TODO: Check if driver is still authenticated
 
                 updatePositionTimer.Interval = 100.0f;
                 updatePositionTimer.Start();

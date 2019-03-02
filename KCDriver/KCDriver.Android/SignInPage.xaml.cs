@@ -15,6 +15,8 @@ namespace KCDriver.Droid
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SignInPage : ContentPage
     {
+        object buttonLock;
+
         public SignInPage()
         {
             InitializeComponent();
@@ -22,6 +24,8 @@ namespace KCDriver.Droid
 
             KCApi.Properties.AskingLocationPermission = false;
             KCApi.Properties.HaveLocationPermission = false;
+
+            buttonLock = new object();
         }
 
         protected override async void OnAppearing()
@@ -36,38 +40,42 @@ namespace KCDriver.Droid
 
         private void SignInClicked(object sender, EventArgs e)
         {
-            //only allow the user to get to the next page if the username and password are correct.
-            if (KCApi.Properties.HaveLocationPermission)
+            lock(buttonLock)
             {
-                if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && KCApi.Authenticate(password.Text, username.Text))
+                //only allow the user to get to the next page if the username and password are correct.
+                if (KCApi.Properties.HaveLocationPermission)
                 {
-                    //reset the username and password fields.
-                    username.Text = "";
-                    password.Text = "";
-                    Navigation.PushAsync(new AcceptPage());
+                    if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && KCApi.Authenticate(password.Text, username.Text))
+                    {
+                        //reset the username and password fields.
+                        username.Text = "";
+                        password.Text = "";
+                        Navigation.PushAsync(new AcceptPage());
+                    }
+                    else
+                    {
+                        //The username or password is incorrect.
+                        var text = "Incorrect credentials.";
+                        Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                    }
                 }
                 else
                 {
-                    //The username or password is incorrect.
-                    var text = "Incorrect credentials.";
-                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                    var alertDialog = new Android.App.AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
+                    alertDialog.SetTitle("Location Needed");
+                    alertDialog.SetMessage("You must allow this app to use your location. Allow and try again.");
+                    alertDialog.SetPositiveButton("OK", async (senderad, args) =>
+                    {
+                        KCApi.Properties.HaveLocationPermission = await RequestPermission(Plugin.Permissions.Abstractions.Permission.Location);
+                    });
+                    alertDialog.SetNegativeButton("Cancel", (senderad, args) =>
+                    {
+                        System.Diagnostics.Process.GetCurrentProcess().Kill();
+                    });
+                    alertDialog.Create().Show();
                 }
             }
-            else
-            {
-                var alertDialog = new Android.App.AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
-                alertDialog.SetTitle("Location Needed");
-                alertDialog.SetMessage("You must allow this app to use your location. Allow and try again.");
-                alertDialog.SetPositiveButton("OK", async (senderad, args) =>
-                {
-                    KCApi.Properties.HaveLocationPermission = await RequestPermission(Plugin.Permissions.Abstractions.Permission.Location);
-                });
-                alertDialog.SetNegativeButton("Cancel", (senderad, args) =>
-                {
-                    System.Diagnostics.Process.GetCurrentProcess().Kill();
-                });
-                alertDialog.Create().Show();
-            }
+            
         }
 
         public async Task<bool> RequestPermission(Plugin.Permissions.Abstractions.Permission permission)
