@@ -380,6 +380,8 @@ namespace KCDriver.Droid {
                     jObject = JObject.Parse(responseFromServer);
 
                     ride.SetRideID(Int32.Parse((string)jObject.result.rideID));
+                    ride.SetRidePhoneNum((string)jObject.result.phone);
+                    ride.SetName((string)jObject.result.name);
                     return true;
                 }
                 //If the response comes back as Authentication failure then set the driver as not authenticated.
