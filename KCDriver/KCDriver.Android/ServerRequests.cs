@@ -376,7 +376,7 @@ namespace KCDriver.Droid {
                 response.Close();
 
                 dynamic jObject = null;
-                if (!responseFromServer.Contains("Failure")) {
+                if (!responseFromServer.Contains("Failure") && !responseFromServer.Contains("No")) {
                     jObject = JObject.Parse(responseFromServer);
 
                     ride.SetRideID(Int32.Parse((string)jObject.result.rideID));

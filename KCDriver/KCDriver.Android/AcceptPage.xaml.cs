@@ -49,8 +49,6 @@ namespace KCDriver.Droid
                 SetTimer();
             }
             base.OnAppearing();
-
-            KCApi.Stop();
         }
         //executes everytime the page dissapears.
         protected override void OnDisappearing() {

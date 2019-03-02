@@ -103,6 +103,8 @@ namespace KCDriver.Droid
             Properties.CurrentRide = ride;
             updatePositionTimer.Start();
             updateCameraTimer.Start();
+
+            Properties.RideActive = true;
         }
 
         // Stops navigation, does cleanup, and outputs recorded exceptions in debug.
@@ -110,6 +112,9 @@ namespace KCDriver.Droid
         {
             updatePositionTimer.Stop();
             updateCameraTimer.Stop();
+
+            if (Properties.RideActive)
+                Properties.RideActive = false;
 
             //Debug
             Debug.WriteLine("------------------------- Exception Output ------------------------");

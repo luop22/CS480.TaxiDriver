@@ -280,7 +280,6 @@ namespace KCDriver.Droid
             {
                 lock (rideActiveLock)
                 {
-                    rideActive = value;
                     SetPropertyField("RideActive", ref rideActive, value);
                 }
             }
