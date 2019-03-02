@@ -43,7 +43,7 @@ namespace KCDriver.Droid
             marker.SetPosition(new LatLng(this.Position.Latitude, this.Position.Longitude));
             marker.SetTitle(this.Label);
             marker.SetSnippet(this.Address);
-            marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.taxiIcon));
+            marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.kc_user_icon));
             return marker;
         }
     }
@@ -108,6 +108,8 @@ namespace KCDriver.Droid
             KCApi.Properties.RenderReady = true;
 
             mapDrawn = true;
+
+            UpdateMarker();
         }
 
         // The number 18.5f reflects some adjustments I made and tested.
@@ -159,10 +161,10 @@ namespace KCDriver.Droid
 
         public void UpdateMarker()
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                if (NativeMap == null) return;
+            while (NativeMap == null) return;
 
+            Device.BeginInvokeOnMainThread( () =>
+            {
                 NativeMap.Clear();
                 riderPin = KCPin.CreateRiderPin(new Position(KCApi.Properties.CurrentRide.ClientLat,
                                                             KCApi.Properties.CurrentRide.ClientLong));
