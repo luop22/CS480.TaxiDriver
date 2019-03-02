@@ -29,8 +29,23 @@ namespace KCDriver.Droid
 
         //executes everytime the page appears.
         protected override void OnAppearing() {
+
+            Ride ride = new Ride();
+            //if the driver already has a ride
+            if (KCApi.RecoveryCheck(ride) && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
+                ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
+                KCApi.Start(ride);
+                Navigation.PushAsync(mapPage);
+            } else if (!Driver_Id.authenticated) {
+                var text = "Authentication Failure";
+                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                Navigation.PopAsync();
+            }
+
+
             //if the update timer is null start the timer.
             if (updater == null) {
+
                 SetTimer();
             }
             base.OnAppearing();
@@ -45,6 +60,7 @@ namespace KCDriver.Droid
             base.OnDisappearing();
         }
 
+        //Is called when the accept button is clicked.
         void Button_Clicked(object sender, EventArgs e)
         {
             lock(buttonLock)
