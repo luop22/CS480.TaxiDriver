@@ -34,6 +34,21 @@ namespace KCDriver.Droid
                 case "CurrentRide":
                     UpdateText();
                     break;
+
+                case "RideActive":
+                    if (!KCApi.Properties.RideActive)
+                    {
+                        KCApi.Stop();
+                        Navigation.PopAsync();
+
+                        var text = "Rider has cancelled their app.";
+
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                        });
+                    }
+                    break;
             }
         }
 

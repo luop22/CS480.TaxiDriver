@@ -263,5 +263,27 @@ namespace KCDriver.Droid
                 }
             }
         }
+
+        private readonly object rideActiveLock = new object();
+        private bool rideActive;
+        public bool RideActive
+        {
+            get
+            {
+                lock (rideActiveLock)
+                {
+                    return rideActive;
+                }
+            }
+
+            set
+            {
+                lock (rideActiveLock)
+                {
+                    rideActive = value;
+                    SetPropertyField("RideActive", ref rideActive, value);
+                }
+            }
+        }
     }
 }
