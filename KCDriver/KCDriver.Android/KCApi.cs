@@ -17,7 +17,6 @@ namespace KCDriver.Droid
         public static KCProperties Properties = new KCProperties();
         private static System.Timers.Timer updatePositionTimer;
         private static System.Timers.Timer updateCameraTimer;
-        private static bool animating;
         private static List<Exception> exceptions = new List<Exception>();
 
         // Set default values and start timers
@@ -155,16 +154,14 @@ namespace KCDriver.Droid
                 if (!locator.IsGeolocationAvailable || !locator.IsGeolocationEnabled)
                 {
                     //not available or enabled
-                    throw new Exception("Geolocation not available or not enabled.");
+                     throw new Exception("Geolocation not available or not enabled.");
                 }
 
                 position = Task.Run(async () => await locator.GetPositionAsync(TimeSpan.FromSeconds(20), null, true)).Result;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Debug.WriteLine(ex.Message);
-                Debug.WriteLine(ex.StackTrace);
-                exceptions.Add(ex);
+                OutputException(e);
             }
 
             return new Position(position.Latitude, position.Longitude);
@@ -188,7 +185,7 @@ namespace KCDriver.Droid
             }
             catch (Exception e)
             {
-                exceptions.Add(e);
+                OutputException(e);
                 return "Error";
             }
             
