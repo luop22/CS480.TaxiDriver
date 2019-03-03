@@ -9,8 +9,6 @@ namespace KCDriver.Droid
         public String ClientName { get; private set; }
         public double ClientLat { get; private set; }
         public double ClientLong { get; private set; }
-        public DateTime StartTime { get; private set; }
-        public DateTime EndTime { get; private set; }
         public String PhoneNum { get; private set; }
         public string DisplayAddress { get; private set; }
 
@@ -22,7 +20,6 @@ namespace KCDriver.Droid
             ClientName = other.ClientName;
             ClientLat = other.ClientLat;
             ClientLong = other.ClientLong;
-            StartTime = other.StartTime;
             PhoneNum = other.PhoneNum;
             DisplayAddress = other.DisplayAddress;
         }
@@ -32,7 +29,6 @@ namespace KCDriver.Droid
             this.ClientName = ClientName;
             this.ClientLat = ClientLat;
             this.ClientLong = ClientLong;
-            this.StartTime = StartTime;
             this.PhoneNum = PhoneNum;
             DisplayAddress = "Retrieving address...";
         }

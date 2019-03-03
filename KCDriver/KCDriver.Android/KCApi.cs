@@ -50,24 +50,23 @@ namespace KCDriver.Droid
             updatePositionTimer.Start();
 
             ThreadPool.QueueUserWorkItem(o => {
+                //if the current position is 0,0 then don't send the position.
+                if (Properties.CurrentPosition.Latitude != 0 && Properties.CurrentPosition.Longitude != 0) {
+                    //set the drivers current position.
+                    if (!SetDriverLocation(Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude)) {
+                        Debug.WriteLine("Setting driver location failed.");
+                    }
 
-                if (!SetDriverLocation(Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude))
-                {
-                    Debug.WriteLine("Setting driver location failed.");
-                }
+                    Ride temp = new Ride(Properties.CurrentRide);
 
-                Ride temp = new Ride(Properties.CurrentRide);
-
-                if (!SetRideLocation(temp, Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude))
-                {
-                    Properties.RideActive = false;
-                }
-                else
-                {
-                    // Only update current ride if needed, since it will trigger a UI update.
-                    if (temp.ClientLat != Properties.CurrentRide.ClientLat
-                    || temp.ClientLong != Properties.CurrentRide.ClientLong)
-                        Properties.CurrentRide = temp;
+                    if (!SetRideLocation(temp, Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude)) {
+                        Properties.RideActive = false;
+                    } else {
+                        // Only update current ride if needed, since it will trigger a UI update.
+                        if (temp.ClientLat != Properties.CurrentRide.ClientLat
+                        || temp.ClientLong != Properties.CurrentRide.ClientLong)
+                            Properties.CurrentRide = temp;
+                    }
                 }
             }); 
         }

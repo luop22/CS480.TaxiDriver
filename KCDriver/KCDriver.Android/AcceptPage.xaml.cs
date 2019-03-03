@@ -63,7 +63,10 @@ namespace KCDriver.Droid
         {
             lock(buttonLock)
             {
+                //c
                 Ride ride = new Ride();
+                KCApi.Properties.CurrentPosition = KCApi.GetCurrentPosition();
+
                 if (!KCApi.Properties.RideActive && KCApi.AcceptNextRide(ride) 
                     && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
                     //Start takes only a position, which will come from the database
