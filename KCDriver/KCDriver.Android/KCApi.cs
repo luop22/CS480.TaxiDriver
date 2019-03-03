@@ -40,7 +40,7 @@ namespace KCDriver.Droid
             updateCameraTimer.Elapsed += (o, e) => Task.Factory.StartNew(() => UpdateCamera(o, e));
         }
 
-        // A timer calls this 10 times per second. Updates the db on where the driver is.
+        /// A timer calls this 10 times per second. Updates the db on where the driver is.
         public static void UpdatePosition(Object source, ElapsedEventArgs e)
         {
             if (!Properties.MapReady || !Properties.RenderReady)

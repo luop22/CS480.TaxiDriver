@@ -18,7 +18,7 @@ namespace KCDriver.Droid
 	public partial class MapPage : ContentPage
 	{
         //the timer which checks the ride queue.
-        static System.Timers.Timer authTimer;
+        static System.Timers.Timer activeTimer;
 
         public MapPage ()
 		{
@@ -34,22 +34,13 @@ namespace KCDriver.Droid
                 case "CurrentRide":
                     UpdateText();
                     break;
-
-                case "RideActive":
-                    if (!KCApi.Properties.RideActive)
-                    {
-                        KCApi.Stop();
-                        Navigation.PopAsync();
-                        
-                    }
-                    break;
             }
         }
 
         //executes everytime the page appears.
         protected override void OnAppearing() {
             //if the authentication timer is null start the timer.
-            if (authTimer == null) {
+            if (activeTimer == null) {
                 SetTimer();
             }
             base.OnAppearing();
@@ -59,8 +50,8 @@ namespace KCDriver.Droid
         //executes everytime the page dissapears.
         protected override void OnDisappearing() {
             //When the page dissapears the authentication timer is stoped.
-            authTimer.Stop();
-            authTimer = null;
+            activeTimer.Stop();
+            activeTimer = null;
             base.OnDisappearing();
         }
 
@@ -154,15 +145,15 @@ namespace KCDriver.Droid
 
         public void SetTimer() {
             // Create a timer with a two second interval.
-            authTimer = new System.Timers.Timer(2000);
+            activeTimer = new System.Timers.Timer(2000);
             // Hook up the Elapsed event for the timer. 
-            authTimer.Elapsed += CheckAuth;
-            authTimer.AutoReset = false;
-            authTimer.Enabled = true;
+            activeTimer.Elapsed += CheckActive;
+            activeTimer.AutoReset = false;
+            activeTimer.Enabled = true;
         }
 
         //Timer which checks if the driver is still authenticated if they arn't it kicks them back to the login page.
-        public void CheckAuth(Object source, ElapsedEventArgs e) {
+        public void CheckActive(Object source, ElapsedEventArgs e) {
             if (!Driver_Id.authenticated && KCApi.Properties.RideActive) {
                 Navigation.RemovePage(this.Navigation.NavigationStack[this.Navigation.NavigationStack.Count - 2]);
 
@@ -171,8 +162,15 @@ namespace KCDriver.Droid
                    Navigation.PopAsync();
                 });
             }
-            authTimer.Interval = 2000;
-            authTimer.Start();
+            //If the ride is inactive then popback to the Accept page.
+            else if (!KCApi.Properties.RideActive) {
+                KCApi.Stop();
+                Device.BeginInvokeOnMainThread(() => {
+                    Navigation.PopAsync();
+                });
+            }
+            activeTimer.Interval = 2000;
+            activeTimer.Start();
         }
 
         public async void UpdateText()
