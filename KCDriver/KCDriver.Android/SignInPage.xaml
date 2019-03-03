@@ -29,7 +29,7 @@
 					<Label Grid.Row="5" Text="NEED HELP?" TextColor="Yellow" Font="30" VerticalOptions="End" 
 						   HorizontalOptions="Center" Margin="0,30,0,30"/>
 					<Button Grid.Row="6" Text="(509)929-3055" TextColor="White" Font="30" VerticalOptions="End" 
-						   HorizontalOptions="CenterAndExpand" BackgroundColor="Black" Clicked="callSelect"  />
+						   HorizontalOptions="CenterAndExpand" BackgroundColor="Black" Clicked="CallSelect"  />
 				</Grid>
 				
 			</StackLayout>
