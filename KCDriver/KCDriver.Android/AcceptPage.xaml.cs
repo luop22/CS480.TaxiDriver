@@ -64,7 +64,7 @@ namespace KCDriver.Droid
             lock(buttonLock)
             {
                 Ride ride = new Ride();
-                if (KCApi.AcceptNextRide(ride) 
+                if (!KCApi.Properties.RideActive && KCApi.AcceptNextRide(ride) 
                     && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
                     //Start takes only a position, which will come from the database
                     ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));

@@ -13,6 +13,7 @@ namespace KCDriver.Droid {
     static partial class KCApi {
 
         private const string ip = "148.72.40.62";
+        private const int timeout = 5000;
 
         //authentication functions
         //returns true if the user is authenticated with the server
@@ -23,6 +24,7 @@ namespace KCDriver.Droid {
             try {
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
+            request.Timeout = timeout;
             // Get the response.
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             // Get the stream containing content returned by the server.
@@ -82,6 +84,7 @@ namespace KCDriver.Droid {
             try {
                 // Create a request for the URL. 		
                 WebRequest request = WebRequest.Create(message);
+                request.Timeout = timeout;
                 // Get the response.
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 // Display the status.
@@ -118,6 +121,7 @@ namespace KCDriver.Droid {
             string responseFromServer = "";
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
+            request.Timeout = timeout;
             try {
                 // Get the response.
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -161,6 +165,7 @@ namespace KCDriver.Droid {
             string message = "http://" + ip + "/driver/acceptRide.php?token=" + Driver_Id.token + "&driverID=" + Driver_Id.driver_Id;
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
+            request.Timeout = timeout;
             // Get the response.
             string responseFromServer = "";
             try {
@@ -206,6 +211,7 @@ namespace KCDriver.Droid {
                 + "&token=" + Driver_Id.token + "&rideID=" + ride.RideId + "&lat=" + latitude + "&lon=" + longitude;
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
+            request.Timeout = timeout;
             // Get the response.
             string responseFromServer = "";
             try { 
@@ -261,6 +267,7 @@ namespace KCDriver.Droid {
 
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
+            request.Timeout = timeout;
             // Get the response.
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             // Get the stream containing content returned by the server.
@@ -291,6 +298,7 @@ namespace KCDriver.Droid {
             try {
                 // Create a request for the URL. 		
                 WebRequest request = WebRequest.Create(message);
+                request.Timeout = timeout;
                 // Get the response.
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 // Get the stream containing content returned by the server.
@@ -328,6 +336,7 @@ namespace KCDriver.Droid {
             string responseFromServer = "";
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
+            request.Timeout = timeout;
             try {
                 // Get the response.
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -360,6 +369,7 @@ namespace KCDriver.Droid {
             string message = "http://" + ip + "/driver/recoveryCheck.php?token=" + Driver_Id.token + "&driverID=" + Driver_Id.driver_Id;
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
+            request.Timeout = timeout;
             // Get the response.
             string responseFromServer = "";
             try {

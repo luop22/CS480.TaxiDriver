@@ -88,7 +88,6 @@ namespace KCDriver.Droid
             else
             {
                 KCApi.Stop();
-                Navigation.PopAsync();
             }
         }
 
@@ -102,7 +101,6 @@ namespace KCDriver.Droid
             else
             {
                 KCApi.Stop();
-                Navigation.PopAsync();
             }
         }
 
