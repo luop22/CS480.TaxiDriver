@@ -16,9 +16,13 @@ namespace KCDriver.Droid
 {
     class DebugMapWriter
     {
-        // Outputs a GPX file for use in an emulator.
-        // The file holds a series of gps coordinates and
-        // can crudely simulate movement.
+        /// <summary>
+        /// Outputs a GPX file for use in an emulator.
+        /// The file holds a series of gps coordinates and
+        /// can crudely simulate movement.
+        /// </summary>
+        /// <param name="route"></param>
+        /// <returns></returns>
         public string OutputGPX(List<Position> route)
         {
             if (route.Count == 0)

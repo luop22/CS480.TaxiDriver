@@ -1,4 +1,4 @@
-﻿/* Legacy Navigation code */
+﻿/* Legacy Navigation code; here for posterity */
 
 using Android.Gms.Maps.Model;
 using Newtonsoft.Json;
