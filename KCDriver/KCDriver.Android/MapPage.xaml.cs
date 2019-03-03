@@ -38,15 +38,9 @@ namespace KCDriver.Droid
                 case "RideActive":
                     if (!KCApi.Properties.RideActive)
                     {
-                        var text = "Rider has cancelled their app.";
-
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-
-                            KCApi.Stop();
-                            Navigation.PopAsync();
-                        });
+                        KCApi.Stop();
+                        Navigation.PopAsync();
+                        
                     }
                     break;
             }
@@ -87,8 +81,15 @@ namespace KCDriver.Droid
             }
             else
             {
-                KCApi.Stop();
-                Navigation.PopAsync();
+                var text = "The Ride has been canceled.";
+
+                KCApi.Properties.RideActive = false;
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                });
+
             }
         }
 
@@ -101,8 +102,12 @@ namespace KCDriver.Droid
             }
             else
             {
-                KCApi.Stop();
-                Navigation.PopAsync();
+                var text = "The Ride has been compleated.";
+                KCApi.Properties.RideActive = false;
+
+                Device.BeginInvokeOnMainThread(() => {
+                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                });
             }
         }
 
