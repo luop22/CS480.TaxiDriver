@@ -7,7 +7,8 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.CSharp;
 
-//class which handles calls to the server including authentication and ride requestes
+/* Contains functions for communicating with the remote database. */
+
 namespace KCDriver.Droid {
 
     static partial class KCApi {
@@ -15,8 +16,13 @@ namespace KCDriver.Droid {
         private const string ip = "148.72.40.62";
         private const int timeout = 5000;
 
-        //authentication functions
-        //returns true if the user is authenticated with the server
+        /// <summary>
+        /// Attempts to authenticate the user. Returns true if the user 
+        /// is authenticated with the server, false upon error or rejection.
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public static bool Authenticate(String password, String userName) {
 
             string message = "http://" + ip + "/driver/auth/authenticate.php?username=" + userName + "&pwHsh=" + GetHash(password, userName);
@@ -56,7 +62,12 @@ namespace KCDriver.Droid {
                 
         }
 
-        //calculates the hash of the password with the salt.
+        /// <summary>
+        /// Calculates the hash of the password with the salt.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         private static string GetHash(string input, String userName) {
             using (SHA256 sha256Hash = SHA256.Create()) {
                 HashAlgorithm hashAlgorithm = sha256Hash;
@@ -77,7 +88,11 @@ namespace KCDriver.Droid {
             }
         }
 
-        //gets the salt of a user.
+        /// <summary>
+        /// Gets the salt for a user in order to hash their password.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public static String GetSalt(String userName) {
             String message = "http://" + ip + "/driver/auth/getSalt.php?username=" + userName;
             String responseFromServer = "";
@@ -113,8 +128,12 @@ namespace KCDriver.Droid {
             }
             
         }
-        
-        //checks if there are any rides in the queue.
+
+        /// <summary>
+        /// Checks if there are any rides in the queue. Returns a
+        /// string which represents the status of the server.
+        /// </summary>
+        /// <returns></returns>
         public static String CheckQueue()
         {
             String message = "http://" + ip + "/driver/checkQueue.php";
@@ -158,8 +177,12 @@ namespace KCDriver.Droid {
             }
             return "error";
         }
-        
-        //binds a driver to a ride.
+
+        /// <summary>
+        /// Takes a Ride ref and binds a driver to the ride on the remote server.
+        /// </summary>
+        /// <param name="ride"></param>
+        /// <returns></returns>
         public static bool AcceptNextRide(Ride ride)
         {
             string message = "http://" + ip + "/driver/acceptRide.php?token=" + Driver_Id.token + "&driverID=" + Driver_Id.driver_Id;
@@ -203,8 +226,15 @@ namespace KCDriver.Droid {
             }
 
         }
-        
-        //sets the clients postion in the ride class.
+
+        /// <summary>
+        /// Sets the clients postion in the given Ride by querying
+        /// the remote server
+        /// </summary>
+        /// <param name="ride"></param>
+        /// <param name="latitude"></param>
+        /// <param name="longitude"></param>
+        /// <returns></returns>
         public static bool SetRideLocation(Ride ride, double latitude, double longitude)
         {
             string message = "http://" + ip + "/driver/rideStatus.php?driverID=" + Driver_Id.driver_Id
@@ -259,7 +289,12 @@ namespace KCDriver.Droid {
             return false;
         }
 
-        //Decouples the driver from a ride and completes it.
+        /// <summary>
+        /// Decouples the driver from a ride and completes it by querying
+        /// the remote server.
+        /// </summary>
+        /// <param name="ride"></param>
+        /// <returns></returns>
         public static bool CompleteRide(Ride ride)
         {
             string message = "http://" + ip + "/driver/completeRide.php?token=" + Driver_Id.token + "&driverID=" 
@@ -289,7 +324,12 @@ namespace KCDriver.Droid {
             return false;
         }
 
-        //Sends the location of the driver to the client.
+        /// <summary>
+        /// Updates the remote server on the current location of the driver.
+        /// </summary>
+        /// <param name="latitude"></param>
+        /// <param name="longitude"></param>
+        /// <returns></returns>
         public static bool SetDriverLocation(double latitude, double longitude)
         {
             string message = "http://" + ip + "/driver/updateLocation.php?driverID=" +  Driver_Id.driver_Id
@@ -328,7 +368,11 @@ namespace KCDriver.Droid {
             return false;
         }
 
-        //Decouples the driver from the ride and puts the ride back in the queue.
+        /// <summary>
+        /// Decouples the driver from the ride and puts the ride back in the queue.
+        /// </summary>
+        /// <param name="ride"></param>
+        /// <returns></returns>
         public static bool CancelRide(Ride ride)
         {
             string message = "http://" + ip + "/driver/decouple.php?" + "rideID=" + ride.RideId + "&token=" + Driver_Id.token +
@@ -364,7 +408,12 @@ namespace KCDriver.Droid {
             return false;
         }
 
-        //If the driver already has a ride it sets the ride id to that ride.
+        /// <summary>
+        /// If the driver already has a ride it sets the ride id to that ride
+        /// in case of failure or lost connection.
+        /// </summary>
+        /// <param name="ride"></param>
+        /// <returns></returns>
         public static bool RecoveryCheck(Ride ride) {
             string message = "http://" + ip + "/driver/recoveryCheck.php?token=" + Driver_Id.token + "&driverID=" + Driver_Id.driver_Id;
             // Create a request for the URL. 		

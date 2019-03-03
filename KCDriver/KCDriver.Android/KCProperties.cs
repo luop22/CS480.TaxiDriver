@@ -20,6 +20,10 @@ namespace KCDriver.Droid
     // Generic property code here: https://stackoverflow.com/questions/2246777/raise-an-event-whenever-a-propertys-value-changed
     public class KCProperties : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Implementation for the INotifyPropertyChanged interface.
+        /// </summary>
+        /// <param name="e"></param>
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
@@ -29,6 +33,14 @@ namespace KCDriver.Droid
             }
         }
 
+        /// <summary>
+        /// Sets the field to the value and notifies all subscribed 
+        /// instances.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="propertyName"></param>
+        /// <param name="field"></param>
+        /// <param name="newValue"></param>
         protected void SetPropertyField<T>(string propertyName, ref T field, T newValue)
         {
             if (!EqualityComparer<T>.Default.Equals(field, newValue))

@@ -27,6 +27,11 @@ namespace KCDriver.Droid
             KCApi.Properties.PropertyChanged += new PropertyChangedEventHandler(OnElementPropertyChanged);
         }
 
+        /// <summary>
+        /// Subscriber function to detect interesting property changes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -52,7 +57,6 @@ namespace KCDriver.Droid
             }
         }
 
-        //executes everytime the page appears.
         protected override void OnAppearing() {
             //if the authentication timer is null start the timer.
             if (authTimer == null) {
@@ -62,7 +66,7 @@ namespace KCDriver.Droid
 
             
         }
-        //executes everytime the page dissapears.
+
         protected override void OnDisappearing() {
             //When the page dissapears the authentication timer is stoped.
             authTimer.Stop();
@@ -144,7 +148,10 @@ namespace KCDriver.Droid
             }
         }
 
-
+        /// <summary>
+        /// Sets up the timer which checks if the ride is still active
+        /// and driver authenticated.
+        /// </summary>
         public void SetTimer() {
             // Create a timer with a two second interval.
             authTimer = new System.Timers.Timer(2000);
@@ -154,7 +161,11 @@ namespace KCDriver.Droid
             authTimer.Enabled = true;
         }
 
-        //Timer which checks if the driver is still authenticated if they arn't it kicks them back to the login page.
+        /// <summary>
+        /// Timer which checks if the driver is still authenticated if they arn't it kicks them back to the login page.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
         public void CheckAuth(Object source, ElapsedEventArgs e) {
             if (!Driver_Id.authenticated && KCApi.Properties.RideActive) {
                 Navigation.RemovePage(this.Navigation.NavigationStack[this.Navigation.NavigationStack.Count - 2]);
@@ -168,6 +179,9 @@ namespace KCDriver.Droid
             authTimer.Start();
         }
 
+        /// <summary>
+        /// Updates the address text when the ride is updated.
+        /// </summary>
         public async void UpdateText()
         {
             await Task.Run(() =>

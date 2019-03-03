@@ -40,7 +40,11 @@ namespace KCDriver.Droid
             updateCameraTimer.Elapsed += (o, e) => Task.Factory.StartNew(() => UpdateCamera(o, e));
         }
 
-        // A timer calls this 10 times per second. Updates the db on where the driver is.
+        /// <summary>
+        /// A timer calls this 10 times per second. Updates the db on where the driver is.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
         public static void UpdatePosition(Object source, ElapsedEventArgs e)
         {
             if (!Properties.MapReady || !Properties.RenderReady)
@@ -72,6 +76,12 @@ namespace KCDriver.Droid
             }); 
         }
 
+        /// <summary>
+        /// Function to keep camera locked on correct location on them map or
+        /// allow the user to scroll.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
         public static void UpdateCamera(Object source, ElapsedEventArgs e)
         {
             if (!Properties.MapReady || !Properties.RenderReady)
@@ -103,7 +113,10 @@ namespace KCDriver.Droid
             });
         }
 
-        // Starts navigation functions. Takes riders position and destination address string.
+        /// <summary>
+        /// Starts navigation functions. Takes riders position and destination address string.
+        /// </summary>
+        /// <param name="ride"></param>
         public static void Start(Ride ride)
         {
             Properties.CurrentRide = ride;
@@ -113,7 +126,9 @@ namespace KCDriver.Droid
             Properties.RideActive = true;
         }
 
-        // Stops navigation, does cleanup, and outputs recorded exceptions in debug.
+        /// <summary>
+        /// Stops navigation, does cleanup, and outputs recorded exceptions in debug.
+        /// </summary>
         public static void Stop()
         {
             updatePositionTimer.Stop();
@@ -140,7 +155,10 @@ namespace KCDriver.Droid
             
         }
 
-        // Plugin example function to get the current position.
+        /// <summary>
+        /// Function to get the current position. Returns 0,0 on failure.
+        /// </summary>
+        /// <returns></returns>
         public static Position GetCurrentPosition()
         {
             Plugin.Geolocator.Abstractions.Position position = new Plugin.Geolocator.Abstractions.Position(0, 0);
@@ -174,6 +192,12 @@ namespace KCDriver.Droid
             return new Position(position.Latitude, position.Longitude);
         }
 
+        /// <summary>
+        /// Takes a geographical location and returns an address using
+        /// Google's Geocoding API.
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
         public static string GetAddressFromPosition(Position pos)
         {
             try
@@ -198,6 +222,11 @@ namespace KCDriver.Droid
             
         }
 
+        /// <summary>
+        /// Write the exception to the log and saves it to output 
+        /// again later.
+        /// </summary>
+        /// <param name="e"></param>
         public static void OutputException(Exception e)
         {
             lock(exceptionsLock)

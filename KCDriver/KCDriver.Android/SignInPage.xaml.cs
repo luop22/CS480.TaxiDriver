@@ -38,6 +38,12 @@ namespace KCDriver.Droid
             KCApi.Properties.AskingLocationPermission = false;
         }
 
+        /// <summary>
+        /// Attempts to sign the user in. If location permissions are 
+        /// denied and denied again, the app is killed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SignInClicked(object sender, EventArgs e)
         {
             lock(buttonLock)
@@ -78,6 +84,11 @@ namespace KCDriver.Droid
             
         }
 
+        /// <summary>
+        /// Function to request a particular permission enumerated by the Permissions Plugin.
+        /// </summary>
+        /// <param name="permission"></param>
+        /// <returns></returns>
         public async Task<bool> RequestPermission(Plugin.Permissions.Abstractions.Permission permission)
         {
             try
@@ -99,7 +110,7 @@ namespace KCDriver.Droid
             }
         }
 
-        private void callSelect(object sender, EventArgs e)
+        private void CallSelect(object sender, EventArgs e)
         {
             Device.OpenUri(new Uri("tel:" + "5099293055"));
         }

@@ -25,6 +25,11 @@ namespace KCDriver.Droid
 {
     public class KCPin : Pin
     {
+        /// <summary>
+        /// Function to set up a basic pin for the rider.
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
         public static KCPin CreateRiderPin(Position pos)
         {
             var pin = new KCPin
@@ -37,6 +42,11 @@ namespace KCDriver.Droid
             return pin;
         }
 
+        /// <summary>
+        /// Takes the current pin object and creates a GoogleMap marker
+        /// from it.
+        /// </summary>
+        /// <returns></returns>
         public MarkerOptions CreateMarker()
         {
             var marker = new MarkerOptions();
@@ -69,6 +79,7 @@ namespace KCDriver.Droid
 
             switch (e.PropertyName)
             {
+                // The current ride just got updated
                 case "CurrentRide":
                     UpdateMarker();
                     break;
@@ -91,6 +102,11 @@ namespace KCDriver.Droid
             }
         }
 
+        /// <summary>
+        /// This function sets up basic variables on the GoogleMap as
+        /// soon as it is ready.
+        /// </summary>
+        /// <param name="map"></param>
         protected override void OnMapReady(Android.Gms.Maps.GoogleMap map)
         {
             if (mapDrawn)
@@ -112,8 +128,13 @@ namespace KCDriver.Droid
             UpdateMarker();
         }
 
-        // The number 18.5f reflects some adjustments I made and tested.
-        // The max appears to be 20.f for whatever reason
+        /// <summary>
+        /// Quick function to animate the camera to a location
+        /// on the map.
+        /// </summary>
+        /// <param name="lat"></param>
+        /// <param name="lon"></param>
+        /// <param name="zoom"></param>
         public void AnimateCameraTo(double lat, double lon, float zoom = 0)
         {
             try
@@ -138,6 +159,11 @@ namespace KCDriver.Droid
             }
         }
 
+        /// <summary>
+        /// Moves the camera directly to the given coordinates.
+        /// </summary>
+        /// <param name="lat"></param>
+        /// <param name="lon"></param>
         public void MoveCameraTo(double lat, double lon)
         {
             try
@@ -159,6 +185,10 @@ namespace KCDriver.Droid
             }
         }
 
+        /// <summary>
+        /// Function to update the GoogleMap with the new 
+        /// position of the rider marker.
+        /// </summary>
         public void UpdateMarker()
         {
             while (NativeMap == null) return;

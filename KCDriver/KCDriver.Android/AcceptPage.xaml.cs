@@ -58,7 +58,11 @@ namespace KCDriver.Droid
             base.OnDisappearing();
         }
 
-        //Is called when the accept button is clicked.
+        /// <summary>
+        /// Function to start map and get ride location.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void Button_Clicked(object sender, EventArgs e)
         {
             lock(buttonLock)
@@ -89,6 +93,9 @@ namespace KCDriver.Droid
             }
         }
 
+        /// <summary>
+        /// Sets up the updater timer to keep the text accurate.
+        /// </summary>
         public void SetTimer() {
             // Create a timer with a two second interval.
             updater = new System.Timers.Timer(1);
@@ -98,7 +105,9 @@ namespace KCDriver.Droid
             updater.Enabled = true;
         }
 
-        //timer function which updates the driver if there are any rides in the queue.
+        /// <summary>
+        /// Timer function which updates the driver if there are any rides in the queue.
+        /// </summary>
         private void Timer(Object source, ElapsedEventArgs e) {
 
             string status = KCApi.CheckQueue();

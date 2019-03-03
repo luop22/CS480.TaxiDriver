@@ -1,6 +1,8 @@
 ﻿using System;
 using Xamarin.Forms;
 
+/* The Ride class is used to store information obtained from theserver on a given ride.  */
+
 namespace KCDriver.Droid
 {
     public class Ride
