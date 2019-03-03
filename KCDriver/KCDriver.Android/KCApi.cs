@@ -17,6 +17,8 @@ namespace KCDriver.Droid
         public static KCProperties Properties = new KCProperties();
         private static System.Timers.Timer updatePositionTimer;
         private static System.Timers.Timer updateCameraTimer;
+
+        private static readonly object exceptionsLock = new object();
         private static List<Exception> exceptions = new List<Exception>();
 
         // Set default values and start timers
@@ -26,17 +28,15 @@ namespace KCDriver.Droid
             Properties.RenderReady = false;
             Properties.CameraOnDriver = true;
             Properties.CameraOnRider = false;
-            Properties.RideActive = true;
+            Properties.RideActive = false;
 
             Properties.CurrentRide = new Ride();
 
             // The timer automatically updates the camera and position every interval.
-            updatePositionTimer = new System.Timers.Timer(100.0f);
-            updatePositionTimer.AutoReset = true;
+            updatePositionTimer = new System.Timers.Timer(500.0f);
             updatePositionTimer.Elapsed += (o,e) => Task.Factory.StartNew( () => UpdatePosition(o,e));
 
             updateCameraTimer = new System.Timers.Timer(16.66f);
-            updateCameraTimer.AutoReset = true;
             updateCameraTimer.Elapsed += (o, e) => Task.Factory.StartNew(() => UpdateCamera(o, e));
         }
 
@@ -45,6 +45,9 @@ namespace KCDriver.Droid
         {
             if (!Properties.MapReady || !Properties.RenderReady)
                 return;
+
+            updatePositionTimer.Interval = 500.0f;
+            updatePositionTimer.Start();
 
             ThreadPool.QueueUserWorkItem(o => {
 
@@ -66,7 +69,7 @@ namespace KCDriver.Droid
                     || temp.ClientLong != Properties.CurrentRide.ClientLong)
                         Properties.CurrentRide = temp;
                 }
-            });
+            }); 
         }
 
         public static void UpdateCamera(Object source, ElapsedEventArgs e)
@@ -75,6 +78,9 @@ namespace KCDriver.Droid
                 return;
 
             Properties.CurrentPosition = GetCurrentPosition();
+
+            updateCameraTimer.Interval = 16.66f;
+            updateCameraTimer.Start();
 
             //Keeps the camera locked on where it is supposed to be.
             Device.BeginInvokeOnMainThread( () =>
@@ -117,17 +123,21 @@ namespace KCDriver.Droid
                 Properties.RideActive = false;
 
             //Debug
-            Debug.WriteLine("------------------------- Exception Output ------------------------");
-            foreach (Exception e in exceptions)
+            lock(exceptionsLock)
             {
-                Debug.WriteLine("Error ------");
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.StackTrace);
-                Debug.WriteLine(e.TargetSite);
-                Debug.WriteLine("End --------");
+                Debug.WriteLine("------------------------- Exception Output ------------------------");
+                foreach (Exception e in exceptions)
+                {
+                    Debug.WriteLine("Error ------");
+                    Debug.WriteLine(e.Message);
+                    Debug.WriteLine(e.StackTrace);
+                    Debug.WriteLine(e.TargetSite);
+                    Debug.WriteLine("End --------");
 
+                }
+                Debug.WriteLine("------------------------- End -------------------------------------");
             }
-            Debug.WriteLine("------------------------- End -------------------------------------");
+            
         }
 
         // Plugin example function to get the current position.
@@ -190,9 +200,12 @@ namespace KCDriver.Droid
 
         public static void OutputException(Exception e)
         {
-            Debug.WriteLine(e.Message);
-            Debug.WriteLine(e.StackTrace);
-            exceptions.Add(e);
+            lock(exceptionsLock)
+            {
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
+                exceptions.Add(e);
+            }
         }
     }
 }
