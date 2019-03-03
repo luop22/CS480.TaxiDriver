@@ -25,7 +25,7 @@
 					VerticalOptions="End"
 					BackgroundColor="Green"
 					TextColor="White"
-                    HeightRequest="50"
+                    HeightRequest="100"
 				    FontSize="28"/>
 			</Grid>
 		</RelativeLayout>
