@@ -17,6 +17,8 @@ namespace KCDriver.Droid
         public static KCProperties Properties = new KCProperties();
         private static System.Timers.Timer updatePositionTimer;
         private static System.Timers.Timer updateCameraTimer;
+
+        private static readonly object exceptionsLock = new object();
         private static List<Exception> exceptions = new List<Exception>();
 
         // Set default values and start timers
@@ -121,17 +123,21 @@ namespace KCDriver.Droid
                 Properties.RideActive = false;
 
             //Debug
-            Debug.WriteLine("------------------------- Exception Output ------------------------");
-            foreach (Exception e in exceptions)
+            lock(exceptionsLock)
             {
-                Debug.WriteLine("Error ------");
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.StackTrace);
-                Debug.WriteLine(e.TargetSite);
-                Debug.WriteLine("End --------");
+                Debug.WriteLine("------------------------- Exception Output ------------------------");
+                foreach (Exception e in exceptions)
+                {
+                    Debug.WriteLine("Error ------");
+                    Debug.WriteLine(e.Message);
+                    Debug.WriteLine(e.StackTrace);
+                    Debug.WriteLine(e.TargetSite);
+                    Debug.WriteLine("End --------");
 
+                }
+                Debug.WriteLine("------------------------- End -------------------------------------");
             }
-            Debug.WriteLine("------------------------- End -------------------------------------");
+            
         }
 
         // Plugin example function to get the current position.
@@ -194,9 +200,12 @@ namespace KCDriver.Droid
 
         public static void OutputException(Exception e)
         {
-            Debug.WriteLine(e.Message);
-            Debug.WriteLine(e.StackTrace);
-            exceptions.Add(e);
+            lock(exceptionsLock)
+            {
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
+                exceptions.Add(e);
+            }
         }
     }
 }
