@@ -109,7 +109,8 @@ namespace KCDriver.Droid
         public void ButtonCallRide(object sender, EventArgs e)
         {
 
-            DisplayAlert("Client Number", KCApi.Properties.CurrentRide.PhoneNum, "OK");
+            DisplayAlert(KCApi.Properties.CurrentRide.ClientName + "'s Phone Number is:", 
+                KCApi.Properties.CurrentRide.PhoneNum, "OK");
          
         }
 
