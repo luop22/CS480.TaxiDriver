@@ -48,7 +48,7 @@
                     </Grid.ColumnDefinitions>
 
 					<ImageButton Source="phone2.jpg" Grid.Column="0" Clicked="ButtonCallRide" Aspect="AspectFill" BackgroundColor="Black"/>
-					<Button Text="Ride Complete" Grid.Column="1" Clicked="ButtonCompleteRide" 
+					<Button Text="Pick-up Successful" Grid.Column="1" Clicked="ButtonCompleteRide" 
 							BackgroundColor="Green" TextColor="White" FontSize="Large"/>
 					<ImageButton Source="cancel2.png" Grid.Column="2" Clicked="ButtonCancelRide" Aspect="AspectFill" BackgroundColor="Black"/>
                 </Grid>
