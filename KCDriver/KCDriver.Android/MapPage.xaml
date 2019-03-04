@@ -47,12 +47,10 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-					<ImageButton Source="phone2.jpg" Grid.Column="0" Clicked="ButtonCallRide" HeightRequest = "50"
-							WidthRequest = "50" VerticalOptions="CenterAndExpand" BackgroundColor="Black"/>
+					<ImageButton Source="phone2.jpg" Grid.Column="0" Clicked="ButtonCallRide" Aspect="AspectFill" BackgroundColor="Black"/>
 					<Button Text="Ride Complete" Grid.Column="1" Clicked="ButtonCompleteRide" 
 							BackgroundColor="Green" TextColor="White" FontSize="Large"/>
-					<ImageButton Source="cancel2.png" Grid.Column="2" Clicked="ButtonCancelRide" HeightRequest = "50"
-							WidthRequest = "50" VerticalOptions="CenterAndExpand" BackgroundColor="Black"/>
+					<ImageButton Source="cancel2.png" Grid.Column="2" Clicked="ButtonCancelRide" Aspect="AspectFill" BackgroundColor="Black"/>
                 </Grid>
             </Grid>
         </Grid>
