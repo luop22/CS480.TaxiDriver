@@ -50,6 +50,8 @@ namespace KCDriver.Droid
             if (!Properties.MapReady || !Properties.RenderReady)
                 return;
 
+            Properties.CurrentPosition = GetCurrentPosition();
+
             updatePositionTimer.Interval = 500.0f;
             updatePositionTimer.Start();
 
@@ -85,8 +87,6 @@ namespace KCDriver.Droid
         {
             if (!Properties.MapReady || !Properties.RenderReady)
                 return;
-
-            Properties.CurrentPosition = GetCurrentPosition();
 
             updateCameraTimer.Interval = 16.66f;
             updateCameraTimer.Start();

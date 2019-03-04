@@ -31,6 +31,8 @@ namespace KCDriver.Droid
         protected override void OnAppearing() {
 
             Ride ride = new Ride();
+            KCApi.Properties.CurrentPosition = KCApi.GetCurrentPosition();
+
             //if the driver already has a ride
             if (KCApi.RecoveryCheck(ride) && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
                 ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
