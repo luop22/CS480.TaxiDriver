@@ -20,10 +20,10 @@
                     HorizontalOptions="Center"
 				    TextColor="White"/>
 
-				<Button Text="Accept" Clicked="Button_Clicked" 
+				<Button x:Name="StatusColor" Command="{Binding ChangeButton}" Text="Accept" Clicked="Button_Clicked" 
 					HorizontalOptions="FillAndExpand"
 					VerticalOptions="End"
-					BackgroundColor="Green"
+					BackgroundColor="Gray"
 					TextColor="White"
                     HeightRequest="100"
 				    FontSize="28"/>
