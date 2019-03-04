@@ -53,7 +53,7 @@ namespace KCDriver.Droid
             marker.SetPosition(new LatLng(this.Position.Latitude, this.Position.Longitude));
             marker.SetTitle(this.Label);
             marker.SetSnippet(this.Address);
-            marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.kc_user_icon));
+            marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.user_pin));
             return marker;
         }
     }
