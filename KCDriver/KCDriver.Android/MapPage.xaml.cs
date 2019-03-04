@@ -184,7 +184,7 @@ namespace KCDriver.Droid {
             }
             else 
             {
-                activeTimer.Interval = 2000;
+                activeTimer.Interval = 16.66f;
                 activeTimer.Start();
             }
         }
