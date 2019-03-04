@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
@@ -12,9 +9,8 @@ using Plugin.CurrentActivity;
 using System.Timers;
 using System.ComponentModel;
 
-namespace KCDriver.Droid
-{
-	[XamlCompilation(XamlCompilationOptions.Compile)]
+namespace KCDriver.Droid {
+    [XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MapPage : ContentPage
 	{
         //the timer which checks the ride queue.
@@ -49,7 +45,16 @@ namespace KCDriver.Droid
             }
             base.OnAppearing();
 
-            
+            if (KCApi.Properties.CameraOnDriver) 
+            {
+                KCApi.Properties.CameraOnDriver = false;
+                ButtonSetDriverCameraLock(null, null);
+            }
+            else 
+            {
+                KCApi.Properties.CameraOnRider = false;
+                ButtonSetRiderCameraLock(null, null);
+            }
         }
 
         protected override void OnDisappearing() {
@@ -97,7 +102,7 @@ namespace KCDriver.Droid
             }
             else
             {
-                var text = "The Ride has been compleated.";
+                var text = "The Ride has been completed.";
                 KCApi.Properties.RideActive = false;
 
                 Device.BeginInvokeOnMainThread(() => {
@@ -177,8 +182,11 @@ namespace KCDriver.Droid
                     Navigation.PopAsync();
                 });
             }
-            activeTimer.Interval = 2000;
-            activeTimer.Start();
+            else 
+            {
+                activeTimer.Interval = 2000;
+                activeTimer.Start();
+            }
         }
 
         /// <summary>

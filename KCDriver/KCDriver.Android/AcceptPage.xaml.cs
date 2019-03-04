@@ -1,17 +1,12 @@
 ﻿using Android.Widget;
 using Plugin.CurrentActivity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
 
-namespace KCDriver.Droid
-{
+namespace KCDriver.Droid {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AcceptPage : ContentPage
     {
@@ -31,10 +26,11 @@ namespace KCDriver.Droid
         protected override void OnAppearing() {
 
             Ride ride = new Ride();
+
             KCApi.Properties.CurrentPosition = KCApi.GetCurrentPosition();
 
             //if the driver already has a ride
-            if (KCApi.RecoveryCheck(ride) && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
+            if (KCApi.RecoveryCheck(ride)) {
                 ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
                 KCApi.Start(ride);
                 Navigation.PushAsync(mapPage);
@@ -73,8 +69,7 @@ namespace KCDriver.Droid
                 Ride ride = new Ride();
                 KCApi.Properties.CurrentPosition = KCApi.GetCurrentPosition();
 
-                if (!KCApi.Properties.RideActive && KCApi.AcceptNextRide(ride) 
-                    && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
+                if (!KCApi.Properties.RideActive && KCApi.AcceptNextRide(ride)) {
                     //Start takes only a position, which will come from the database
                     ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
                     KCApi.Start(ride);

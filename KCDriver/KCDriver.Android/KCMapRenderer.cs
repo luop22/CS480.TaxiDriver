@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
-using System.Diagnostics;
-
-using Android.App;
 using Android.Content;
 using Xamarin.Forms;
 
@@ -13,16 +6,12 @@ using Xamarin.Forms.Maps.Android;
 using Xamarin.Forms.Maps;
 using Android.Gms.Maps.Model;
 using Android.Gms.Maps;
-using System.Threading.Tasks;
-using Android.Locations;
 using System.ComponentModel;
 using KCDriver.Droid;
-using Android.Views;
 
 // Source: https://docs.microsoft.com/en-us/xamarin/android/platform/maps-and-location/maps/maps-api
 [assembly: ExportRenderer(typeof(KCMap), typeof(KCMapRenderer))]
-namespace KCDriver.Droid
-{
+namespace KCDriver.Droid {
     public class KCPin : Pin
     {
         /// <summary>

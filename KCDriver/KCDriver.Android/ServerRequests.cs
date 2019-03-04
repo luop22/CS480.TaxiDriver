@@ -1,11 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.CSharp;
 
 /* Contains functions for communicating with the remote database. */
 
@@ -235,10 +233,15 @@ namespace KCDriver.Droid {
         /// <param name="latitude"></param>
         /// <param name="longitude"></param>
         /// <returns></returns>
-        public static bool SetRideLocation(Ride ride, double latitude, double longitude)
+        public static bool SetRideLocation(Ride ride, double latitude = 0, double longitude = 0)
         {
             string message = "http://" + ip + "/driver/rideStatus.php?driverID=" + Driver_Id.driver_Id
-                + "&token=" + Driver_Id.token + "&rideID=" + ride.RideId + "&lat=" + latitude + "&lon=" + longitude;
+                + "&token=" + Driver_Id.token + "&rideID=" + ride.RideId;
+
+            if (Properties.CurrentPosition.Latitude != 0 
+                || Properties.CurrentPosition.Longitude != 0)
+                message += "&lat=" + latitude + "&lon=" + longitude;
+
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
             request.Timeout = timeout;

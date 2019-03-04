@@ -1,22 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Timers;
-using Android.App;
-using Android.Content;
-using Android.Gms.Maps;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Xamarin.Forms.Maps;
-using KCDriver.Droid;
 
-namespace KCDriver.Droid
-{
+namespace KCDriver.Droid {
     // Generic property code here: https://stackoverflow.com/questions/2246777/raise-an-event-whenever-a-propertys-value-changed
     public class KCProperties : INotifyPropertyChanged
     {
