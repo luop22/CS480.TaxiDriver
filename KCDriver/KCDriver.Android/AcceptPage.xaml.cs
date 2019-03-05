@@ -1,6 +1,7 @@
 ﻿using Android.Widget;
 using Plugin.CurrentActivity;
 using System;
+using System.Threading;
 using System.Timers;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
@@ -24,22 +25,23 @@ namespace KCDriver.Droid {
 
         //executes everytime the page appears.
         protected override void OnAppearing() {
+            //Thread.Sleep(1000);
 
             Ride ride = new Ride();
 
             KCApi.Properties.CurrentPosition = KCApi.GetCurrentPosition();
 
             //if the driver already has a ride
-            if (KCApi.RecoveryCheck(ride)) {
-                ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
-                KCApi.Start(ride);
-                Navigation.PushAsync(mapPage);
-            } else if (!Driver_Id.authenticated) {
+            if (!Driver_Id.authenticated) {
                 var text = "Authentication Failure";
                 Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                 Navigation.PopAsync();
             }
-
+            else if (!KCApi.Properties.RideActive && KCApi.RecoveryCheck(ride)) {
+                ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
+                KCApi.Start(ride);
+                Navigation.PushAsync(mapPage);
+            }
 
             //if the update timer is null start the timer.
             if (updater == null) {
@@ -69,7 +71,13 @@ namespace KCDriver.Droid {
                 Ride ride = new Ride();
                 KCApi.Properties.CurrentPosition = KCApi.GetCurrentPosition();
 
-                if (!KCApi.Properties.RideActive && KCApi.AcceptNextRide(ride)) {
+                if (KCApi.Properties.CurrentPosition.Latitude == 0 && KCApi.Properties.CurrentPosition.Longitude == 0)
+                {
+                    var text = "Invalid location. Please enable GPS or reenter service.";
+                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                }
+                else if (!KCApi.Properties.RideActive && KCApi.AcceptNextRide(ride)
+                    && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
                     //Start takes only a position, which will come from the database
                     ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
                     KCApi.Start(ride);
