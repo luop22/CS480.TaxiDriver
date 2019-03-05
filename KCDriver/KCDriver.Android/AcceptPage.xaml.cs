@@ -113,6 +113,7 @@ namespace KCDriver.Droid {
             updater.Enabled = true;
         }
 
+
         /// <summary>
         /// Timer function which updates the driver if there are any rides in the queue.
         /// </summary>
@@ -121,7 +122,16 @@ namespace KCDriver.Droid {
             string status = KCApi.CheckQueue();
             Device.BeginInvokeOnMainThread(() => {
                 Status.Text = status;
+
+                if(status.Equals("Rides are available"))
+                {
+                    StatusColor.BackgroundColor = Color.Green;
+                } else
+                {
+                    StatusColor.BackgroundColor = Color.Gray;
+                }
             });
+
             updater.Interval = 500;
             updater.Start();
         }
