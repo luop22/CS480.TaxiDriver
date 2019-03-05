@@ -109,18 +109,24 @@ namespace KCDriver.Droid {
 
         protected override bool OnBackButtonPressed()
         {
+            ButtonDisable();
+
             if (KCApi.Properties.State == "Map")
                 Device.BeginInvokeOnMainThread(() => {
                     ButtonCancelRide(null, null);
                 });
                 KCApi.Properties.RideActive = false;
                 return false;
+
+            ButtonEnable();
         }
 
         public void ButtonCancelRide(object sender, EventArgs e)
         {
             lock (buttonLock)
             {
+                ButtonDisable();
+
                 if (!KCApi.CancelRide(KCApi.Properties.CurrentRide))
                 {
                     var text = "There was a problem with cancellation.";
@@ -133,6 +139,9 @@ namespace KCDriver.Droid {
                     KCApi.Properties.RideActive = false;
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                 }
+
+                ButtonEnable();
+
             }
         }
 
@@ -140,6 +149,8 @@ namespace KCDriver.Droid {
         {
             lock (buttonLock)
             {
+                ButtonDisable();
+
                 if (!KCApi.CompleteRide(KCApi.Properties.CurrentRide))
                 {
                     var text = "There was a problem completing the ride.";
@@ -152,20 +163,27 @@ namespace KCDriver.Droid {
 
                     KCApi.Properties.RideActive = false;
                 }
+
+                ButtonEnable();
             }
         }
 
         public void ButtonCallRide(object sender, EventArgs e)
         {
+            ButtonDisable();
             lock (buttonLock)
                 DisplayAlert(KCApi.Properties.CurrentRide.ClientName + "'s Phone Number is:", 
                     KCApi.Properties.CurrentRide.PhoneNum, "OK");
+
+            ButtonEnable();
         }
 
         public void ButtonSetRiderCameraLock(object sender, EventArgs e)
         {
             lock (buttonLock)
             {
+                ButtonDisable();
+
                 KCApi.Properties.CameraOnRider = !KCApi.Properties.CameraOnRider;
 
                 if (KCApi.Properties.CameraOnRider)
@@ -181,6 +199,8 @@ namespace KCDriver.Droid {
                 {
                     ButtonSetRiderCamera.BorderColor = Color.Black;
                 }
+
+                ButtonEnable();
             }
         }
 
@@ -188,6 +208,8 @@ namespace KCDriver.Droid {
         {
             lock (buttonLock)
             {
+                ButtonDisable();
+
                 if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
                 {
                     KCApi.Properties.CameraOnDriver = !KCApi.Properties.CameraOnDriver;
@@ -207,6 +229,8 @@ namespace KCDriver.Droid {
                     var text = "Location unknown. Please enable GPS or reenter service.";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                 }
+
+                ButtonEnable();
             }
         }
 
@@ -268,6 +292,30 @@ namespace KCDriver.Droid {
                         RiderCardText.Text = KCApi.Properties.CurrentRide.ClientName + ": " + KCApi.Properties.CurrentRide.DisplayAddress;
                     });
                 });       
+        }
+
+
+        //Disables the use of all buttons
+        private void ButtonDisable() {
+
+            completeBtn.IsEnabled = false;
+            cancelBtn.IsEnabled = false;
+            phoneBtn.IsEnabled = false;
+            ButtonSetDriverCamera.IsEnabled = false;
+            ButtonSetRiderCamera.IsEnabled = false;
+
+        }
+
+
+        //Enables the use of all buttons
+        private void ButtonEnable() {
+
+            completeBtn.IsEnabled = true;
+            cancelBtn.IsEnabled = true;
+            phoneBtn.IsEnabled = true;
+            ButtonSetDriverCamera.IsEnabled = true;
+            ButtonSetRiderCamera.IsEnabled = true;
+
         }
     }
 }
