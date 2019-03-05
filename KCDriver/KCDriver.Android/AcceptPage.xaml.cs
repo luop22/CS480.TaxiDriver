@@ -34,6 +34,8 @@ namespace KCDriver.Droid {
 
             if (KCApi.Properties.State != "Accept")
             {
+                KCApi.Properties.State = "Accept";
+
                 KCApi.Properties.CurrentPosition = await KCApi.GetCurrentPosition();
 
                 // Location is not set
@@ -56,7 +58,7 @@ namespace KCDriver.Droid {
                 {
                     Ride ride = new Ride();
 
-                    if (KCApi.RecoveryCheck(ride))
+                    if (KCApi.RecoveryCheck(ride) && KCApi.SetRideLocation(ride))
                     {
                         ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
                         KCApi.Start(ride);
@@ -66,8 +68,6 @@ namespace KCDriver.Droid {
 
                 updater.Start();
             }
-
-            KCApi.Properties.State = "Accept";
         }
         //executes everytime the page disappears.
         protected override void OnDisappearing() {
