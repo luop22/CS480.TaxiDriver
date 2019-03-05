@@ -30,6 +30,8 @@ namespace KCDriver.Droid
 
         protected override async void OnAppearing()
         {
+            KCApi.Properties.State = "SignIn";
+
             if (KCApi.Properties.AskingLocationPermission)
                 return;
 
@@ -50,41 +52,43 @@ namespace KCDriver.Droid
         {
             lock(buttonLock)
             {
-                //only allow the user to get to the next page if the username and password are correct.
-                if (KCApi.Properties.HaveLocationPermission)
+                if (KCApi.Properties.State == "SignIn")
                 {
-                    if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && KCApi.Authenticate(password.Text, username.Text))
+                    //only allow the user to get to the next page if the username and password are correct.
+                    if (KCApi.Properties.HaveLocationPermission)
                     {
-                        //reset the username and password fields.
-                        username.Text = "";
-                        password.Text = "";
-                        Navigation.PushAsync(new AcceptPage());
+                        if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && KCApi.Authenticate(password.Text, username.Text))
+                        {
+                            //reset the username and password fields.
+                            username.Text = "";
+                            password.Text = "";
+                            Navigation.PushAsync(new AcceptPage());
+                        }
+                        else
+                        {
+                            //The username or password is incorrect.
+                            var text = "Incorrect credentials.";
+                            Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                            DisplayAlert("ALERT", text, "OK");
+                        }
                     }
                     else
                     {
-                        //The username or password is incorrect.
-                        var text = "Incorrect credentials.";
-                        Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-                        DisplayAlert("ALERT", text, "OK");
+                        var alertDialog = new Android.App.AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
+                        alertDialog.SetTitle("Location Needed");
+                        alertDialog.SetMessage("You must allow this app to use your location. Allow and try again.");
+                        alertDialog.SetPositiveButton("OK", async (senderad, args) =>
+                        {
+                            KCApi.Properties.HaveLocationPermission = await RequestPermission(Plugin.Permissions.Abstractions.Permission.Location);
+                        });
+                        alertDialog.SetNegativeButton("Cancel", (senderad, args) =>
+                        {
+                            System.Diagnostics.Process.GetCurrentProcess().Kill();
+                        });
+                        alertDialog.Create().Show();
                     }
                 }
-                else
-                {
-                    var alertDialog = new Android.App.AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
-                    alertDialog.SetTitle("Location Needed");
-                    alertDialog.SetMessage("You must allow this app to use your location. Allow and try again.");
-                    alertDialog.SetPositiveButton("OK", async (senderad, args) =>
-                    {
-                        KCApi.Properties.HaveLocationPermission = await RequestPermission(Plugin.Permissions.Abstractions.Permission.Location);
-                    });
-                    alertDialog.SetNegativeButton("Cancel", (senderad, args) =>
-                    {
-                        System.Diagnostics.Process.GetCurrentProcess().Kill();
-                    });
-                    alertDialog.Create().Show();
-                }
             }
-            
         }
 
         /// <summary>

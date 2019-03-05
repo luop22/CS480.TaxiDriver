@@ -42,6 +42,27 @@ namespace KCDriver.Droid {
 
         #endregion
 
+        private readonly object stateLock = new object();
+        private string state;
+        public string State
+        {
+            get
+            {
+                lock (stateLock)
+                {
+                    return state;
+                }
+            }
+
+            set
+            {
+                lock (stateLock)
+                {
+                    state = value;
+                }
+            }
+        }
+
         // The Map object which holds the google map with thread-safe get and set.
         // Thread lock
         private readonly object mapLock = new object();

@@ -48,28 +48,41 @@ namespace KCDriver.Droid
         public static void UpdatePosition(Object source, ElapsedEventArgs e)
         {
             updatePositionTimer.Interval = 500.0f;
-            updatePositionTimer.Start();
+
+            if (KCApi.Properties.State != "Map")
+                return;
 
             if (!Properties.MapReady || !Properties.RenderReady)
                 return;
 
-            Properties.CurrentPosition = GetCurrentPosition();
+            Task.Run( async () => {
+                try
+                {
+                    Properties.CurrentPosition = await GetCurrentPosition();
 
-            ThreadPool.QueueUserWorkItem(o => {
-                //set the drivers current position.
-                if (!SetDriverLocation(Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude)) {
-                    Debug.WriteLine("Setting driver location failed.");
+                    //set the drivers current position.
+                    if (!SetDriverLocation(Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude))
+                    {
+                        Debug.WriteLine("Setting driver location failed.");
+                    }
+
+                    Ride temp = new Ride(Properties.CurrentRide);
+
+                    if (!SetRideLocation(temp, Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude))
+                    {
+                        Properties.RideActive = false;
+                    }
+                    else
+                    {
+                        // Only update current ride if needed, since it will trigger a UI update.
+                        if (Properties.CurrentRide == null || temp.ClientLat != Properties.CurrentRide.ClientLat
+                        || temp.ClientLong != Properties.CurrentRide.ClientLong)
+                            Properties.CurrentRide = temp;
+                    }
                 }
-
-                Ride temp = new Ride(Properties.CurrentRide);
-
-                if (!SetRideLocation(temp, Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude)) {
-                    //Properties.RideActive = false;
-                } else {
-                    // Only update current ride if needed, since it will trigger a UI update.
-                    if (temp.ClientLat != Properties.CurrentRide.ClientLat
-                    || temp.ClientLong != Properties.CurrentRide.ClientLong)
-                        Properties.CurrentRide = temp;
+                catch (Exception ex)
+                {
+                    OutputException(ex);
                 }
             }); 
         }
@@ -83,7 +96,9 @@ namespace KCDriver.Droid
         public static void UpdateCamera(Object source, ElapsedEventArgs e)
         {
             updateCameraTimer.Interval = 16.66f;
-            updateCameraTimer.Start();
+
+            if (KCApi.Properties.State != "Map")
+                return;
 
             if (!Properties.MapReady || !Properties.RenderReady)
                 return;
@@ -160,7 +175,7 @@ namespace KCDriver.Droid
         /// Function to get the current position. Returns 0,0 on failure.
         /// </summary>
         /// <returns></returns>
-        public static Position GetCurrentPosition()
+        public static async Task<Position> GetCurrentPosition()
         {
 
             try
@@ -168,7 +183,7 @@ namespace KCDriver.Droid
                 var locator = CrossGeolocator.Current;
                 locator.DesiredAccuracy = 100;
 
-                Plugin.Geolocator.Abstractions.Position position = Task.Run(async () => await locator.GetLastKnownLocationAsync()).Result;
+                Plugin.Geolocator.Abstractions.Position position = await locator.GetLastKnownLocationAsync();
 
                 if (position != null)
                 {
@@ -182,7 +197,7 @@ namespace KCDriver.Droid
                      throw new Exception("Geolocation not available or not enabled.");
                 }
 
-                position = Task.Run(async () => await locator.GetPositionAsync(TimeSpan.FromSeconds(20), null, true)).Result;
+                position = await locator.GetPositionAsync(TimeSpan.FromSeconds(20), null, true);
             }
             catch (Exception e)
             {
