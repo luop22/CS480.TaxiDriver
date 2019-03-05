@@ -53,7 +53,7 @@ namespace KCDriver.Droid {
                         if (KCApi.Properties.CameraOnDriver)
                         {
                             KCApi.Properties.CameraOnRider = false;
-                            ButtonSetRiderCameraLock(null, null);
+                            Device.BeginInvokeOnMainThread(() => { ButtonSetRiderCameraLock(null, null); });
                         }
                     }
                     break;
@@ -71,14 +71,14 @@ namespace KCDriver.Droid {
                     KCApi.Properties.CameraOnDriver) 
             {
                 KCApi.Properties.CameraOnDriver = false;
-                ButtonSetDriverCameraLock(null, null);
+                Device.BeginInvokeOnMainThread(() => { ButtonSetDriverCameraLock(null, null); });
             }
             else 
             {
                 KCApi.Properties.CameraOnRider = false;
-                ButtonSetRiderCameraLock(null, null);
 
                 Device.BeginInvokeOnMainThread(() => {
+                    ButtonSetRiderCameraLock(null, null);
                     ButtonSetDriverCamera.BorderColor = Color.Gray;
                 });
             }
@@ -94,7 +94,7 @@ namespace KCDriver.Droid {
         protected override bool OnBackButtonPressed()
         {
             KCApi.CancelRide(KCApi.Properties.CurrentRide);
-            KCApi.Stop();
+            KCApi.Properties.RideActive = false;
             return false;
         }
 
@@ -208,16 +208,18 @@ namespace KCDriver.Droid {
                     Navigation.RemovePage(this.Navigation.NavigationStack[this.Navigation.NavigationStack.Count - 2]);
                     KCApi.Stop();
                     Device.BeginInvokeOnMainThread(() => {
-                        Navigation.PopAsync();
+                        Task.Run( async () => await Navigation.PopAsync()).Wait();
                     });
+                    activeTimer.Stop();
                 }
                 //If the ride is inactive then popback to the Accept page.
                 else if (!KCApi.Properties.RideActive)
                 {
                     KCApi.Stop();
                     Device.BeginInvokeOnMainThread(() => {
-                        Navigation.PopAsync();
+                        Task.Run( async () => await Navigation.PopAsync()).Wait();
                     });
+                    activeTimer.Stop();
                 }
                 else
                 {

@@ -25,7 +25,9 @@ namespace KCDriver.Droid {
 
         //executes everytime the page appears.
         protected override void OnAppearing() {
-            //Thread.Sleep(1000);
+            base.OnAppearing();
+
+            Thread.Sleep(200); // Need to wait a little time in order to avoid the pop crash
 
             Ride ride = new Ride();
 
@@ -48,13 +50,13 @@ namespace KCDriver.Droid {
 
                 SetTimer();
             }
-            base.OnAppearing();
         }
         //executes everytime the page dissapears.
         protected override void OnDisappearing() {
             //When the page dissapears the update timer is stoped.
             updater.Stop();
             updater = null;
+
             base.OnDisappearing();
         }
 
