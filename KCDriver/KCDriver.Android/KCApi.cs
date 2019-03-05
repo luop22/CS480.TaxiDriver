@@ -217,10 +217,8 @@ namespace KCDriver.Droid
         {
             try
             {
-                /* Prod API Key: AIzaSyDku7O-5lR0g8fOx04lPSAPA5T8-JmK1a0 - Needs to be updated with Geocoding API as of 2/28/19 */
-                /* Developer: AIzaSyAgdPpZhmK2UGsVKkJ5UWGp-w46aSt2Npo */
                 string request = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.Latitude + "," + pos.Longitude
-                    + "&key=AIzaSyAgdPpZhmK2UGsVKkJ5UWGp-w46aSt2Npo";
+                    + "&key=AIzaSyDku7O-5lR0g8fOx04lPSAPA5T8-JmK1a0";
 
                 WebClient client = new WebClient();
                 string s = client.DownloadString(request);
