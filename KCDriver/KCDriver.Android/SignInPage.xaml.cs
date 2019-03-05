@@ -36,6 +36,8 @@ namespace KCDriver.Droid
             KCApi.Properties.AskingLocationPermission = true;
             KCApi.Properties.HaveLocationPermission = await RequestPermission(Plugin.Permissions.Abstractions.Permission.Location);
             KCApi.Properties.AskingLocationPermission = false;
+
+            KCApi.Reset();
         }
 
         /// <summary>

@@ -70,7 +70,8 @@ namespace KCDriver.Droid {
             {
                 // The current ride just got updated
                 case "CurrentRide":
-                    UpdateMarker();
+                    if (KCApi.Properties.RideActive)
+                        UpdateMarker();
                     break;
             }
         }
@@ -180,16 +181,24 @@ namespace KCDriver.Droid {
         /// </summary>
         public void UpdateMarker()
         {
-            while (NativeMap == null) return;
-
-            Device.BeginInvokeOnMainThread( () =>
+            lock (nativeMapLock)
             {
-                NativeMap.Clear();
-                riderPin = KCPin.CreateRiderPin(new Position(KCApi.Properties.CurrentRide.ClientLat,
-                                                            KCApi.Properties.CurrentRide.ClientLong));
-                MarkerOptions mo = riderPin.CreateMarker();
-                NativeMap.AddMarker(mo);
-            });
+                Device.BeginInvokeOnMainThread(() =>
+               {
+                   try
+                   {
+                       NativeMap.Clear();
+                       riderPin = KCPin.CreateRiderPin(new Position(KCApi.Properties.CurrentRide.ClientLat,
+                                                                   KCApi.Properties.CurrentRide.ClientLong));
+                       MarkerOptions mo = riderPin.CreateMarker();
+                       NativeMap.AddMarker(mo);
+                   }
+                   catch (Exception e)
+                   {
+                       KCApi.OutputException(e);
+                   }
+               });
+            }
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Android.Widget;
 using Plugin.CurrentActivity;
+using Plugin.Geolocator;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
@@ -27,27 +29,38 @@ namespace KCDriver.Droid {
         protected override void OnAppearing() {
             base.OnAppearing();
 
-            Thread.Sleep(200); // Need to wait a little time in order to avoid the pop crash
-
-            Ride ride = new Ride();
-
             KCApi.Properties.CurrentPosition = KCApi.GetCurrentPosition();
 
-            //if the driver already has a ride
-            if (!Driver_Id.authenticated) {
+            // Location is not set
+            if (KCApi.Properties.CurrentPosition.Latitude == 0 && KCApi.Properties.CurrentPosition.Longitude == 0)
+            {
+                var text = "GPS signal lost. Please reenable or reenter service.";
+                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+            }
+            // Driver is no longer authenticated. Send back to sign in
+            else if (!Driver_Id.authenticated)
+            {
                 var text = "Authentication Failure";
                 Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-                Navigation.PopAsync();
+
+                if (Navigation.NavigationStack.Count > 0)
+                    Navigation.PopAsync();
             }
-            else if (!KCApi.Properties.RideActive && KCApi.RecoveryCheck(ride)) {
-                ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
-                KCApi.Start(ride);
-                Navigation.PushAsync(mapPage);
+            // Driver has entered the Accept screen for the first time since logging in
+            else if (!KCApi.Properties.RideActive && KCApi.Properties.CurrentRide == null)
+            {
+                Ride ride = new Ride();
+
+                if (KCApi.RecoveryCheck(ride))
+                {
+                    ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
+                    KCApi.Start(ride);
+                    Navigation.PushAsync(mapPage);
+                }
             }
 
             //if the update timer is null start the timer.
             if (updater == null) {
-
                 SetTimer();
             }
         }
@@ -69,17 +82,18 @@ namespace KCDriver.Droid {
         {
             lock(buttonLock)
             {
-                //c
+                StatusColor.IsEnabled = false;
+
                 Ride ride = new Ride();
                 KCApi.Properties.CurrentPosition = KCApi.GetCurrentPosition();
 
                 if (KCApi.Properties.CurrentPosition.Latitude == 0 && KCApi.Properties.CurrentPosition.Longitude == 0)
                 {
-                    var text = "Invalid location. Please enable GPS or reenter service.";
+                    var text = "GPS signal lost. Please reenable or reenter service.";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                 }
                 else if (!KCApi.Properties.RideActive && KCApi.AcceptNextRide(ride)
-                    && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
+                            && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
                     //Start takes only a position, which will come from the database
                     ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
                     KCApi.Start(ride);
@@ -88,7 +102,9 @@ namespace KCDriver.Droid {
                 else if (!Driver_Id.authenticated) {
                     var text = "Authentication Failure";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-                    Navigation.PopAsync();
+
+                    if (Navigation.NavigationStack.Count > 1)
+                        Navigation.PopAsync();
                 }
                 else if (Status.Text == "No available rides")
                 {
@@ -100,6 +116,9 @@ namespace KCDriver.Droid {
                     var text = "Accept ride failed.";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                 }
+
+                Task.Delay(200);
+                StatusColor.IsEnabled = true;
             }
         }
 

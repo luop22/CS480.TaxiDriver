@@ -32,8 +32,6 @@ namespace KCDriver.Droid
             Properties.CameraOnRider = false;
             Properties.RideActive = false;
 
-            Properties.CurrentRide = new Ride();
-
             // The timer automatically updates the camera and position every interval.
             updatePositionTimer = new System.Timers.Timer(500.0f);
             updatePositionTimer.Elapsed += (o,e) => Task.Factory.StartNew( () => UpdatePosition(o,e));
@@ -150,7 +148,12 @@ namespace KCDriver.Droid
                 }
                 Debug.WriteLine("------------------------- End -------------------------------------");
             }
-            
+
+        }
+
+        public static void Reset()
+        {
+            Properties.CurrentRide = null;
         }
 
         /// <summary>
@@ -209,7 +212,9 @@ namespace KCDriver.Droid
 
                 var obj = JsonConvert.DeserializeObject<GoogleRevGeocoderResponse>(s);
 
-                return obj.results[0].formatted_address;
+                if (obj.results.Count > 0)
+                    return obj.results[0].formatted_address;
+                else return "No nearby address. Retrying...";
             }
             catch (Exception e)
             {

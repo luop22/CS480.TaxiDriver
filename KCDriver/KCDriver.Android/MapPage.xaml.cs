@@ -8,6 +8,7 @@ using Android.Widget;
 using Plugin.CurrentActivity;
 using System.Timers;
 using System.ComponentModel;
+using System.Threading;
 
 namespace KCDriver.Droid {
     [XamlCompilation(XamlCompilationOptions.Compile)]
@@ -15,6 +16,8 @@ namespace KCDriver.Droid {
 	{
         //the timer which checks the ride queue.
         static System.Timers.Timer activeTimer;
+
+        static readonly object buttonLock = new object();
 
         public MapPage ()
 		{
@@ -33,7 +36,8 @@ namespace KCDriver.Droid {
             switch (e.PropertyName)
             {
                 case "CurrentRide":
-                    UpdateText();
+                    if (KCApi.Properties.RideActive)
+                        UpdateText();
                     break;
                 case "CurrentPosition":
                     if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
@@ -53,22 +57,26 @@ namespace KCDriver.Droid {
                         if (KCApi.Properties.CameraOnDriver)
                         {
                             KCApi.Properties.CameraOnRider = false;
-                            Device.BeginInvokeOnMainThread(() => { ButtonSetRiderCameraLock(null, null); });
+                            Device.BeginInvokeOnMainThread(() => {
+                                ButtonSetRiderCameraLock(null, null);
+                            });
                         }
                     }
                     break;
             }
         }
 
-        protected override void OnAppearing() {
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
             //if the authentication timer is null start the timer.
             if (activeTimer == null) {
                 SetTimer();
             }
-            base.OnAppearing();
-
-            if ( (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0) &&
-                    KCApi.Properties.CameraOnDriver) 
+            
+            if ( (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
+                    && KCApi.Properties.CameraOnDriver) 
             {
                 KCApi.Properties.CameraOnDriver = false;
                 Device.BeginInvokeOnMainThread(() => { ButtonSetDriverCameraLock(null, null); });
@@ -98,91 +106,104 @@ namespace KCDriver.Droid {
             return false;
         }
 
-
         public void ButtonCancelRide(object sender, EventArgs e)
         {
-            if (!KCApi.CancelRide(KCApi.Properties.CurrentRide))
+            lock (buttonLock)
             {
-                var text = "There was a problem with cancellation.";
-                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-            }
-            else
-            {
-                var text = "The Ride has been canceled.";
-
-                KCApi.Properties.RideActive = false;
-
-                Device.BeginInvokeOnMainThread(() =>
+                if (!KCApi.CancelRide(KCApi.Properties.CurrentRide))
                 {
-                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-                });
+                    var text = "There was a problem with cancellation.";
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                    });
+                }
+                else
+                {
+                    var text = "The Ride has been canceled.";
 
+                    KCApi.Properties.RideActive = false;
+
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                    });
+
+                }
             }
         }
 
         public void ButtonCompleteRide(object sender, EventArgs e)
         {
-            if (!KCApi.CompleteRide(KCApi.Properties.CurrentRide))
+            lock (buttonLock)
             {
-                var text = "There was a problem completing the ride.";
-                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-            }
-            else
-            {
-                var text = "The Ride has been completed.";
-                KCApi.Properties.RideActive = false;
-
-                Device.BeginInvokeOnMainThread(() => {
+                if (!KCApi.CompleteRide(KCApi.Properties.CurrentRide))
+                {
+                    var text = "There was a problem completing the ride.";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-                });
+                }
+                else
+                {
+                    var text = "The Ride has been completed.";
+                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+
+                    KCApi.Properties.RideActive = false;
+                }
             }
         }
 
         public void ButtonCallRide(object sender, EventArgs e)
         {
-            DisplayAlert(KCApi.Properties.CurrentRide.ClientName + "'s Phone Number is:", 
-                KCApi.Properties.CurrentRide.PhoneNum, "OK");
+            lock (buttonLock)
+                DisplayAlert(KCApi.Properties.CurrentRide.ClientName + "'s Phone Number is:", 
+                    KCApi.Properties.CurrentRide.PhoneNum, "OK");
         }
 
         public void ButtonSetRiderCameraLock(object sender, EventArgs e)
         {
-            KCApi.Properties.CameraOnRider = !KCApi.Properties.CameraOnRider;
-
-            if (KCApi.Properties.CameraOnRider)
+            lock (buttonLock)
             {
-                ButtonSetRiderCamera.BorderColor = Color.Yellow;
+                KCApi.Properties.CameraOnRider = !KCApi.Properties.CameraOnRider;
 
-                if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
-                    ButtonSetDriverCamera.BorderColor = Color.Black;
+                if (KCApi.Properties.CameraOnRider)
+                {
+                    ButtonSetRiderCamera.BorderColor = Color.Yellow;
+
+                    if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
+                        ButtonSetDriverCamera.BorderColor = Color.Black;
+                    else
+                        ButtonSetDriverCamera.BorderColor = Color.Gray;
+                }
                 else
-                    ButtonSetDriverCamera.BorderColor = Color.Gray;
-            }
-            else
-            {
-                ButtonSetRiderCamera.BorderColor = Color.Black;
+                {
+                    ButtonSetRiderCamera.BorderColor = Color.Black;
+                }
             }
         }
 
         public void ButtonSetDriverCameraLock(object sender, EventArgs e)
         {
-            if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
+            lock (buttonLock)
             {
-                KCApi.Properties.CameraOnDriver = !KCApi.Properties.CameraOnDriver;
-
-                if (KCApi.Properties.CameraOnDriver)
+                if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
                 {
-                    ButtonSetDriverCamera.BorderColor = Color.Yellow;
-                    ButtonSetRiderCamera.BorderColor = Color.Black;
+                    KCApi.Properties.CameraOnDriver = !KCApi.Properties.CameraOnDriver;
+
+                    if (KCApi.Properties.CameraOnDriver)
+                    {
+                        ButtonSetDriverCamera.BorderColor = Color.Yellow;
+                        ButtonSetRiderCamera.BorderColor = Color.Black;
+                    }
+                    else
+                    {
+                        ButtonSetDriverCamera.BorderColor = Color.Black;
+                    }
                 }
                 else
                 {
-                    ButtonSetDriverCamera.BorderColor = Color.Black;
+                    var text = "Location unknown. Please enable GPS or reenter service.";
+                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                 }
-            }
-            else
-            {
-                var text = "Location unknown. Please enable GPS or reenter service.";
-                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
             }
         }
 
@@ -191,15 +212,14 @@ namespace KCDriver.Droid {
         /// and driver authenticated.
         /// </summary>
         public void SetTimer() {
-            // Create a timer with a two second interval.
-            activeTimer = new System.Timers.Timer(2000);
+            activeTimer = new System.Timers.Timer(16.66f);
             // Hook up the Elapsed event for the timer. 
             activeTimer.Elapsed += CheckActive;
             activeTimer.AutoReset = false;
             activeTimer.Enabled = true;
         }
 
-        //Timer which checks if the driver is still authenticated if they arn't it kicks them back to the login page.
+        //Timer which checks if the driver is still authenticated if they aren't it kicks them back to the login page.
         public void CheckActive(Object source, ElapsedEventArgs e) {
             try
             {
@@ -207,23 +227,25 @@ namespace KCDriver.Droid {
                 {
                     Navigation.RemovePage(this.Navigation.NavigationStack[this.Navigation.NavigationStack.Count - 2]);
                     KCApi.Stop();
-                    Device.BeginInvokeOnMainThread(() => {
-                        Task.Run( async () => await Navigation.PopAsync()).Wait();
+                    Device.BeginInvokeOnMainThread(async () => {
+                        if (Navigation.NavigationStack.Count > 2)
+                            await Navigation.PopAsync();
                     });
                     activeTimer.Stop();
                 }
-                //If the ride is inactive then popback to the Accept page.
-                else if (!KCApi.Properties.RideActive)
+                //If the ride is inactive then pop back to the Accept page.
+                else if (!KCApi.Properties.RideActive && KCApi.Properties.RenderReady)
                 {
                     KCApi.Stop();
-                    Device.BeginInvokeOnMainThread(() => {
-                        Task.Run( async () => await Navigation.PopAsync()).Wait();
+                    Device.BeginInvokeOnMainThread(async () => {
+                        if (Navigation.NavigationStack.Count > 2)
+                            await Navigation.PopAsync();
                     });
                     activeTimer.Stop();
                 }
                 else
                 {
-                    activeTimer.Interval = 2000;
+                    activeTimer.Interval = 16.66f;
                     activeTimer.Start();
                 }
             }
