@@ -35,6 +35,28 @@ namespace KCDriver.Droid {
                 case "CurrentRide":
                     UpdateText();
                     break;
+                case "CurrentPosition":
+                    if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
+                    {
+                        if (ButtonSetDriverCamera.BorderColor == Color.Gray)
+                            Device.BeginInvokeOnMainThread(() => {
+                                ButtonSetDriverCamera.BorderColor = Color.Black;
+                            });
+                    }
+                    else
+                    {
+                        if (ButtonSetDriverCamera.BorderColor == Color.Black)
+                            Device.BeginInvokeOnMainThread(() => {
+                                ButtonSetDriverCamera.BorderColor = Color.Gray;
+                            });
+
+                        if (KCApi.Properties.CameraOnDriver)
+                        {
+                            KCApi.Properties.CameraOnRider = false;
+                            ButtonSetRiderCameraLock(null, null);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -45,7 +67,8 @@ namespace KCDriver.Droid {
             }
             base.OnAppearing();
 
-            if (KCApi.Properties.CameraOnDriver) 
+            if ( (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0) &&
+                    KCApi.Properties.CameraOnDriver) 
             {
                 KCApi.Properties.CameraOnDriver = false;
                 ButtonSetDriverCameraLock(null, null);
@@ -54,6 +77,10 @@ namespace KCDriver.Droid {
             {
                 KCApi.Properties.CameraOnRider = false;
                 ButtonSetRiderCameraLock(null, null);
+
+                Device.BeginInvokeOnMainThread(() => {
+                    ButtonSetDriverCamera.BorderColor = Color.Gray;
+                });
             }
         }
 
@@ -113,42 +140,49 @@ namespace KCDriver.Droid {
 
         public void ButtonCallRide(object sender, EventArgs e)
         {
-
             DisplayAlert(KCApi.Properties.CurrentRide.ClientName + "'s Phone Number is:", 
                 KCApi.Properties.CurrentRide.PhoneNum, "OK");
-         
         }
 
         public void ButtonSetRiderCameraLock(object sender, EventArgs e)
         {
-
             KCApi.Properties.CameraOnRider = !KCApi.Properties.CameraOnRider;
 
             if (KCApi.Properties.CameraOnRider)
             {
                 ButtonSetRiderCamera.BorderColor = Color.Yellow;
-                ButtonSetDriverCamera.BorderColor = Color.Black;
+
+                if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
+                    ButtonSetDriverCamera.BorderColor = Color.Black;
+                else
+                    ButtonSetDriverCamera.BorderColor = Color.Gray;
             }
             else
             {
                 ButtonSetRiderCamera.BorderColor = Color.Black;
             }
-
         }
 
         public void ButtonSetDriverCameraLock(object sender, EventArgs e)
         {
-
-            KCApi.Properties.CameraOnDriver = !KCApi.Properties.CameraOnDriver;
-
-            if (KCApi.Properties.CameraOnDriver)
+            if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
             {
-                ButtonSetDriverCamera.BorderColor = Color.Yellow;
-                ButtonSetRiderCamera.BorderColor = Color.Black;
+                KCApi.Properties.CameraOnDriver = !KCApi.Properties.CameraOnDriver;
+
+                if (KCApi.Properties.CameraOnDriver)
+                {
+                    ButtonSetDriverCamera.BorderColor = Color.Yellow;
+                    ButtonSetRiderCamera.BorderColor = Color.Black;
+                }
+                else
+                {
+                    ButtonSetDriverCamera.BorderColor = Color.Black;
+                }
             }
             else
             {
-                ButtonSetDriverCamera.BorderColor = Color.Black;
+                var text = "Location unknown. Please enable GPS or reenter service.";
+                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
             }
         }
 
@@ -167,25 +201,33 @@ namespace KCDriver.Droid {
 
         //Timer which checks if the driver is still authenticated if they arn't it kicks them back to the login page.
         public void CheckActive(Object source, ElapsedEventArgs e) {
-            if (!Driver_Id.authenticated && KCApi.Properties.RideActive) {
-                Navigation.RemovePage(this.Navigation.NavigationStack[this.Navigation.NavigationStack.Count - 2]);
-
-                Device.BeginInvokeOnMainThread(() => {
-                   KCApi.Stop();
-                   Navigation.PopAsync();
-                });
-            }
-            //If the ride is inactive then popback to the Accept page.
-            else if (!KCApi.Properties.RideActive) {
-                KCApi.Stop();
-                Device.BeginInvokeOnMainThread(() => {
-                    Navigation.PopAsync();
-                });
-            }
-            else 
+            try
             {
-                activeTimer.Interval = 2000;
-                activeTimer.Start();
+                if (!Driver_Id.authenticated && KCApi.Properties.RideActive)
+                {
+                    Navigation.RemovePage(this.Navigation.NavigationStack[this.Navigation.NavigationStack.Count - 2]);
+                    KCApi.Stop();
+                    Device.BeginInvokeOnMainThread(() => {
+                        Navigation.PopAsync();
+                    });
+                }
+                //If the ride is inactive then popback to the Accept page.
+                else if (!KCApi.Properties.RideActive)
+                {
+                    KCApi.Stop();
+                    Device.BeginInvokeOnMainThread(() => {
+                        Navigation.PopAsync();
+                    });
+                }
+                else
+                {
+                    activeTimer.Interval = 2000;
+                    activeTimer.Start();
+                }
+            }
+            catch (Exception ex)
+            {
+                KCApi.OutputException(ex);
             }
         }
 

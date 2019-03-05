@@ -9,6 +9,8 @@ using System.Diagnostics;
 using Xamarin.Forms;
 using System.Net;
 using Newtonsoft.Json;
+using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
 
 namespace KCDriver.Droid
 {
@@ -47,13 +49,13 @@ namespace KCDriver.Droid
         /// <param name="e"></param>
         public static void UpdatePosition(Object source, ElapsedEventArgs e)
         {
+            updatePositionTimer.Interval = 500.0f;
+            updatePositionTimer.Start();
+
             if (!Properties.MapReady || !Properties.RenderReady)
                 return;
 
             Properties.CurrentPosition = GetCurrentPosition();
-
-            updatePositionTimer.Interval = 500.0f;
-            updatePositionTimer.Start();
 
             ThreadPool.QueueUserWorkItem(o => {
                 //set the drivers current position.
@@ -64,7 +66,7 @@ namespace KCDriver.Droid
                 Ride temp = new Ride(Properties.CurrentRide);
 
                 if (!SetRideLocation(temp, Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude)) {
-                    Properties.RideActive = false;
+                    //Properties.RideActive = false;
                 } else {
                     // Only update current ride if needed, since it will trigger a UI update.
                     if (temp.ClientLat != Properties.CurrentRide.ClientLat
@@ -82,11 +84,11 @@ namespace KCDriver.Droid
         /// <param name="e"></param>
         public static void UpdateCamera(Object source, ElapsedEventArgs e)
         {
-            if (!Properties.MapReady || !Properties.RenderReady)
-                return;
-
             updateCameraTimer.Interval = 16.66f;
             updateCameraTimer.Start();
+
+            if (!Properties.MapReady || !Properties.RenderReady)
+                return;
 
             //Keeps the camera locked on where it is supposed to be.
             Device.BeginInvokeOnMainThread( () =>
@@ -94,18 +96,18 @@ namespace KCDriver.Droid
                 Position temp = new Position();
 
                 if (Properties.CameraOnDriver)
-                    temp = KCApi.Properties.CurrentPosition;
+                    temp = Properties.CurrentPosition;
                 else if (Properties.CameraOnRider)
                     temp = new Position(Properties.CurrentRide.ClientLat, Properties.CurrentRide.ClientLong);
 
                 if (Properties.CameraOnDriver || Properties.CameraOnRider)
                 {
                     if (temp != null)
-                        KCApi.Properties.Renderer.MoveCameraTo(temp.Latitude, temp.Longitude);
+                        Properties.Renderer.MoveCameraTo(temp.Latitude, temp.Longitude);
 
-                    KCApi.Properties.Map.HasScrollEnabled = false;
+                    Properties.Map.HasScrollEnabled = false;
                 }
-                else KCApi.Properties.Map.HasScrollEnabled = true;
+                else Properties.Map.HasScrollEnabled = true;
             });
         }
 
@@ -229,6 +231,21 @@ namespace KCDriver.Droid
                 Debug.WriteLine(e.Message);
                 Debug.WriteLine(e.StackTrace);
                 exceptions.Add(e);
+            }
+        }
+
+        public static bool CheckLocationPermission()
+        {
+            try
+            {
+                PermissionStatus ps = Task.Run(async () => await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location)).Result;
+
+                return ps == PermissionStatus.Granted;
+            }
+            catch (Exception e)
+            {
+                OutputException(e);
+                return false;
             }
         }
     }
