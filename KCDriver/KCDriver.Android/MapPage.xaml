@@ -42,7 +42,7 @@
 					   Text="Address: 100 Willow St, Everett, WA 98204">
 						<Label.FontSize>
 							<OnIdiom x:TypeArguments="x:Double"
-							 Phone="24"
+							 Phone="20"
 							 Tablet="36"/>
 						</Label.FontSize>
 					</Label>
