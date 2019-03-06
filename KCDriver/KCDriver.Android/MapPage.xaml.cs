@@ -163,8 +163,20 @@ namespace KCDriver.Droid {
         public void ButtonCallRide(object sender, EventArgs e)
         {
             ButtonDisable();
-                DisplayAlert(KCApi.Properties.CurrentRide.ClientName + "'s Phone Number is:", 
-                    KCApi.Properties.CurrentRide.PhoneNum, "OK");
+            //DisplayAlert(KCApi.Properties.CurrentRide.ClientName + "'s Phone Number is:", KCApi.Properties.CurrentRide.PhoneNum, "OK");
+
+            var alertDialog = new Android.App.AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
+            alertDialog.SetTitle("Phone Number");
+            alertDialog.SetMessage(KCApi.Properties.CurrentRide.ClientName + "'s Phone Number is:" + KCApi.Properties.CurrentRide.PhoneNum);
+            alertDialog.SetPositiveButton("Call", async (senderad, args) =>
+            {
+                Device.OpenUri(new Uri("tel:" + KCApi.Properties.CurrentRide.PhoneNum));
+            });
+            alertDialog.SetNegativeButton("Cancel", (senderad, args) =>
+            {
+                //Does not want to call
+            });
+            alertDialog.Create().Show();
 
             ButtonEnable();
         }
