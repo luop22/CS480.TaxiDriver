@@ -11,6 +11,8 @@ using System.Net;
 using Newtonsoft.Json;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using Android.Widget;
+using Plugin.CurrentActivity;
 
 namespace KCDriver.Droid
 {
@@ -71,6 +73,11 @@ namespace KCDriver.Droid
                     if (!SetRideLocation(temp, Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude))
                     {
                         Properties.RideActive = false;
+
+                        var text = "Rider has cancelled ride.";
+                        Device.BeginInvokeOnMainThread(() => { 
+                            Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                        });
                     }
                     else
                     {

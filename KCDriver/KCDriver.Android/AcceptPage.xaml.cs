@@ -98,6 +98,9 @@ namespace KCDriver.Droid {
                 }
                 else if (!KCApi.Properties.RideActive && KCApi.AcceptNextRide(ride)
                             && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
+
+                    KCApi.Properties.State = KCProperties.AppState.Transitioning;
+
                     //Start takes only a position, which will come from the database
                     ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
                     KCApi.Start(ride);
@@ -106,6 +109,8 @@ namespace KCDriver.Droid {
                 else if (!Driver_Id.authenticated) {
                     var text = "Authentication Failure";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+
+                    KCApi.Properties.State = KCProperties.AppState.Transitioning;
 
                     lock (KCApi.Properties.StateLock)
                     {
