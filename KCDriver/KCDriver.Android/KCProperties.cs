@@ -42,9 +42,18 @@ namespace KCDriver.Droid {
 
         #endregion
 
+        public enum AppState
+        {
+            SignIn,
+            Accept,
+            Map,
+            Transitioning
+        };
+
         private readonly object stateLock = new object();
-        private string state;
-        public string State
+        public readonly object StateLock = new object(); // For external classes to coordinate state changes
+        private AppState state;
+        public AppState State
         {
             get
             {

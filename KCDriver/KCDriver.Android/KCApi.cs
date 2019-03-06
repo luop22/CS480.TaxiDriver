@@ -49,7 +49,7 @@ namespace KCDriver.Droid
         {
             updatePositionTimer.Interval = 500.0f;
 
-            if (KCApi.Properties.State != "Map")
+            if (KCApi.Properties.State != KCProperties.AppState.Map)
                 return;
 
             if (!Properties.MapReady || !Properties.RenderReady)
@@ -97,7 +97,7 @@ namespace KCDriver.Droid
         {
             updateCameraTimer.Interval = 16.66f;
 
-            if (KCApi.Properties.State != "Map")
+            if (KCApi.Properties.State != KCProperties.AppState.Map)
                 return;
 
             if (!Properties.MapReady || !Properties.RenderReady)

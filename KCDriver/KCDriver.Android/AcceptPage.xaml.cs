@@ -32,9 +32,9 @@ namespace KCDriver.Droid {
         protected override async void OnAppearing() {
             base.OnAppearing();
 
-            if (KCApi.Properties.State != "Accept")
+            if (KCApi.Properties.State != KCProperties.AppState.Accept)
             {
-                KCApi.Properties.State = "Accept";
+                KCApi.Properties.State = KCProperties.AppState.Accept;
 
                 KCApi.Properties.CurrentPosition = await KCApi.GetCurrentPosition();
 
@@ -84,7 +84,7 @@ namespace KCDriver.Droid {
         /// <param name="e"></param>
         void Button_Clicked(object sender, EventArgs e)
         {
-            lock(buttonLock)
+            lock (buttonLock) 
             {
                 StatusColor.IsEnabled = false;
 
@@ -107,8 +107,11 @@ namespace KCDriver.Droid {
                     var text = "Authentication Failure";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
 
-                    if (Navigation != null && Navigation.NavigationStack.Count > 1)
-                        Navigation.PopAsync();
+                    lock (KCApi.Properties.StateLock)
+                    {
+                        if (KCApi.Properties.State == KCProperties.AppState.Accept && Navigation.NavigationStack.Count > 1)
+                            Navigation.PopAsync();
+                    }
                 }
                 else if (Status.Text == "No available rides")
                 {

@@ -30,7 +30,7 @@ namespace KCDriver.Droid
 
         protected override async void OnAppearing()
         {
-            KCApi.Properties.State = "SignIn";
+            KCApi.Properties.State = KCProperties.AppState.SignIn;
 
             if (KCApi.Properties.AskingLocationPermission)
                 return;
@@ -52,7 +52,7 @@ namespace KCDriver.Droid
         {
             lock(buttonLock)
             {
-                if (KCApi.Properties.State == "SignIn")
+                if (KCApi.Properties.State == KCProperties.AppState.SignIn)
                 {
                     //only allow the user to get to the next page if the username and password are correct.
                     if (KCApi.Properties.HaveLocationPermission)
