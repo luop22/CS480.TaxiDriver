@@ -11,12 +11,16 @@ using Xamarin.Forms.Xaml;
 
 namespace KCDriver.Droid {
     [XamlCompilation(XamlCompilationOptions.Compile)]
+
     public partial class AcceptPage : ContentPage
     {
         MapPage mapPage;
         object buttonLock;
         static System.Timers.Timer updater;
 
+        /// <summary>
+        /// Initializes variables and update timer for the Accept page.
+        /// </summary>
         public AcceptPage()
         {
             InitializeComponent();
@@ -28,7 +32,9 @@ namespace KCDriver.Droid {
             updater.Enabled = false;
         }
 
-        //executes everytime the page appears.
+        /// <summary>
+        /// Executes everytime the page appears.
+        /// </summary>
         protected override async void OnAppearing() {
             base.OnAppearing();
 
@@ -82,7 +88,7 @@ namespace KCDriver.Droid {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Button_Clicked(object sender, EventArgs e)
+        public void Button_Clicked(object sender, EventArgs e)
         {
             lock (buttonLock) 
             {

@@ -19,6 +19,10 @@ namespace KCDriver.Droid {
 
         static readonly object buttonLock = new object();
 
+        /// <summary>
+        /// Starts navigation and initializes the map page and starts the timer 
+        /// to check if the there is an active ride.
+        /// </summary>
         public MapPage ()
 		{
 			InitializeComponent();
@@ -69,6 +73,9 @@ namespace KCDriver.Droid {
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void OnAppearing()
         {
             base.OnAppearing();

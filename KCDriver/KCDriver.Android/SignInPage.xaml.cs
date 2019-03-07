@@ -17,6 +17,9 @@ namespace KCDriver.Droid
     {
         object buttonLock;
 
+        /// <summary>
+        /// Asks for permission to access location and initializes the sign in page.
+        /// </summary>
         public SignInPage()
         {
             InitializeComponent();
@@ -28,6 +31,10 @@ namespace KCDriver.Droid
             buttonLock = new object();
         }
 
+        /// <summary>
+        /// makes sure that the app has permission to access the 
+        /// location and resets KCApi everytime the sign in page appears.
+        /// </summary>
         protected override async void OnAppearing()
         {
             KCApi.Properties.State = KCProperties.AppState.SignIn;
@@ -122,6 +129,11 @@ namespace KCDriver.Droid
             }
         }
 
+        /// <summary>
+        /// Opens the phone app to call the K.C. Cab company.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CallSelect(object sender, EventArgs e)
         {
             Device.OpenUri(new Uri("tel:" + "5099293055"));
