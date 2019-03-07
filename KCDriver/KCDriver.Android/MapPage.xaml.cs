@@ -166,8 +166,9 @@ namespace KCDriver.Droid {
             //DisplayAlert(KCApi.Properties.CurrentRide.ClientName + "'s Phone Number is:", KCApi.Properties.CurrentRide.PhoneNum, "OK");
 
             var alertDialog = new Android.App.AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
-            alertDialog.SetTitle("Phone Number");
-            alertDialog.SetMessage(KCApi.Properties.CurrentRide.ClientName + "'s Phone Number is:" + KCApi.Properties.CurrentRide.PhoneNum);
+            alertDialog.SetTitle(KCApi.Properties.CurrentRide.ClientName + "'s Phone Number");
+            alertDialog.SetMessage("(" + KCApi.Properties.CurrentRide.PhoneNum.Substring(0,3) + ") " 
+                + KCApi.Properties.CurrentRide.PhoneNum.Substring(3, 3) + "-" + KCApi.Properties.CurrentRide.PhoneNum.Substring(6));
             alertDialog.SetPositiveButton("Call", (senderad, args) =>
             {
                 Device.OpenUri(new Uri("tel:" + KCApi.Properties.CurrentRide.PhoneNum));
