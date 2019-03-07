@@ -206,7 +206,6 @@ namespace KCDriver.Droid {
 
         public void ButtonSetDriverCameraLock(object sender, EventArgs e)
         {
-          
             ButtonDisable();
 
             if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
@@ -234,49 +233,68 @@ namespace KCDriver.Droid {
 
         //Timer which checks if the driver is still authenticated if they aren't it kicks them back to the login page.
         public void CheckActive(Object source, ElapsedEventArgs e) {
-            try
-            {
-                lock (KCApi.Properties.StateLock)
+            Task.Run(() => { 
+                try
                 {
-                    if (KCApi.Properties.State == KCProperties.AppState.Map)
+                    lock (KCApi.Properties.StateLock)
                     {
-                        if (!Driver_Id.authenticated && KCApi.Properties.RideActive)
+                        if (KCApi.Properties.State == KCProperties.AppState.Map)
                         {
-                            Navigation.RemovePage(this.Navigation.NavigationStack[this.Navigation.NavigationStack.Count - 2]);
-                            KCApi.Stop();
-                            Device.BeginInvokeOnMainThread(async () =>
+                            bool pop = false;
+                            if (!Driver_Id.authenticated && KCApi.Properties.RideActive)
                             {
-                                if (Navigation.NavigationStack.Count > 2)
-                                    await Navigation.PopAsync();
-                            });
-                            activeTimer.Stop();
+                                // Pop us back to the main page!
+                                Navigation.RemovePage(this.Navigation.NavigationStack[this.Navigation.NavigationStack.Count - 2]);
 
-                            KCApi.Properties.State = KCProperties.AppState.Transitioning;
-                        }
-                        //If the ride is inactive then pop back to the Accept page.
-                        else if (!KCApi.Properties.RideActive && KCApi.Properties.RenderReady)
-                        {
-                            KCApi.Stop();
-                            Device.BeginInvokeOnMainThread(async () =>
+                                pop = true;
+                            }
+                            //If the ride is inactive then pop back to the Accept page.
+                            else if (!KCApi.Properties.RideActive && KCApi.Properties.RenderReady)
                             {
-                                if (Navigation.NavigationStack.Count > 2)
-                                    await Navigation.PopAsync();
-                            });
-                            activeTimer.Stop();
+                                var text = "Rider has cancelled ride.";
+                                Device.BeginInvokeOnMainThread(() => {
+                                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                                });
 
-                            KCApi.Properties.State = KCProperties.AppState.Transitioning;
-                        }
-                        else
-                        {
-                            activeTimer.Interval = 100.0f; // Can be optimized
+                                pop = true;
+                            }
+                            else if (KCApi.Properties.NetState == KCProperties.NetworkState.Disconnected)
+                            {
+                                // Back to the main page
+                                Navigation.RemovePage(this.Navigation.NavigationStack[this.Navigation.NavigationStack.Count - 2]);
+
+                                var text = "Internet connection lost.";
+                                Device.BeginInvokeOnMainThread(() => {
+                                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                                });
+
+                                pop = true;
+                            }
+
+                            if (pop)
+                            {
+                                KCApi.Stop();
+                                activeTimer.Stop();
+
+                                KCApi.Properties.State = KCProperties.AppState.Transitioning;
+
+                                Device.BeginInvokeOnMainThread(async () =>
+                                {
+                                    await Navigation.PopAsync();
+                                });
+                            }
+                            else
+                            {
+                                activeTimer.Interval = 100.0f; // Can be optimized
+                            }
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                KCApi.OutputException(ex);
-            }
+                catch (Exception ex)
+                {
+                    KCApi.OutputException(ex);
+                }
+            });
         }
 
         /// <summary>

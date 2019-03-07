@@ -32,14 +32,14 @@ namespace KCDriver.Droid
         {
             KCApi.Properties.State = KCProperties.AppState.SignIn;
 
+            KCApi.Reset();
+
             if (KCApi.Properties.AskingLocationPermission)
                 return;
 
             KCApi.Properties.AskingLocationPermission = true;
             KCApi.Properties.HaveLocationPermission = await RequestPermission(Plugin.Permissions.Abstractions.Permission.Location);
             KCApi.Properties.AskingLocationPermission = false;
-
-            KCApi.Reset();
         }
 
         /// <summary>
@@ -50,47 +50,44 @@ namespace KCDriver.Droid
         /// <param name="e"></param>
         private void SignInClicked(object sender, EventArgs e)
         {
-            if (KCApi.Properties.State == KCProperties.AppState.SignIn)
+            lock (buttonLock)
             {
-                lock (buttonLock)
+                if (KCApi.Properties.State == KCProperties.AppState.SignIn)
                 {
-                    if (KCApi.Properties.State == KCProperties.AppState.SignIn)
+                    //only allow the user to get to the next page if the username and password are correct.
+                    if (KCApi.Properties.HaveLocationPermission)
                     {
-                        //only allow the user to get to the next page if the username and password are correct.
-                        if (KCApi.Properties.HaveLocationPermission)
+                        if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && KCApi.Authenticate(password.Text, username.Text))
                         {
-                            if ((!String.IsNullOrEmpty(username.Text) || !String.IsNullOrEmpty(password.Text)) && KCApi.Authenticate(password.Text, username.Text))
-                            {
-                                KCApi.Properties.State = KCProperties.AppState.Transitioning;
+                            KCApi.Properties.State = KCProperties.AppState.Transitioning;
+                            KCApi.Properties.NetState = KCProperties.NetworkState.Connected;
 
-                                //reset the username and password fields.
-                                username.Text = "";
-                                password.Text = "";
-                                Navigation.PushAsync(new AcceptPage());
-                            }
-                            else
-                            {
-                                //The username or password is incorrect.
-                                var text = "Incorrect credentials.";
-                                Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-                                DisplayAlert("ALERT", text, "OK");
-                            }
+                            //reset the username and password fields.
+                            username.Text = "";
+                            password.Text = "";
+                            Navigation.PushAsync(new AcceptPage());
                         }
                         else
                         {
-                            var alertDialog = new Android.App.AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
-                            alertDialog.SetTitle("Location Needed");
-                            alertDialog.SetMessage("You must allow this app to use your location. Allow and try again.");
-                            alertDialog.SetPositiveButton("OK", async (senderad, args) =>
-                            {
-                                KCApi.Properties.HaveLocationPermission = await RequestPermission(Plugin.Permissions.Abstractions.Permission.Location);
-                            });
-                            alertDialog.SetNegativeButton("Cancel", (senderad, args) =>
-                            {
-                                System.Diagnostics.Process.GetCurrentProcess().Kill();
-                            });
-                            alertDialog.Create().Show();
+                            //The username or password is incorrect.
+                            var text = "Check your network connection and credentials and try again.";
+                            DisplayAlert("Authentication Failure", text, "OK");
                         }
+                    }
+                    else
+                    {
+                        var alertDialog = new Android.App.AlertDialog.Builder(CrossCurrentActivity.Current.Activity);
+                        alertDialog.SetTitle("Location Needed");
+                        alertDialog.SetMessage("You must allow this app to use your location. Allow and try again.");
+                        alertDialog.SetPositiveButton("OK", async (senderad, args) =>
+                        {
+                            KCApi.Properties.HaveLocationPermission = await RequestPermission(Plugin.Permissions.Abstractions.Permission.Location);
+                        });
+                        alertDialog.SetNegativeButton("Cancel", (senderad, args) =>
+                        {
+                            System.Diagnostics.Process.GetCurrentProcess().Kill();
+                        });
+                        alertDialog.Create().Show();
                     }
                 }
             }

@@ -36,6 +36,12 @@ namespace KCDriver.Droid {
             {
                 KCApi.Properties.State = KCProperties.AppState.Accept;
 
+                if (KCApi.Properties.NetState == KCProperties.NetworkState.Disconnected)
+                {
+                    await Navigation.PopAsync();
+                    return;
+                }
+
                 KCApi.Properties.CurrentPosition = await KCApi.GetCurrentPosition();
 
                 // Location is not set
@@ -50,8 +56,9 @@ namespace KCDriver.Droid {
                     var text = "Authentication Failure";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
 
-                    if (Navigation != null && Navigation.NavigationStack.Count > 1)
-                        await Navigation.PopAsync();
+                    KCApi.Properties.State = KCProperties.AppState.Transitioning;
+
+                    await Navigation.PopAsync();
                 }
                 // Driver has entered the Accept screen for the first time since logging in
                 else if (!KCApi.Properties.RideActive && KCApi.Properties.CurrentRide == null)
@@ -62,6 +69,9 @@ namespace KCDriver.Droid {
                     {
                         ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
                         KCApi.Start(ride);
+
+                        KCApi.Properties.State = KCProperties.AppState.Transitioning;
+
                         await Navigation.PushAsync(mapPage);
                     }
                 }
@@ -114,8 +124,10 @@ namespace KCDriver.Droid {
 
                     lock (KCApi.Properties.StateLock)
                     {
-                        if (KCApi.Properties.State == KCProperties.AppState.Accept && Navigation.NavigationStack.Count > 1)
+                        if (KCApi.Properties.State == KCProperties.AppState.Accept)
+                        {
                             Navigation.PopAsync();
+                        }    
                     }
                 }
                 else if (Status.Text == "No available rides")
@@ -136,9 +148,25 @@ namespace KCDriver.Droid {
         /// <summary>
         /// Timer function which updates the driver if there are any rides in the queue.
         /// </summary>
-        private void Timer(Object source, ElapsedEventArgs e) {
+        private void Timer(Object source, ElapsedEventArgs e)
+        {
 
-            string status = KCApi.CheckQueue();
+            string status = Task.Run(() => KCApi.CheckQueue()).Result;
+
+            if (KCApi.Properties.NetState == KCProperties.NetworkState.Disconnected)
+            {
+                var text = "Internet connection lost.";
+                
+                Device.BeginInvokeOnMainThread(async () => {
+                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+
+                    KCApi.Properties.State = KCProperties.AppState.Transitioning;
+
+                    await Navigation.PopAsync();
+                });
+                return;
+            }
+
             Device.BeginInvokeOnMainThread(() => {
                 Status.Text = status;
 
