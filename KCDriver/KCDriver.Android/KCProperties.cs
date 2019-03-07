@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Timers;
 using Xamarin.Forms.Maps;
 
 namespace KCDriver.Droid {
@@ -42,6 +44,7 @@ namespace KCDriver.Droid {
 
         #endregion
 
+        #region AppState
         public enum AppState
         {
             SignIn,
@@ -71,13 +74,94 @@ namespace KCDriver.Droid {
                 }
             }
         }
+        #endregion
+
+        #region NetworkState
+        public enum NetworkState
+        {
+            Connected,
+            Retrying,
+            Disconnected
+        }
+
+        private readonly object networkStateLock = new object();
+        public readonly object NetworkStateLock = new object();
+        private int netStateTimeout = 30000;
+        private Stopwatch netStateTimer = new Stopwatch();
+        private NetworkState netState = NetworkState.Connected;
+        public NetworkState NetState
+        {
+            get
+            {
+                lock (networkStateLock)
+                {
+                    return netState;
+                }
+            }
+
+            set
+            {
+                lock (networkStateLock)
+                {
+                    if (value == NetworkState.Disconnected)
+                    {
+                        if (netStateTimer.ElapsedMilliseconds >= netStateTimeout
+                            && netState == NetworkState.Retrying)
+                        {
+                            netStateTimer.Reset();
+                            SetPropertyField("NetState", ref netState, NetworkState.Disconnected);
+                        }
+                        else if (!netStateTimer.IsRunning)
+                        {
+                            netState = NetworkState.Retrying;
+                            netStateTimer.Start();
+                        }
+                    }
+                    else
+                    {
+                        netStateTimer.Reset();
+                        netState = value;
+                    }
+                }
+            }
+        }
+        #endregion
+
+        /* Slated for removal
+        #region GPSState
+        public enum GPSState
+        {
+            Connected,
+            Disconnected
+        }
+
+        private readonly object gpsStateLock = new object();
+        public readonly object GPSStateLock = new object();
+        private GPSState gpsState;
+        public GPSState GpsState
+        {
+            get
+            {
+                lock (gpsStateLock)
+                {
+                    return gpsState;
+                }
+            }
+
+            set
+            {
+                lock (gpsStateLock)
+                {
+                    gpsState = value;
+                }
+            }
+        }
+        #endregion */
 
         // The Map object which holds the google map with thread-safe get and set.
-        // Thread lock
+        #region Map
         private readonly object mapLock = new object();
-        // Private-facing
         private KCMap map;
-        // Public facing
         public KCMap Map
         {
             get
@@ -97,8 +181,10 @@ namespace KCDriver.Droid {
                 }
             }
         }
+        #endregion
 
         // Custom renderer object used for drawing on the map
+        #region Renderer
         private readonly object renderLock = new object();
         private KCMapRenderer renderer;
         public KCMapRenderer Renderer
@@ -119,7 +205,9 @@ namespace KCDriver.Droid {
                 }
             }
         }
+        #endregion
 
+        #region CurrentRide
         private readonly object rideLock = new object();
         private Ride currentRide;
         public Ride CurrentRide
@@ -140,8 +228,10 @@ namespace KCDriver.Droid {
                 }
             }
         }
+        #endregion
 
         // Single lock for values tracking when the map and renderer call OnReady()
+        #region MapReady
         private readonly object boolLock = new object();
         private bool mapReady;
         public bool MapReady
@@ -162,8 +252,10 @@ namespace KCDriver.Droid {
                 }
             }
         }
+        #endregion
 
         // See above
+        #region RenderReady
         private bool renderReady;
         public bool RenderReady
         {
@@ -183,8 +275,10 @@ namespace KCDriver.Droid {
                 }
             }
         }
+        #endregion
 
         // Current GPS position
+        #region CurrentPosition
         private readonly object positionLock = new object();
         private Position currentPosition;
         public Position CurrentPosition
@@ -205,7 +299,10 @@ namespace KCDriver.Droid {
                 }
             }
         }
+        #endregion
 
+        // To track when permissions are being asked
+        #region Permission Flow
         private readonly object permissionLock = new object();
         private bool askingLocationPermission;
         public bool AskingLocationPermission
@@ -245,7 +342,10 @@ namespace KCDriver.Droid {
                 }
             }
         }
+        #endregion
 
+        // Track which camera lock is active if any
+        #region Camera Controls
         private readonly object cameraDriverLock = new object();
         private bool cameraOnDriver;
         public bool CameraOnDriver
@@ -291,7 +391,10 @@ namespace KCDriver.Droid {
                 }
             }
         }
+        #endregion
 
+        // Track the rides status
+        #region RideActive
         private readonly object rideActiveLock = new object();
         private bool rideActive;
         public bool RideActive
@@ -312,5 +415,6 @@ namespace KCDriver.Droid {
                 }
             }
         }
+        #endregion
     }
 }

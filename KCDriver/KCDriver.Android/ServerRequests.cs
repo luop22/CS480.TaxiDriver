@@ -26,35 +26,49 @@ namespace KCDriver.Droid {
 
             string message = "http://" + ip + "/driver/auth/authenticate.php?username=" + userName + "&pwHsh=" + GetHash(password, userName);
             string responseFromServer = "";
-            try {
-            // Create a request for the URL. 		
-            WebRequest request = WebRequest.Create(message);
-            request.Timeout = timeout;
-            // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Get the stream containing content returned by the server.
-            Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
-            responseFromServer = reader.ReadToEnd();
-            // Cleanup the streams and the response.
-            reader.Close();
-            dataStream.Close();
-            response.Close();
-            dynamic jObject = null;
-            if (!responseFromServer.Contains("Failure")) {
-                jObject = JObject.Parse(responseFromServer);
+            try
+            {
+                // Create a request for the URL. 		
+                WebRequest request = WebRequest.Create(message);
+                request.Timeout = timeout;
+                // Get the response.
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                // Get the stream containing content returned by the server.
+                Stream dataStream = response.GetResponseStream();
+                // Open the stream using a StreamReader for easy access.
+                StreamReader reader = new StreamReader(dataStream);
+                // Read the content.
+                responseFromServer = reader.ReadToEnd();
+                // Cleanup the streams and the response.
+                reader.Close();
+                dataStream.Close();
+                response.Close();
+                dynamic jObject = null;
 
-                Driver_Id.driver_Id = Int32.Parse((string)jObject.result.driverID);
-                Driver_Id.token = (string)jObject.result.token;
-                Driver_Id.authenticated = true;
+                if (!responseFromServer.Contains("Failure"))
+                {
+                    jObject = JObject.Parse(responseFromServer);
 
-                return true;
-            } else {
-                return false;
+                    Driver_Id.driver_Id = Int32.Parse((string)jObject.result.driverID);
+                    Driver_Id.token = (string)jObject.result.token;
+                    Driver_Id.authenticated = true;
+
+                    return true;
                 }
-            } catch (Exception e) {
+                else
+                {
+                    return false;
+                }
+            }
+            catch (WebException)
+            {
+                lock (Properties.NetworkStateLock)
+                    KCApi.Properties.NetState = KCProperties.NetworkState.Disconnected;
+
+                return false;
+            }
+            catch (Exception e)
+            {
                 KCApi.OutputException(e);
                 return false;
             }
@@ -68,7 +82,8 @@ namespace KCDriver.Droid {
         /// <param name="userName"></param>
         /// <returns></returns>
         private static string GetHash(string input, String userName) {
-            using (SHA256 sha256Hash = SHA256.Create()) {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
                 HashAlgorithm hashAlgorithm = sha256Hash;
                 // Convert the input string to a byte array and compute the hash.
                 byte[] data = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(GetSalt(userName) + input));
@@ -79,7 +94,8 @@ namespace KCDriver.Droid {
 
                 // Loop through each byte of the hashed data 
                 // and format each one as a hexadecimal string.
-                for (int i = 0; i < data.Length; i++) {
+                for (int i = 0; i < data.Length; i++)
+                {
                     sBuilder.Append(data[i].ToString("x2"));
                 }
                 // Return the hexadecimal string.
@@ -95,7 +111,8 @@ namespace KCDriver.Droid {
         public static String GetSalt(String userName) {
             String message = "http://" + ip + "/driver/auth/getSalt.php?username=" + userName;
             String responseFromServer = "";
-            try {
+            try
+            {
                 // Create a request for the URL. 		
                 WebRequest request = WebRequest.Create(message);
                 request.Timeout = timeout;
@@ -121,11 +138,19 @@ namespace KCDriver.Droid {
                 } else {
                     return "error";
                 }
-            } catch (Exception e) {
+            }
+            catch (WebException)
+            {
+                lock (Properties.NetworkStateLock)
+                    KCApi.Properties.NetState = KCProperties.NetworkState.Disconnected;
+
+                return "No Internet connection.";
+            }
+            catch (Exception e)
+            {
                 KCApi.OutputException(e);
                 return "Error Connecting to Server";
-            }
-            
+            } 
         }
 
         /// <summary>
@@ -140,7 +165,9 @@ namespace KCDriver.Droid {
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
             request.Timeout = timeout;
-            try {
+
+            try
+            {
                 // Get the response.
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 // Display the status.
@@ -170,10 +197,19 @@ namespace KCDriver.Droid {
                         return "error";
                     }
                 }
-            } catch (Exception e) {
+            }
+            catch (WebException)
+            {
+                lock (Properties.NetworkStateLock)
+                    KCApi.Properties.NetState = KCProperties.NetworkState.Disconnected;
+
+                return "No Internet connection.";
+            }
+            catch (Exception e) {
                 KCApi.OutputException(e);
                 return "Error Connecting to Server";
             }
+
             return "error";
         }
 
@@ -190,7 +226,9 @@ namespace KCDriver.Droid {
             request.Timeout = timeout;
             // Get the response.
             string responseFromServer = "";
-            try {
+
+            try
+            {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 // Get the stream containing content returned by the server.
                 Stream dataStream = response.GetResponseStream();
@@ -219,7 +257,16 @@ namespace KCDriver.Droid {
                 }
                 
                 return false;
-            } catch (Exception e) {
+            }
+            catch (WebException)
+            {
+                lock (Properties.NetworkStateLock)
+                    KCApi.Properties.NetState = KCProperties.NetworkState.Disconnected;
+
+                return false;
+            }
+            catch (Exception e)
+            {
                 KCApi.OutputException(e);
                 return false;
             }
@@ -233,7 +280,7 @@ namespace KCDriver.Droid {
         /// <param name="ride"></param>
         /// <param name="latitude"></param>
         /// <param name="longitude"></param>
-        /// <returns></returns>
+        /// <returns>True upon success, false upon failure</returns>
         public static bool SetRideLocation(Ride ride, double latitude = 0, double longitude = 0)
         {
             string message = "http://" + ip + "/driver/rideStatus.php?driverID=" + Driver_Id.driver_Id
@@ -248,7 +295,8 @@ namespace KCDriver.Droid {
             request.Timeout = timeout;
             // Get the response.
             string responseFromServer = "";
-            try { 
+            try
+            { 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 // Get the stream containing content returned by the server.
                 Stream dataStream = response.GetResponseStream();
@@ -260,14 +308,29 @@ namespace KCDriver.Droid {
                 reader.Close();
                 dataStream.Close();
                 response.Close();
-            } catch (Exception e) {
+            }
+            catch (WebException)
+            {
+                lock (Properties.NetworkStateLock)
+                    KCApi.Properties.NetState = KCProperties.NetworkState.Disconnected;
+
+                return false;
+            }
+            catch (Exception e)
+            {
                 KCApi.OutputException(e);
                 return false;
             }
+
             //If the response comes back as Authentication failure then set the driver as not authenticated.
             if (responseFromServer.Contains("Authentication failure") || responseFromServer.Contains("Unable to authenticate")) {
                 Driver_Id.authenticated = false;
                 return false;
+            }
+            // If the response is "Ride not found", the user has canceled.
+            else if (responseFromServer.Contains("Ride not found"))
+            {
+                KCApi.Properties.RideActive = false;
             }
             //check if there are any other errors
             else if (!responseFromServer.Contains("error"))
@@ -304,25 +367,39 @@ namespace KCDriver.Droid {
             string message = "http://" + ip + "/driver/completeRide.php?token=" + Driver_Id.token + "&driverID=" 
                 + Driver_Id.driver_Id + "&rideID=" + ride.RideId;
 
-            // Create a request for the URL. 		
-            WebRequest request = WebRequest.Create(message);
-            request.Timeout = timeout;
-            // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Get the stream containing content returned by the server.
-            Stream dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.
-            string responseFromServer = reader.ReadToEnd();
-            // Cleanup the streams and the response.
-            reader.Close();
-            dataStream.Close();
-            response.Close();
-
-            if (!responseFromServer.Contains("error"))
+            try
             {
-                return true;
+                // Create a request for the URL. 		
+                WebRequest request = WebRequest.Create(message);
+                request.Timeout = timeout;
+                // Get the response.
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                // Get the stream containing content returned by the server.
+                Stream dataStream = response.GetResponseStream();
+                // Open the stream using a StreamReader for easy access.
+                StreamReader reader = new StreamReader(dataStream);
+                // Read the content.
+                string responseFromServer = reader.ReadToEnd();
+                // Cleanup the streams and the response.
+                reader.Close();
+                dataStream.Close();
+                response.Close();
+
+                if (!responseFromServer.Contains("error"))
+                {
+                    return true;
+                }
+            }
+            catch (WebException)
+            {
+                lock (Properties.NetworkStateLock)
+                    KCApi.Properties.NetState = KCProperties.NetworkState.Disconnected;
+
+                return false;
+            }
+            catch (Exception e)
+            {
+                KCApi.OutputException(e);
             }
 
             return false;
@@ -339,7 +416,9 @@ namespace KCDriver.Droid {
             string message = "http://" + ip + "/driver/updateLocation.php?driverID=" +  Driver_Id.driver_Id
                 + "&token=" + Driver_Id.token + "&lat=" + latitude + "&lon=" + longitude;
             string responseFromServer = "";
-            try {
+
+            try
+            {
                 // Create a request for the URL. 		
                 WebRequest request = WebRequest.Create(message);
                 request.Timeout = timeout;
@@ -355,10 +434,20 @@ namespace KCDriver.Droid {
                 reader.Close();
                 dataStream.Close();
                 response.Close();
-            } catch (Exception e) {
+            }
+            catch (WebException)
+            {
+                lock (Properties.NetworkStateLock)
+                    KCApi.Properties.NetState = KCProperties.NetworkState.Disconnected;
+
+                return false;
+            }
+            catch (Exception e)
+            {
                 KCApi.OutputException(e);
                 return false;
             }
+
             //If the response comes back as Authentication failure then set the driver as not authenticated.
             if (responseFromServer.Contains("Authentication failure") || responseFromServer.Contains("Unable to authenticate")) {
                 Driver_Id.authenticated = false;
@@ -385,7 +474,9 @@ namespace KCDriver.Droid {
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
             request.Timeout = timeout;
-            try {
+
+            try
+            {
                 // Get the response.
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 // Get the stream containing content returned by the server.
@@ -398,7 +489,16 @@ namespace KCDriver.Droid {
                 reader.Close();
                 dataStream.Close();
                 response.Close();
-            } catch (Exception e) {
+            }
+            catch (WebException)
+            {
+                lock (Properties.NetworkStateLock)
+                    KCApi.Properties.NetState = KCProperties.NetworkState.Disconnected;
+
+                return false;
+            }
+            catch (Exception e)
+            {
                 KCApi.OutputException(e);
                 return false;
             }
@@ -423,9 +523,11 @@ namespace KCDriver.Droid {
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
             request.Timeout = timeout;
+
             // Get the response.
             string responseFromServer = "";
-            try {
+            try
+            {
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 // Get the stream containing content returned by the server.
                 Stream dataStream = response.GetResponseStream();
@@ -454,7 +556,16 @@ namespace KCDriver.Droid {
                 }
 
                 return false;
-            } catch (Exception e) {
+            }
+            catch (WebException)
+            {
+                lock (Properties.NetworkStateLock)
+                    KCApi.Properties.NetState = KCProperties.NetworkState.Disconnected;
+
+                return false;
+            }
+            catch (Exception e)
+            {
                 KCApi.OutputException(e);
                 return false;
             }

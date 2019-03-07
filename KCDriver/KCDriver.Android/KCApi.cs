@@ -70,16 +70,9 @@ namespace KCDriver.Droid
 
                     Ride temp = new Ride(Properties.CurrentRide);
 
-                    if (!SetRideLocation(temp, Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude))
-                    {
-                        Properties.RideActive = false;
+                    SetRideLocation(temp, Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude);
 
-                        var text = "Rider has cancelled ride.";
-                        Device.BeginInvokeOnMainThread(() => { 
-                            Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-                        });
-                    }
-                    else
+                    if (Properties.RideActive)
                     {
                         // Only update current ride if needed, since it will trigger a UI update.
                         if (Properties.CurrentRide == null || temp.ClientLat != Properties.CurrentRide.ClientLat
@@ -156,6 +149,7 @@ namespace KCDriver.Droid
                 Properties.RideActive = false;
 
             //Debug
+            #if DEBUG
             lock(exceptionsLock)
             {
                 Debug.WriteLine("------------------------- Exception Output ------------------------");
@@ -168,14 +162,17 @@ namespace KCDriver.Droid
                     Debug.WriteLine("End --------");
 
                 }
+
+                Debug.Flush();
                 Debug.WriteLine("------------------------- End -------------------------------------");
             }
-
+            #endif
         }
 
         public static void Reset()
         {
             Properties.CurrentRide = null;
+            Properties.NetState = KCProperties.NetworkState.Connected;
         }
 
         /// <summary>
@@ -253,8 +250,6 @@ namespace KCDriver.Droid
         {
             lock(exceptionsLock)
             {
-                Debug.WriteLine(e.Message);
-                Debug.WriteLine(e.StackTrace);
                 exceptions.Add(e);
             }
         }
