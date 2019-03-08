@@ -47,6 +47,7 @@ namespace KCDriver.Droid {
         #region AppState
         public enum AppState
         {
+            Starting,
             SignIn,
             Accept,
             Map,
@@ -55,7 +56,7 @@ namespace KCDriver.Droid {
 
         private readonly object stateLock = new object();
         public readonly object StateLock = new object(); // For external classes to coordinate state changes
-        private AppState state;
+        private AppState state = AppState.Starting;
         public AppState State
         {
             get
@@ -89,25 +90,36 @@ namespace KCDriver.Droid {
         private int netStateTimeout = 30000;
         private Stopwatch netStateTimer = new Stopwatch();
         private NetworkState netState = NetworkState.Connected;
-        public NetworkState NetState {
-            get {
-                lock (networkStateLock) {
+        public NetworkState NetState
+        {
+            get
+            {
+                lock (networkStateLock)
+                {
                     return netState;
                 }
             }
 
-            set {
-                lock (networkStateLock) {
-                    if (value == NetworkState.Disconnected) {
+            set
+            {
+                lock (networkStateLock)
+                {
+                    if (value == NetworkState.Disconnected)
+                    {
                         if (netStateTimer.ElapsedMilliseconds >= netStateTimeout
-                            && netState == NetworkState.Retrying) {
+                            && netState == NetworkState.Retrying)
+                        {
                             netStateTimer.Reset();
                             SetPropertyField("NetState", ref netState, NetworkState.Disconnected);
-                        } else if (!netStateTimer.IsRunning) {
+                        }
+                        else if (!netStateTimer.IsRunning && netState == NetworkState.Connected)
+                        {
                             netState = NetworkState.Retrying;
                             netStateTimer.Start();
                         }
-                    } else {
+                    }
+                    else
+                    {
                         netStateTimer.Reset();
                         netState = value;
                     }
@@ -116,9 +128,7 @@ namespace KCDriver.Droid {
         }
         #endregion
 
-        /// <summary>
-        /// The Map object which holds the google map with thread-safe get and set.
-        /// </summary>
+        // The Map object which holds the google map with thread-safe get and set.
         #region Map
         private readonly object mapLock = new object();
         private KCMap map;
@@ -353,25 +363,33 @@ namespace KCDriver.Droid {
         }
         #endregion
 
-        // Track the rides status
-        #region RideActive
-        private readonly object rideActiveLock = new object();
-        private bool rideActive;
-        public bool RideActive
+        #region RideStatus
+        public enum RideStatuses
+        {
+            Uninitialized,
+            Active,
+            CanceledByRider,
+            CanceledByDriver,
+            Completed
+        }
+
+        private readonly object rideStatusLock = new object();
+        private RideStatuses rideStatus;
+        public RideStatuses RideStatus
         {
             get
             {
-                lock (rideActiveLock)
+                lock(rideStatusLock)
                 {
-                    return rideActive;
+                    return rideStatus;
                 }
             }
 
             set
             {
-                lock (rideActiveLock)
+                lock(rideStatusLock)
                 {
-                    SetPropertyField("RideActive", ref rideActive, value);
+                    SetPropertyField("RideStatus", ref rideStatus, value);
                 }
             }
         }

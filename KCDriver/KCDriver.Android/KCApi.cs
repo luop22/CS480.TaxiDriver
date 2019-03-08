@@ -32,7 +32,7 @@ namespace KCDriver.Droid
             Properties.RenderReady = false;
             Properties.CameraOnDriver = true;
             Properties.CameraOnRider = false;
-            Properties.RideActive = false;
+            KCApi.Properties.RideStatus = KCProperties.RideStatuses.Uninitialized;
 
             // The timer automatically updates the camera and position every interval.
             updatePositionTimer = new System.Timers.Timer(500.0f);
@@ -60,19 +60,13 @@ namespace KCDriver.Droid
             Task.Run( async () => {
                 try
                 {
-                    Properties.CurrentPosition = await GetCurrentPosition();
-
-                    //set the drivers current position.
-                    if (!SetDriverLocation(Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude))
-                    {
-                        Debug.WriteLine("Setting driver location failed.");
-                    }
+                    Properties.CurrentPosition = await GetCurrentPosition(3);
 
                     Ride temp = new Ride(Properties.CurrentRide);
 
                     SetRideLocation(temp, Properties.CurrentPosition.Latitude, Properties.CurrentPosition.Longitude);
 
-                    if (Properties.RideActive)
+                    if (KCApi.Properties.RideStatus == KCProperties.RideStatuses.Active)
                     {
                         // Only update current ride if needed, since it will trigger a UI update.
                         if (Properties.CurrentRide == null || temp.ClientLat != Properties.CurrentRide.ClientLat
@@ -134,7 +128,7 @@ namespace KCDriver.Droid
             updatePositionTimer.Start();
             updateCameraTimer.Start();
 
-            Properties.RideActive = true;
+            Properties.RideStatus = KCProperties.RideStatuses.Active;
         }
 
         /// <summary>
@@ -145,27 +139,28 @@ namespace KCDriver.Droid
             updatePositionTimer.Stop();
             updateCameraTimer.Stop();
 
-            if (Properties.RideActive)
-                Properties.RideActive = false;
+            Properties.RideStatus = KCProperties.RideStatuses.Uninitialized;
 
             //Debug
             #if DEBUG
-            lock(exceptionsLock)
-            {
-                Debug.WriteLine("------------------------- Exception Output ------------------------");
-                foreach (Exception e in exceptions)
+            /*Task.Run(() => { 
+                lock (exceptionsLock)
                 {
-                    Debug.WriteLine("Error ------");
-                    Debug.WriteLine(e.Message);
-                    Debug.WriteLine(e.StackTrace);
-                    Debug.WriteLine(e.TargetSite);
-                    Debug.WriteLine("End --------");
+                    Debug.WriteLine("------------------------- Exception Output ------------------------");
+                    foreach (Exception e in exceptions)
+                    {
+                        Debug.WriteLine("Error ------");
+                        Debug.WriteLine(e.Message);
+                        Debug.WriteLine(e.StackTrace);
+                        Debug.WriteLine(e.TargetSite);
+                        Debug.WriteLine("End --------");
 
+                    }
+
+                    Debug.Flush();
+                    Debug.WriteLine("------------------------- End -------------------------------------");
                 }
-
-                Debug.Flush();
-                Debug.WriteLine("------------------------- End -------------------------------------");
-            }
+            });*/
             #endif
         }
 
@@ -179,7 +174,7 @@ namespace KCDriver.Droid
         /// Function to get the current position. Returns 0,0 on failure.
         /// </summary>
         /// <returns></returns>
-        public static async Task<Position> GetCurrentPosition()
+        public static async Task<Position> GetCurrentPosition(int timeoutSeconds = 20)
         {
 
             try
@@ -198,14 +193,15 @@ namespace KCDriver.Droid
                 if (!locator.IsGeolocationAvailable || !locator.IsGeolocationEnabled)
                 {
                     //not available or enabled
-                     throw new Exception("Geolocation not available or not enabled.");
+                    throw new Exception("Geolocation not available or not enabled.");
                 }
 
-                position = await locator.GetPositionAsync(TimeSpan.FromSeconds(20), null, true);
+                position = await locator.GetPositionAsync(TimeSpan.FromSeconds(timeoutSeconds), null, true);
             }
             catch (Exception e)
             {
-                OutputException(e);
+                if (!e.Message.Contains("Geolocation not"))
+                    OutputException(e);
             }
 
             return new Position(0, 0);
