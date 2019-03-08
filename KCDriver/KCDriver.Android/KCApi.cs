@@ -30,9 +30,8 @@ namespace KCDriver.Droid
         {
             Properties.MapReady = false;
             Properties.RenderReady = false;
-            Properties.CameraOnDriver = true;
-            Properties.CameraOnRider = false;
-            KCApi.Properties.RideStatus = KCProperties.RideStatuses.Uninitialized;
+            
+            Properties.RideStatus = KCProperties.RideStatuses.Uninitialized;
 
             // The timer automatically updates the camera and position every interval.
             updatePositionTimer = new System.Timers.Timer(500.0f);
@@ -43,7 +42,8 @@ namespace KCDriver.Droid
         }
 
         /// <summary>
-        /// A timer calls this 10 times per second. Updates the db on where the driver is.
+        /// A timer calls this 10 times per second. Updates the db on where the driver is
+        /// and updates the driver (device) on where the rider is.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="e"></param>
@@ -60,7 +60,11 @@ namespace KCDriver.Droid
             Task.Run( async () => {
                 try
                 {
-                    Properties.CurrentPosition = await GetCurrentPosition(3);
+                    Position tempPos = await GetCurrentPosition(20);
+
+                    if (tempPos.Latitude != Properties.CurrentPosition.Latitude
+                        || tempPos.Longitude != Properties.CurrentPosition.Longitude)
+                        Properties.CurrentPosition = tempPos;
 
                     Ride temp = new Ride(Properties.CurrentRide);
 
@@ -143,7 +147,7 @@ namespace KCDriver.Droid
 
             //Debug
             #if DEBUG
-            /*Task.Run(() => { 
+            Task.Run(() => { 
                 lock (exceptionsLock)
                 {
                     Debug.WriteLine("------------------------- Exception Output ------------------------");
@@ -160,7 +164,7 @@ namespace KCDriver.Droid
                     Debug.Flush();
                     Debug.WriteLine("------------------------- End -------------------------------------");
                 }
-            });*/
+            });
             #endif
         }
 
@@ -250,6 +254,10 @@ namespace KCDriver.Droid
             }
         }
 
+        /// <summary>
+        /// Checks if the location permission is active, if not then returns false.
+        /// </summary>
+        /// <returns></returns>
         public static bool CheckLocationPermission()
         {
             try
