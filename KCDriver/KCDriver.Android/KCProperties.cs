@@ -44,10 +44,6 @@ namespace KCDriver.Droid {
 
         #endregion
 
-        /// <summary>
-        /// The AppState region contains the AppState enum and
-        /// State, the current state of the app.
-        /// </summary>
         #region AppState
         public enum AppState
         {
@@ -81,17 +77,6 @@ namespace KCDriver.Droid {
         }
         #endregion
 
-        /// <summary>
-        /// The NetworkState region contains the NetworkState enum,
-        /// which defines the three states of the network, and
-        /// NetState, the current state of the network
-        /// for the app.
-        /// 
-        /// NetState will changed to connected at any time, but will only
-        /// change to disconnected once it has been in the retrying state 
-        /// for over 30 seconds. All server calls set this to disconnected
-        /// upon any WebException.
-        /// </summary>
         #region NetworkState
         public enum NetworkState
         {
@@ -192,6 +177,28 @@ namespace KCDriver.Droid {
         }
         #endregion
 
+        #region CurrentRide
+        private readonly object rideLock = new object();
+        private Ride currentRide;
+        public Ride CurrentRide
+        {
+            get
+            {
+                lock (rideLock)
+                {
+                    return currentRide;
+                }
+            }
+
+            set
+            {
+                lock (rideLock)
+                {
+                    SetPropertyField("CurrentRide", ref currentRide, value);
+                }
+            }
+        }
+        #endregion
 
         // Single lock for values tracking when the map and renderer call OnReady()
         #region MapReady
@@ -356,36 +363,6 @@ namespace KCDriver.Droid {
         }
         #endregion
 
-        /// <summary>
-        /// The current ride object being worked upon.
-        /// </summary>
-        #region CurrentRide
-        private readonly object rideLock = new object();
-        private Ride currentRide;
-        public Ride CurrentRide
-        {
-            get
-            {
-                lock (rideLock)
-                {
-                    return currentRide;
-                }
-            }
-
-            set
-            {
-                lock (rideLock)
-                {
-                    SetPropertyField("CurrentRide", ref currentRide, value);
-                }
-            }
-        }
-        #endregion
-
-        /// <summary>
-        /// The RideStatus region contains the RideStatuses enum and
-        /// RideStatus, the current state of the ride.
-        /// </summary>
         #region RideStatus
         public enum RideStatuses
         {
