@@ -21,7 +21,7 @@ namespace KCDriver.Droid {
         /// </summary>
         /// <param name="password"></param>
         /// <param name="userName"></param>
-        /// <returns></returns>
+        /// <returns>returns true if the user is authenticated correctly otherwise reterns false.</returns>
         public static bool Authenticate(String password, String userName) {
 
             string message = "http://" + ip + "/driver/auth/authenticate.php?username=" + userName + "&pwHsh=" + GetHash(password, userName);
@@ -80,7 +80,7 @@ namespace KCDriver.Droid {
         /// </summary>
         /// <param name="input"></param>
         /// <param name="userName"></param>
-        /// <returns></returns>
+        /// <returns>Returns the has from the given username nad password.</returns>
         private static string GetHash(string input, String userName) {
             using (SHA256 sha256Hash = SHA256.Create())
             {

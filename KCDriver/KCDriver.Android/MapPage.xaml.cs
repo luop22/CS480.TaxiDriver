@@ -338,7 +338,6 @@ namespace KCDriver.Droid {
             }
         }
 
-
         /// <summary>
         /// Enables the use of all buttons
         /// </summary>

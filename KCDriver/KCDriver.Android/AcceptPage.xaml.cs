@@ -164,6 +164,34 @@ namespace KCDriver.Droid {
         }
 
         /// <summary>
+        /// Sends the user back to the sign in page.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void signOut(object sender, EventArgs e) {
+
+            OnBackButtonPressed();
+
+        }
+
+        /// <summary>
+        /// Sets the state to Transitioning and pop the user back to the Sign in page.
+        /// </summary>
+        /// <returns>returns if the transition was successful</returns>
+        protected override bool OnBackButtonPressed() {
+            try {
+                KCApi.Properties.State = KCProperties.AppState.Transitioning;
+                Device.BeginInvokeOnMainThread(() => {
+                    Navigation.PopAsync();
+                });
+            } catch (Exception e) {
+                return false;
+            }
+            return true;
+        }
+    
+
+        /// <summary>
         /// Timer function which updates the driver if there are any rides in the queue.
         /// </summary>
         private void Timer(Object source, ElapsedEventArgs e)
