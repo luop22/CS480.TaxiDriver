@@ -12,7 +12,7 @@ namespace KCDriver.Droid {
 
     static partial class KCApi {
 
-        private const string ip = "148.72.40.62";
+        private const string ip = "kccabapp.com";
         private const int timeout = 5000;
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace KCDriver.Droid {
         /// <returns></returns>
         public static bool Authenticate(string password, string userName)
         {
-            string message = "http://" + ip + "/driver/auth/authenticate.php?username=" + userName + "&pwHsh=" + GetHash(password, userName);
+            string message = "https://" + ip + "/driver/auth/authenticate.php?username=" + userName + "&pwHsh=" + GetHash(password, userName);
             string responseFromServer = "";
             try
             {
@@ -110,7 +110,7 @@ namespace KCDriver.Droid {
         /// <returns>string containing the salt.</returns>
         public static string GetSalt(string userName)
         {
-            string message = "http://" + ip + "/driver/auth/getSalt.php?username=" + userName;
+            string message = "https://" + ip + "/driver/auth/getSalt.php?username=" + userName;
             string responseFromServer = "";
             try
             {
@@ -161,7 +161,7 @@ namespace KCDriver.Droid {
         /// <returns>String containing the status of the queue.</returns>
         public static string CheckQueue()
         {
-            string message = "http://" + ip + "/driver/checkQueue.php";
+            string message = "https://" + ip + "/driver/checkQueue.php";
             string responseFromServer = "";
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
@@ -221,7 +221,7 @@ namespace KCDriver.Droid {
         /// <returns>True if a ride is accepted, false otherwise.</returns>
         public static bool AcceptNextRide(Ride ride)
         {
-            string message = "http://" + ip + "/driver/acceptRide.php?token=" + Driver_Id.token + "&driverID=" + Driver_Id.driver_Id;
+            string message = "https://" + ip + "/driver/acceptRide.php?token=" + Driver_Id.token + "&driverID=" + Driver_Id.driver_Id;
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
             request.Timeout = timeout;
@@ -284,7 +284,7 @@ namespace KCDriver.Droid {
         /// <returns>True upon success, false upon failure</returns>
         public static bool SetRideLocation(Ride ride, double latitude = 0, double longitude = 0)
         {
-            string message = "http://" + ip + "/driver/rideStatus.php?driverID=" + Driver_Id.driver_Id
+            string message = "https://" + ip + "/driver/rideStatus.php?driverID=" + Driver_Id.driver_Id
                 + "&token=" + Driver_Id.token + "&rideID=" + ride.RideId;
 
             if (Properties.CurrentPosition.Latitude != 0 
@@ -365,7 +365,7 @@ namespace KCDriver.Droid {
         /// <returns>True if a success response was recieved, false otherwise.</returns>
         public static bool CompleteRide(Ride ride)
         {
-            string message = "http://" + ip + "/driver/completeRide.php?token=" + Driver_Id.token + "&driverID=" 
+            string message = "https://" + ip + "/driver/completeRide.php?token=" + Driver_Id.token + "&driverID=" 
                 + Driver_Id.driver_Id + "&rideID=" + ride.RideId;
 
             try
@@ -414,7 +414,7 @@ namespace KCDriver.Droid {
         /// <returns></returns>
         public static bool SetDriverLocation(double latitude, double longitude)
         {
-            string message = "http://" + ip + "/driver/updateLocation.php?driverID=" +  Driver_Id.driver_Id
+            string message = "https://" + ip + "/driver/updateLocation.php?driverID=" +  Driver_Id.driver_Id
                 + "&token=" + Driver_Id.token + "&lat=" + latitude + "&lon=" + longitude;
             string responseFromServer = "";
 
@@ -469,7 +469,7 @@ namespace KCDriver.Droid {
         /// <returns>True upon receipt of a success response, false otherwise.</returns>
         public static bool CancelRide(Ride ride)
         {
-            string message = "http://" + ip + "/driver/decouple.php?" + "rideID=" + ride.RideId + "&token=" + Driver_Id.token +
+            string message = "https://" + ip + "/driver/decouple.php?" + "rideID=" + ride.RideId + "&token=" + Driver_Id.token +
                  "&driverID=" + Driver_Id.driver_Id;
             string responseFromServer = "";
             // Create a request for the URL. 		
@@ -520,7 +520,7 @@ namespace KCDriver.Droid {
         /// <param name="ride">Ride object to store recovery info in.</param>
         /// <returns>True upon receipt of a success response, false otherwise.</returns>
         public static bool RecoveryCheck(Ride ride) {
-            string message = "http://" + ip + "/driver/recoveryCheck.php?token=" + Driver_Id.token + "&driverID=" + Driver_Id.driver_Id;
+            string message = "https://" + ip + "/driver/recoveryCheck.php?token=" + Driver_Id.token + "&driverID=" + Driver_Id.driver_Id;
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
             request.Timeout = timeout;
