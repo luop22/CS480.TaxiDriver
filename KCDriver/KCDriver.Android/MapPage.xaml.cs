@@ -56,6 +56,9 @@ namespace KCDriver.Droid {
             }
         }
 
+        /// <summary>
+        /// When the map page appears the current posstion is retrived and the camera is adjusted.
+        /// </summary>
         protected override void OnAppearing()
         {
             base.OnAppearing();
@@ -74,6 +77,9 @@ namespace KCDriver.Droid {
             }
         }
 
+        /// <summary>
+        /// When the map page disappears the active timer stops.
+        /// </summary>
         protected override void OnDisappearing() {
             //When the page dissapears the authentication timer is stoped.
             activeTimer.Stop();
@@ -81,6 +87,10 @@ namespace KCDriver.Droid {
             base.OnDisappearing();
         }
 
+        /// <summary>
+        /// When the back button is pressed the ride is canceled.
+        /// </summary>
+        /// <returns></returns>
         protected override bool OnBackButtonPressed()
         {
             if (KCApi.Properties.State == KCProperties.AppState.Map)
@@ -90,6 +100,11 @@ namespace KCDriver.Droid {
             return true;
         }
 
+        /// <summary>
+        /// When the cancel button is pressed rideactive is set to false.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void ButtonCancelRide(object sender, EventArgs e)
         {
             if (KCApi.Properties.State != KCProperties.AppState.Map)
@@ -113,6 +128,11 @@ namespace KCDriver.Droid {
             ButtonEnable();
         }
         
+        /// <summary>
+        /// When a ride is completed rideactive is set to false and the ride is compleated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void ButtonCompleteRide(object sender, EventArgs e)
         {
             if (KCApi.Properties.State != KCProperties.AppState.Map)
@@ -136,6 +156,13 @@ namespace KCDriver.Droid {
             ButtonEnable();
         }
 
+
+        /// <summary>
+        /// Sends an alert which displays the clients phone number 
+        /// and provides a call button which launches the phone app if the device is able to make calls.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void ButtonCallRide(object sender, EventArgs e)
         {
             if (KCApi.Properties.State != KCProperties.AppState.Map)
@@ -161,6 +188,11 @@ namespace KCDriver.Droid {
             ButtonEnable();
         }
 
+        /// <summary>
+        /// Sets the camera to lock on the client.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void ButtonSetRiderCameraLock(object sender, EventArgs e)
         {
             if (KCApi.Properties.State != KCProperties.AppState.Map)
@@ -175,6 +207,11 @@ namespace KCDriver.Droid {
             ButtonEnable();
         }
 
+        /// <summary>
+        /// Sets the camera to lock on to the driver.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void ButtonSetDriverCameraLock(object sender, EventArgs e)
         {
             if (KCApi.Properties.State != KCProperties.AppState.Map)
@@ -286,8 +323,9 @@ namespace KCDriver.Droid {
                 });       
         }
 
-
-        //Disables the use of all buttons
+        /// <summary>
+        /// Disables the use of all buttons
+        /// </summary>
         private void ButtonDisable() {
 
             lock(buttonLock)
@@ -301,7 +339,9 @@ namespace KCDriver.Droid {
         }
 
 
-        //Enables the use of all buttons
+        /// <summary>
+        /// Enables the use of all buttons
+        /// </summary>
         private void ButtonEnable() {
 
             lock(buttonLock)
