@@ -24,6 +24,7 @@ namespace KCDriver.Droid {
         public AcceptPage()
         {
             InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
             mapPage = new MapPage();
             buttonLock = new object();
 
@@ -44,6 +45,9 @@ namespace KCDriver.Droid {
 
                 if (KCApi.Properties.NetState == KCProperties.NetworkState.Disconnected)
                 {
+                    lock (KCApi.Properties.StateLock)
+                        KCApi.Properties.State = KCProperties.AppState.Transitioning;
+
                     await Navigation.PopAsync();
                     return;
                 }
@@ -62,12 +66,13 @@ namespace KCDriver.Droid {
                     var text = "Authentication Failure";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
 
-                    KCApi.Properties.State = KCProperties.AppState.Transitioning;
+                    lock (KCApi.Properties.StateLock)
+                        KCApi.Properties.State = KCProperties.AppState.Transitioning;
 
                     await Navigation.PopAsync();
                 }
                 // Driver has entered the Accept screen for the first time since logging in
-                else if (!KCApi.Properties.RideActive && KCApi.Properties.CurrentRide == null)
+                else if (KCApi.Properties.RideStatus != KCProperties.RideStatuses.Active && KCApi.Properties.CurrentRide == null)
                 {
                     Ride ride = new Ride();
 
@@ -76,7 +81,8 @@ namespace KCDriver.Droid {
                         ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
                         KCApi.Start(ride);
 
-                        KCApi.Properties.State = KCProperties.AppState.Transitioning;
+                        lock (KCApi.Properties.StateLock)
+                            KCApi.Properties.State = KCProperties.AppState.Transitioning;
 
                         await Navigation.PushAsync(mapPage);
                     }
@@ -112,26 +118,29 @@ namespace KCDriver.Droid {
                     var text = "GPS signal lost. Please reenable or reenter service.";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                 }
-                else if (!KCApi.Properties.RideActive && KCApi.AcceptNextRide(ride)
+                else if (KCApi.Properties.RideStatus != KCProperties.RideStatuses.Active && KCApi.AcceptNextRide(ride)
                             && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
 
-                    KCApi.Properties.State = KCProperties.AppState.Transitioning;
+                    lock (KCApi.Properties.StateLock)
+                    {
+                        KCApi.Properties.State = KCProperties.AppState.Transitioning;
 
-                    //Start takes only a position, which will come from the database
-                    ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
-                    KCApi.Start(ride);
-                    Navigation.PushAsync(mapPage);
+                        //Start takes only a position, which will come from the database
+                        ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
+                        KCApi.Start(ride);
+                        Navigation.PushAsync(mapPage);
+                    }
                 }
                 else if (!Driver_Id.authenticated) {
                     var text = "Authentication Failure";
                     Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
 
-                    KCApi.Properties.State = KCProperties.AppState.Transitioning;
-
-                    lock (KCApi.Properties.StateLock)
+                    if (KCApi.Properties.State == KCProperties.AppState.Accept)
                     {
-                        if (KCApi.Properties.State == KCProperties.AppState.Accept)
+                        lock (KCApi.Properties.StateLock)
                         {
+                            KCApi.Properties.State = KCProperties.AppState.Transitioning;
+
                             Navigation.PopAsync();
                         }    
                     }
@@ -162,15 +171,19 @@ namespace KCDriver.Droid {
             if (KCApi.Properties.NetState == KCProperties.NetworkState.Disconnected)
             {
                 var text = "Internet connection lost.";
-                
-                Device.BeginInvokeOnMainThread(async () => {
-                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
 
-                    KCApi.Properties.State = KCProperties.AppState.Transitioning;
+                lock (KCApi.Properties.StateLock)
+                {
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
 
-                    await Navigation.PopAsync();
-                });
-                return;
+                        KCApi.Properties.State = KCProperties.AppState.Transitioning;
+
+                        await Navigation.PopAsync();
+                    });
+                    return;
+                }
             }
 
             Device.BeginInvokeOnMainThread(() => {

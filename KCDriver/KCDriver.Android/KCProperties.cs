@@ -47,6 +47,7 @@ namespace KCDriver.Droid {
         #region AppState
         public enum AppState
         {
+            Starting,
             SignIn,
             Accept,
             Map,
@@ -55,7 +56,7 @@ namespace KCDriver.Droid {
 
         private readonly object stateLock = new object();
         public readonly object StateLock = new object(); // For external classes to coordinate state changes
-        private AppState state;
+        private AppState state = AppState.Starting;
         public AppState State
         {
             get
@@ -111,7 +112,7 @@ namespace KCDriver.Droid {
                             netStateTimer.Reset();
                             SetPropertyField("NetState", ref netState, NetworkState.Disconnected);
                         }
-                        else if (!netStateTimer.IsRunning)
+                        else if (!netStateTimer.IsRunning && netState == NetworkState.Connected)
                         {
                             netState = NetworkState.Retrying;
                             netStateTimer.Start();
@@ -126,37 +127,6 @@ namespace KCDriver.Droid {
             }
         }
         #endregion
-
-        /* Slated for removal
-        #region GPSState
-        public enum GPSState
-        {
-            Connected,
-            Disconnected
-        }
-
-        private readonly object gpsStateLock = new object();
-        public readonly object GPSStateLock = new object();
-        private GPSState gpsState;
-        public GPSState GpsState
-        {
-            get
-            {
-                lock (gpsStateLock)
-                {
-                    return gpsState;
-                }
-            }
-
-            set
-            {
-                lock (gpsStateLock)
-                {
-                    gpsState = value;
-                }
-            }
-        }
-        #endregion */
 
         // The Map object which holds the google map with thread-safe get and set.
         #region Map
@@ -393,25 +363,33 @@ namespace KCDriver.Droid {
         }
         #endregion
 
-        // Track the rides status
-        #region RideActive
-        private readonly object rideActiveLock = new object();
-        private bool rideActive;
-        public bool RideActive
+        #region RideStatus
+        public enum RideStatuses
+        {
+            Uninitialized,
+            Active,
+            CanceledByRider,
+            CanceledByDriver,
+            Completed
+        }
+
+        private readonly object rideStatusLock = new object();
+        private RideStatuses rideStatus;
+        public RideStatuses RideStatus
         {
             get
             {
-                lock (rideActiveLock)
+                lock(rideStatusLock)
                 {
-                    return rideActive;
+                    return rideStatus;
                 }
             }
 
             set
             {
-                lock (rideActiveLock)
+                lock(rideStatusLock)
                 {
-                    SetPropertyField("RideActive", ref rideActive, value);
+                    SetPropertyField("RideStatus", ref rideStatus, value);
                 }
             }
         }

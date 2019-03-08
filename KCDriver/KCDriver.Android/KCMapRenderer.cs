@@ -70,7 +70,7 @@ namespace KCDriver.Droid {
             {
                 // The current ride just got updated
                 case "CurrentRide":
-                    if (KCApi.Properties.RideActive)
+                    if (KCApi.Properties.RideStatus == KCProperties.RideStatuses.Active)
                         UpdateMarker();
                     break;
             }

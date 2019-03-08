@@ -330,7 +330,7 @@ namespace KCDriver.Droid {
             // If the response is "Ride not found", the user has canceled.
             else if (responseFromServer.Contains("Ride not found"))
             {
-                KCApi.Properties.RideActive = false;
+                Properties.RideStatus = KCProperties.RideStatuses.CanceledByRider;
             }
             //check if there are any other errors
             else if (!responseFromServer.Contains("error"))

@@ -23,7 +23,7 @@ namespace KCDriver.Droid
         public SignInPage()
         {
             InitializeComponent();
-            NavigationPage.SetHasNavigationBar(this, true);
+            NavigationPage.SetHasNavigationBar(this, false);
 
             KCApi.Properties.AskingLocationPermission = false;
             KCApi.Properties.HaveLocationPermission = false;
@@ -37,16 +37,14 @@ namespace KCDriver.Droid
         /// </summary>
         protected override async void OnAppearing()
         {
-            KCApi.Properties.State = KCProperties.AppState.SignIn;
+            if (KCApi.Properties.State != KCProperties.AppState.SignIn)
+            {
+                KCApi.Properties.State = KCProperties.AppState.SignIn;
 
-            KCApi.Reset();
+                KCApi.Reset();
 
-            if (KCApi.Properties.AskingLocationPermission)
-                return;
-
-            KCApi.Properties.AskingLocationPermission = true;
-            KCApi.Properties.HaveLocationPermission = await RequestPermission(Plugin.Permissions.Abstractions.Permission.Location);
-            KCApi.Properties.AskingLocationPermission = false;
+                KCApi.Properties.HaveLocationPermission = await RequestPermission(Plugin.Permissions.Abstractions.Permission.Location);
+            }
         }
 
         /// <summary>
