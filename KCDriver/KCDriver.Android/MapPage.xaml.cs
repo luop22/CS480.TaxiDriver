@@ -354,6 +354,10 @@ namespace KCDriver.Droid {
             }
         }
 
+        /// <summary>
+        /// Sets the colors of the buttons depending on the state of
+        /// the GPS and the camera flags.
+        /// </summary>
         private void SyncCameraButtonStates()
         {
             if (KCApi.Properties.CurrentPosition.Latitude == 0 && KCApi.Properties.CurrentPosition.Longitude == 0)

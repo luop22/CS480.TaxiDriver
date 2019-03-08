@@ -42,6 +42,8 @@ namespace KCDriver.Droid {
             {
                 KCApi.Properties.State = KCProperties.AppState.Accept;
 
+                Timer(null, null);
+
                 if (KCApi.Properties.NetState == KCProperties.NetworkState.Disconnected)
                 {
                     lock (KCApi.Properties.StateLock)
@@ -90,6 +92,7 @@ namespace KCDriver.Droid {
                 updater.Start();
             }
         }
+
         //executes everytime the page disappears.
         protected override void OnDisappearing() {
             //When the page disappears the update timer is stopped.
@@ -101,8 +104,8 @@ namespace KCDriver.Droid {
         /// <summary>
         /// Function to start map and get ride location.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
         public void Button_Clicked(object sender, EventArgs e)
         {
             if (KCApi.Properties.State == KCProperties.AppState.Accept)
