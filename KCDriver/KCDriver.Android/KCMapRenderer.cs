@@ -54,6 +54,10 @@ namespace KCDriver.Droid {
         KCPin riderPin;
         bool mapDrawn = false;
 
+        /// <summary>
+        /// Initializes the KCMapRenderer properties.
+        /// </summary>
+        /// <param name="context"></param>
         public KCMapRenderer(Context context) : base(context)
         {
             dataLock = new object();
@@ -62,6 +66,11 @@ namespace KCDriver.Droid {
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
@@ -76,6 +85,10 @@ namespace KCDriver.Droid {
             }
         }
 
+        /// <summary>
+        /// Updates the map when it is changed.
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnElementChanged(Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Map> e)
         {
             base.OnElementChanged(e);

@@ -89,36 +89,25 @@ namespace KCDriver.Droid {
         private int netStateTimeout = 30000;
         private Stopwatch netStateTimer = new Stopwatch();
         private NetworkState netState = NetworkState.Connected;
-        public NetworkState NetState
-        {
-            get
-            {
-                lock (networkStateLock)
-                {
+        public NetworkState NetState {
+            get {
+                lock (networkStateLock) {
                     return netState;
                 }
             }
 
-            set
-            {
-                lock (networkStateLock)
-                {
-                    if (value == NetworkState.Disconnected)
-                    {
+            set {
+                lock (networkStateLock) {
+                    if (value == NetworkState.Disconnected) {
                         if (netStateTimer.ElapsedMilliseconds >= netStateTimeout
-                            && netState == NetworkState.Retrying)
-                        {
+                            && netState == NetworkState.Retrying) {
                             netStateTimer.Reset();
                             SetPropertyField("NetState", ref netState, NetworkState.Disconnected);
-                        }
-                        else if (!netStateTimer.IsRunning)
-                        {
+                        } else if (!netStateTimer.IsRunning) {
                             netState = NetworkState.Retrying;
                             netStateTimer.Start();
                         }
-                    }
-                    else
-                    {
+                    } else {
                         netStateTimer.Reset();
                         netState = value;
                     }
@@ -127,38 +116,9 @@ namespace KCDriver.Droid {
         }
         #endregion
 
-        /* Slated for removal
-        #region GPSState
-        public enum GPSState
-        {
-            Connected,
-            Disconnected
-        }
-
-        private readonly object gpsStateLock = new object();
-        public readonly object GPSStateLock = new object();
-        private GPSState gpsState;
-        public GPSState GpsState
-        {
-            get
-            {
-                lock (gpsStateLock)
-                {
-                    return gpsState;
-                }
-            }
-
-            set
-            {
-                lock (gpsStateLock)
-                {
-                    gpsState = value;
-                }
-            }
-        }
-        #endregion */
-
-        // The Map object which holds the google map with thread-safe get and set.
+        /// <summary>
+        /// The Map object which holds the google map with thread-safe get and set.
+        /// </summary>
         #region Map
         private readonly object mapLock = new object();
         private KCMap map;
