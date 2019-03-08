@@ -13,6 +13,14 @@
 			<Grid RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width}"
 				  RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height}">
 
+                <Button x:Name="SignoutBtn" Text="Sign out" Clicked="signOut" 
+					HorizontalOptions="Start"
+					VerticalOptions="Start"
+					BackgroundColor="Transparent"
+					TextColor="Yellow"
+                    HeightRequest="50"
+				    FontSize="14"/>
+                
 				<Label Text="Accessing Server"
                     x:Name="Status"
 				    FontSize="36"
