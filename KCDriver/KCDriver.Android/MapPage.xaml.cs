@@ -29,6 +29,9 @@ namespace KCDriver.Droid {
             NavigationPage.SetHasNavigationBar(this, false);
             KCApi.Properties.PropertyChanged += new PropertyChangedEventHandler(OnElementPropertyChanged);
 
+            KCApi.Properties.CameraOnDriver = false;
+            KCApi.Properties.CameraOnRider = true;
+
             activeTimer = new System.Timers.Timer(16.66f);
             activeTimer.Elapsed += CheckActive;
             activeTimer.Enabled = false;
@@ -48,27 +51,7 @@ namespace KCDriver.Droid {
                     break;
 
                 case "CurrentPosition":
-                    if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
-                    {
-                        if (ButtonSetDriverCamera.BorderColor == Color.Gray)
-                            Device.BeginInvokeOnMainThread(() => {
-                                ButtonSetDriverCamera.BorderColor = Color.Black;
-                            });
-                    }
-                    else
-                    {
-                        if (ButtonSetDriverCamera.BorderColor == Color.Black)
-                            Device.BeginInvokeOnMainThread(() => {
-                                ButtonSetDriverCamera.BorderColor = Color.Gray;
-                            });
-                        else if (KCApi.Properties.CameraOnDriver)
-                        {
-                            KCApi.Properties.CameraOnRider = false;
-                            Device.BeginInvokeOnMainThread(() => {
-                                ButtonSetRiderCameraLock(null, null);
-                            });
-                        }
-                    }
+                    Device.BeginInvokeOnMainThread(() => SyncCameraButtonStates());
                     break;
             }
         }
@@ -86,28 +69,9 @@ namespace KCDriver.Droid {
 
                 UpdateText();
 
-                /*if ((KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
-                        && KCApi.Properties.CameraOnDriver)
-                {
-                    KCApi.Properties.CameraOnDriver = false;
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        ButtonSetDriverCameraLock(null, null);
-                    });
-                }
-                else
-                {
-                    KCApi.Properties.CameraOnRider = false;
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        ButtonSetRiderCameraLock(null, null);
+                KCApi.Properties.CameraOnRider = true;
 
-                        if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
-                            ButtonSetDriverCamera.BorderColor = Color.Black;
-                        else
-                            ButtonSetDriverCamera.BorderColor = Color.Gray;
-                    });
-                }*/
+                SyncCameraButtonStates();
 
                 activeTimer.Start();
             }
@@ -117,10 +81,10 @@ namespace KCDriver.Droid {
         /// When the map page disappears the active timer stops.
         /// </summary>
         protected override void OnDisappearing() {
-            base.OnDisappearing();
-
             //When the page dissapears the authentication timer is stoped.
             activeTimer.Stop();
+
+            base.OnDisappearing();
         }
 
         /// <summary>
@@ -133,7 +97,7 @@ namespace KCDriver.Droid {
                 Device.BeginInvokeOnMainThread(() => {
                     ButtonCancelRide(null, null);
                 });
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -143,6 +107,9 @@ namespace KCDriver.Droid {
         /// <param name="e"></param>
         public void ButtonCancelRide(object sender, EventArgs e)
         {
+            if (KCApi.Properties.State != KCProperties.AppState.Map)
+                return;
+
             ButtonDisable();
 
             if (!KCApi.CancelRide(KCApi.Properties.CurrentRide))
@@ -168,6 +135,9 @@ namespace KCDriver.Droid {
         /// <param name="e"></param>
         public void ButtonCompleteRide(object sender, EventArgs e)
         {
+            if (KCApi.Properties.State != KCProperties.AppState.Map)
+                return;
+
             ButtonDisable();
 
             if (!KCApi.CompleteRide(KCApi.Properties.CurrentRide))
@@ -195,6 +165,9 @@ namespace KCDriver.Droid {
         /// <param name="e"></param>
         public void ButtonCallRide(object sender, EventArgs e)
         {
+            if (KCApi.Properties.State != KCProperties.AppState.Map)
+                return;
+
             ButtonDisable();
             //DisplayAlert(KCApi.Properties.CurrentRide.ClientName + "'s Phone Number is:", KCApi.Properties.CurrentRide.PhoneNum, "OK");
 
@@ -222,23 +195,14 @@ namespace KCDriver.Droid {
         /// <param name="e"></param>
         public void ButtonSetRiderCameraLock(object sender, EventArgs e)
         {
+            if (KCApi.Properties.State != KCProperties.AppState.Map)
+                return;
+
             ButtonDisable();
 
             KCApi.Properties.CameraOnRider = !KCApi.Properties.CameraOnRider;
 
-            if (KCApi.Properties.CameraOnRider)
-            {
-                ButtonSetRiderCamera.BorderColor = Color.Yellow;
-
-                if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
-                    ButtonSetDriverCamera.BorderColor = Color.Black;
-                else
-                    ButtonSetDriverCamera.BorderColor = Color.Gray;
-            }
-            else
-            {
-                ButtonSetRiderCamera.BorderColor = Color.Black;
-            }
+            SyncCameraButtonStates();
 
             ButtonEnable();
         }
@@ -250,21 +214,14 @@ namespace KCDriver.Droid {
         /// <param name="e"></param>
         public void ButtonSetDriverCameraLock(object sender, EventArgs e)
         {
+            if (KCApi.Properties.State != KCProperties.AppState.Map)
+                return;
+
             ButtonDisable();
 
             if (KCApi.Properties.CurrentPosition.Latitude != 0 || KCApi.Properties.CurrentPosition.Longitude != 0)
             {
                 KCApi.Properties.CameraOnDriver = !KCApi.Properties.CameraOnDriver;
-
-                if (KCApi.Properties.CameraOnDriver)
-                {
-                    ButtonSetDriverCamera.BorderColor = Color.Yellow;
-                    ButtonSetRiderCamera.BorderColor = Color.Black;
-                }
-                else
-                {
-                    ButtonSetDriverCamera.BorderColor = Color.Black;
-                }
             }
             else
             {
@@ -272,70 +229,73 @@ namespace KCDriver.Droid {
                 Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
             }
 
+            SyncCameraButtonStates();
+
             ButtonEnable();
         }
 
-        /// <summary>
-        /// Timer which checks if the driver is still authenticated if they aren't it kicks them back to the login page.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="e"></param>
-        public void CheckActive(Object source, ElapsedEventArgs e) {
-            Task.Run(() => { 
+        //Timer which checks if the driver is still authenticated if they aren't it kicks them back to the login page.
+        public void CheckActive(Object source, ElapsedEventArgs e)
+        {
+            if (KCApi.Properties.State != KCProperties.AppState.Map)
+                return;
+
+            Task.Run(() =>
+            {
                 try
                 {
-                    if (KCApi.Properties.State == KCProperties.AppState.Map)
+                    bool pop = false;
+                    if (!Driver_Id.authenticated && KCApi.Properties.RideStatus == KCProperties.RideStatuses.Active)
                     {
-                        bool pop = false;
-                        if (!Driver_Id.authenticated && KCApi.Properties.RideStatus == KCProperties.RideStatuses.Active)
+                        pop = true;
+                    }
+                    //If the ride is inactive then pop back to the Accept page.
+                    else if (KCApi.Properties.RideStatus != KCProperties.RideStatuses.Active && KCApi.Properties.RenderReady)
+                    {
+                        if (KCApi.Properties.RideStatus == KCProperties.RideStatuses.CanceledByRider)
                         {
-                            pop = true;
-                        }
-                        //If the ride is inactive then pop back to the Accept page.
-                        else if (KCApi.Properties.RideStatus != KCProperties.RideStatuses.Active && KCApi.Properties.RenderReady)
-                        {
-                            if (KCApi.Properties.RideStatus == KCProperties.RideStatuses.CanceledByRider)
+                            var text = "Rider has cancelled ride.";
+                            Device.BeginInvokeOnMainThread(() =>
                             {
-                                var text = "Rider has cancelled ride.";
-                                Device.BeginInvokeOnMainThread(() => {
-                                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-                                });
-                            }
-                            
-
-                            pop = true;
-                        }
-                        else if (KCApi.Properties.NetState == KCProperties.NetworkState.Disconnected)
-                        {
-                            var text = "Internet connection lost.";
-                            Device.BeginInvokeOnMainThread(() => {
                                 Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                             });
-
-                            pop = true;
                         }
 
-                        if (pop)
-                        {
-                            KCApi.Stop();
-                            activeTimer.Stop();
 
-                            lock (KCApi.Properties.StateLock)
+                        pop = true;
+                    }
+                    else if (KCApi.Properties.NetState == KCProperties.NetworkState.Disconnected)
+                    {
+                        var text = "Internet connection lost.";
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                        });
+
+                        pop = true;
+                    }
+
+                    if (pop)
+                    {
+                        KCApi.Stop();
+                        activeTimer.Stop();
+
+                        lock (KCApi.Properties.StateLock)
+                        {
+                            KCApi.Properties.State = KCProperties.AppState.Transitioning;
+
+                            Device.BeginInvokeOnMainThread(async () =>
                             {
-                                KCApi.Properties.State = KCProperties.AppState.Transitioning;
-
-                                Device.BeginInvokeOnMainThread(async () =>
-                                {
-                                    await Navigation.PopAsync();
-                                });
-                            }
-                        }
-                        else
-                        {
-                            activeTimer.Interval = 100.0f; // Can be optimized
+                                await Navigation.PopAsync();
+                            });
                         }
                     }
+                    else
+                    {
+                        activeTimer.Interval = 100.0f; // Can be optimized
+                    }
                 }
+
                 catch (Exception ex)
                 {
                     KCApi.OutputException(ex);
@@ -392,6 +352,33 @@ namespace KCDriver.Droid {
                 ButtonSetDriverCamera.IsEnabled = true;
                 ButtonSetRiderCamera.IsEnabled = true;
             }
+        }
+
+        private void SyncCameraButtonStates()
+        {
+            if (KCApi.Properties.CurrentPosition.Latitude == 0 && KCApi.Properties.CurrentPosition.Longitude == 0)
+            {
+                ButtonSetDriverCamera.BorderColor = Color.Gray;
+
+                if (KCApi.Properties.CameraOnDriver)
+                {
+                    KCApi.Properties.CameraOnRider = true;
+                }
+            }
+            else if (KCApi.Properties.CameraOnDriver)
+            {
+                ButtonSetDriverCamera.BorderColor = Color.Yellow;
+            }
+            else
+            {
+                ButtonSetDriverCamera.BorderColor = Color.Black;
+            }
+
+            if (KCApi.Properties.CameraOnRider)
+            {
+                ButtonSetRiderCamera.BorderColor = Color.Yellow;
+            }
+            else ButtonSetRiderCamera.BorderColor = Color.Black;
         }
     }
 }

@@ -36,12 +36,8 @@ namespace KCDriver.Droid
         /// initilises the KCApp class.
         /// </summary>
         public KCApp()
-        { 
-            var navPage = new NavigationPage(new SignInPage())
-            {
-                BarTextColor = Color.Yellow
-            };
-            MainPage = navPage;
+        {
+            MainPage = new NavigationPage(new SignInPage());
         }
 
         protected override void OnStart()

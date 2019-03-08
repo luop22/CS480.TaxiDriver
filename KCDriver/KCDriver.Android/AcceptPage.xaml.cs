@@ -14,7 +14,6 @@ namespace KCDriver.Droid {
 
     public partial class AcceptPage : ContentPage
     {
-        MapPage mapPage;
         object buttonLock;
         static System.Timers.Timer updater;
 
@@ -25,7 +24,6 @@ namespace KCDriver.Droid {
         {
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
-            mapPage = new MapPage();
             buttonLock = new object();
 
             updater = new System.Timers.Timer(500);
@@ -85,7 +83,7 @@ namespace KCDriver.Droid {
                         lock (KCApi.Properties.StateLock)
                             KCApi.Properties.State = KCProperties.AppState.Transitioning;
 
-                        await Navigation.PushAsync(mapPage);
+                        await Navigation.PushAsync(new MapPage());
                     }
                 }
 
@@ -107,57 +105,61 @@ namespace KCDriver.Droid {
         /// <param name="e"></param>
         public void Button_Clicked(object sender, EventArgs e)
         {
-            lock (buttonLock) 
+            if (KCApi.Properties.State == KCProperties.AppState.Accept)
             {
-                StatusColor.IsEnabled = false;
-
-                Ride ride = new Ride();
-                KCApi.Properties.CurrentPosition = Task.Run(async () => await KCApi.GetCurrentPosition()).Result;
-
-                if (KCApi.Properties.CurrentPosition.Latitude == 0 && KCApi.Properties.CurrentPosition.Longitude == 0)
+                lock (buttonLock)
                 {
-                    var text = "GPS signal lost. Please reenable or reenter service.";
-                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-                }
-                else if (KCApi.Properties.RideStatus != KCProperties.RideStatuses.Active && KCApi.AcceptNextRide(ride)
-                            && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude)) {
+                    StatusColor.IsEnabled = false;
 
-                    lock (KCApi.Properties.StateLock)
+                    Ride ride = new Ride();
+                    KCApi.Properties.CurrentPosition = Task.Run(async () => await KCApi.GetCurrentPosition()).Result;
+
+                    if (KCApi.Properties.CurrentPosition.Latitude == 0 && KCApi.Properties.CurrentPosition.Longitude == 0)
                     {
-                        KCApi.Properties.State = KCProperties.AppState.Transitioning;
-
-                        //Start takes only a position, which will come from the database
-                        ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
-                        KCApi.Start(ride);
-                        Navigation.PushAsync(mapPage);
+                        var text = "GPS signal lost. Please reenable or reenter service.";
+                        Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
                     }
-                }
-                else if (!Driver_Id.authenticated) {
-                    var text = "Authentication Failure";
-                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-
-                    if (KCApi.Properties.State == KCProperties.AppState.Accept)
+                    else if (KCApi.Properties.RideStatus != KCProperties.RideStatuses.Active && KCApi.AcceptNextRide(ride)
+                                && KCApi.SetRideLocation(ride, KCApi.Properties.CurrentPosition.Latitude, KCApi.Properties.CurrentPosition.Longitude))
                     {
                         lock (KCApi.Properties.StateLock)
                         {
                             KCApi.Properties.State = KCProperties.AppState.Transitioning;
 
-                            Navigation.PopAsync();
-                        }    
+                            //Start takes only a position, which will come from the database
+                            ride.SetDisplayAddress(KCApi.GetAddressFromPosition(new Position(ride.ClientLat, ride.ClientLong)));
+                            KCApi.Start(ride);
+                            Navigation.PushAsync(new MapPage()); 
+                        }
                     }
-                }
-                else if (Status.Text == "No available rides")
-                {
-                    var text = "No available rides.";
-                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-                }
-                else
-                {
-                    var text = "Accept ride failed.";
-                    Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
-                }
+                    else if (!Driver_Id.authenticated)
+                    {
+                        var text = "Authentication Failure";
+                        Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
 
-                StatusColor.IsEnabled = true;
+                        if (KCApi.Properties.State == KCProperties.AppState.Accept)
+                        {
+                            lock (KCApi.Properties.StateLock)
+                            {
+                                KCApi.Properties.State = KCProperties.AppState.Transitioning;
+
+                                Navigation.PopAsync();
+                            }
+                        }
+                    }
+                    else if (Status.Text == "No available rides")
+                    {
+                        var text = "No available rides.";
+                        Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                    }
+                    else
+                    {
+                        var text = "Accept ride failed.";
+                        Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                    }
+
+                    StatusColor.IsEnabled = true;
+                }
             }
         }
 
@@ -166,40 +168,49 @@ namespace KCDriver.Droid {
         /// </summary>
         private void Timer(Object source, ElapsedEventArgs e)
         {
-
-            string status = Task.Run(() => KCApi.CheckQueue()).Result;
-
-            if (KCApi.Properties.NetState == KCProperties.NetworkState.Disconnected)
+            if (KCApi.Properties.State == KCProperties.AppState.Accept)
             {
-                var text = "Internet connection lost.";
+                string status = Task.Run(() => KCApi.CheckQueue()).Result;
 
-                lock (KCApi.Properties.StateLock)
+                if (KCApi.RecoveryCheck(new Ride()))
                 {
-                    Device.BeginInvokeOnMainThread(async () =>
+                    status = "Active ride ongoing";
+                }
+
+                if (KCApi.Properties.NetState == KCProperties.NetworkState.Disconnected)
+                {
+                    var text = "Internet connection lost.";
+
+                    lock (KCApi.Properties.StateLock)
                     {
-                        Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
+                        Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            Toast.MakeText(CrossCurrentActivity.Current.Activity, text, ToastLength.Short).Show();
 
-                        KCApi.Properties.State = KCProperties.AppState.Transitioning;
+                            KCApi.Properties.State = KCProperties.AppState.Transitioning;
 
-                        await Navigation.PopAsync();
-                    });
-                    return;
+                            await Navigation.PopAsync();
+                        });
+                        return;
+                    }
                 }
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Status.Text = status;
+
+                    if (status.Equals("Rides are available"))
+                    {
+                        StatusColor.BackgroundColor = Color.Green;
+                    }
+                    else
+                    {
+                        StatusColor.BackgroundColor = Color.Gray;
+                    }
+                });
+
+                updater.Interval = 500; // Can optimize to reduce interval depending on time taken
             }
-
-            Device.BeginInvokeOnMainThread(() => {
-                Status.Text = status;
-
-                if(status.Equals("Rides are available"))
-                {
-                    StatusColor.BackgroundColor = Color.Green;
-                } else
-                {
-                    StatusColor.BackgroundColor = Color.Gray;
-                }
-            });
-
-            updater.Interval = 500; // Can optimize to reduce interval depending on time taken
         }
     }
 }

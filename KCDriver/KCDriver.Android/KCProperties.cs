@@ -44,6 +44,10 @@ namespace KCDriver.Droid {
 
         #endregion
 
+        /* public SignInPage signInPage = new SignInPage();
+        public AcceptPage acceptPage = new AcceptPage();
+        public MapPage mapPage = new MapPage(); */
+
         #region AppState
         public enum AppState
         {
@@ -316,6 +320,8 @@ namespace KCDriver.Droid {
 
         // Track which camera lock is active if any
         #region Camera Controls
+        private readonly object cameraLock = new object();
+
         private readonly object cameraDriverLock = new object();
         private bool cameraOnDriver;
         public bool CameraOnDriver
@@ -330,7 +336,7 @@ namespace KCDriver.Droid {
 
             set
             {
-                lock (cameraDriverLock)
+                lock (cameraLock)
                 {
                     if (value == true)
                         CameraOnRider = false;
@@ -353,7 +359,7 @@ namespace KCDriver.Droid {
 
             set
             {
-                lock (cameraRiderLock)
+                lock (cameraLock)
                 {
                     if (value == true)
                         CameraOnDriver = false;
