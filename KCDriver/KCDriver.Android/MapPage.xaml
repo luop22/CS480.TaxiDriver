@@ -16,20 +16,15 @@
                 MapType="Street"/>
             <Grid Grid.Row="4" ColumnSpacing="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="8*" />
+                    <ColumnDefinition Width="4*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                    <ImageButton x:Name="ButtonSetDriverCamera" Source="currentPositionCameraIcon.jpg" Grid.Column="1" Grid.Row="1" Clicked="ButtonSetDriverCameraLock" 
-				    BackgroundColor="Transparent" BorderWidth="2" BorderColor="Yellow" HorizontalOptions="Start" HeightRequest="50"/>
-                <ImageButton x:Name="ButtonSetRiderCamera" Source="destinationCameraIcon.jpg" Grid.Column="2" Grid.Row="1" Clicked="ButtonSetRiderCameraLock" 
-					BackgroundColor="Transparent" BorderWidth="2" BorderColor="Black" HorizontalOptions="Start" HeightRequest="50"/>
+                <ImageButton x:Name="ButtonSetDriverCamera" Source="drawable/currentPositionCameraIcon.jpg" Grid.Column="1" Clicked="ButtonSetDriverCameraLock" 
+				    BackgroundColor="Transparent" BorderWidth="2" BorderColor="Yellow" HorizontalOptions="Start" Aspect="AspectFill" Scale="0.9"/>
+                <ImageButton x:Name="ButtonSetRiderCamera" Source="drawable/destinationCameraIcon.jpg" Grid.Column="2" Clicked="ButtonSetRiderCameraLock" 
+					BackgroundColor="Transparent" BorderWidth="2" BorderColor="Black" HorizontalOptions="Start" Aspect="AspectFill" Scale="0.9"/>
             </Grid>
             <Grid Grid.Row="5" Grid.RowSpan="2">
                 <Grid.RowDefinitions>
@@ -39,7 +34,7 @@
 				<Frame HasShadow="true" IsClippedToBounds="True" BackgroundColor="#3A3A3A" Padding="1">
 
 					<Label x:Name="RiderCardText" Grid.Row="0" TextColor="#FFFFFF" LineBreakMode="CharacterWrap" 
-					   Text="Address: 100 Willow St, Everett, WA 98204">
+					   Text="">
 						<Label.FontSize>
 							<OnIdiom x:TypeArguments="x:Double"
 							 Phone="20"
