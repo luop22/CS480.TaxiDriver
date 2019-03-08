@@ -101,7 +101,6 @@
     <Compile Include="AcceptPage.xaml.cs">
       <DependentUpon>AcceptPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DebugMapWriter.cs" />
     <Compile Include="Driver_Id.cs" />
     <Compile Include="GoogleDirectionsResponse.cs" />
     <Compile Include="GoogleRevGeocoderResponse.cs" />
@@ -122,9 +121,6 @@
       <DependentUpon>SignInPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="SplashActivity.cs" />
-    <Compile Include="WelcomePage.xaml.cs">
-      <DependentUpon>WelcomePage.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -185,11 +181,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SignInPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="WelcomePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

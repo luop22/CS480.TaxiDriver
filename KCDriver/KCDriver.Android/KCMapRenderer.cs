@@ -17,8 +17,8 @@ namespace KCDriver.Droid {
         /// <summary>
         /// Function to set up a basic pin for the rider.
         /// </summary>
-        /// <param name="pos"></param>
-        /// <returns></returns>
+        /// <param name="pos">Position to create the pin at.</param>
+        /// <returns>The pin object created.</returns>
         public static KCPin CreateRiderPin(Position pos)
         {
             var pin = new KCPin
@@ -35,7 +35,7 @@ namespace KCDriver.Droid {
         /// Takes the current pin object and creates a GoogleMap marker
         /// from it.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A MarkerOptions object from which to make a googlemap marker.</returns>
         public MarkerOptions CreateMarker()
         {
             var marker = new MarkerOptions();
@@ -57,7 +57,7 @@ namespace KCDriver.Droid {
         /// <summary>
         /// Initializes the KCMapRenderer properties.
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="context">Operating context.</param>
         public KCMapRenderer(Context context) : base(context)
         {
             dataLock = new object();
@@ -69,8 +69,8 @@ namespace KCDriver.Droid {
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
@@ -88,7 +88,7 @@ namespace KCDriver.Droid {
         /// <summary>
         /// Updates the map when it is changed.
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">Event args.</param>
         protected override void OnElementChanged(Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Map> e)
         {
             base.OnElementChanged(e);
@@ -109,7 +109,7 @@ namespace KCDriver.Droid {
         /// This function sets up basic variables on the GoogleMap as
         /// soon as it is ready.
         /// </summary>
-        /// <param name="map"></param>
+        /// <param name="map">Googlemap object we are using.</param>
         protected override void OnMapReady(Android.Gms.Maps.GoogleMap map)
         {
             if (mapDrawn)
@@ -135,9 +135,9 @@ namespace KCDriver.Droid {
         /// Quick function to animate the camera to a location
         /// on the map.
         /// </summary>
-        /// <param name="lat"></param>
-        /// <param name="lon"></param>
-        /// <param name="zoom"></param>
+        /// <param name="lat">Latitude to move to.</param>
+        /// <param name="lon">Longitude to move to.</param>
+        /// <param name="zoom">Level to zoom to over 100ms.</param>
         public void AnimateCameraTo(double lat, double lon, float zoom = 0)
         {
             try
@@ -165,8 +165,8 @@ namespace KCDriver.Droid {
         /// <summary>
         /// Moves the camera directly to the given coordinates.
         /// </summary>
-        /// <param name="lat"></param>
-        /// <param name="lon"></param>
+        /// <param name="lat">Latitude to move to.</param>
+        /// <param name="lon">Longitude to move to.</param>
         public void MoveCameraTo(double lat, double lon)
         {
             try

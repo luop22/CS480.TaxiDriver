@@ -51,8 +51,8 @@ namespace KCDriver.Droid
         /// Attempts to sign the user in. If location permissions are 
         /// denied and denied again, the app is killed.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
         private void SignInClicked(object sender, EventArgs e)
         {
             lock (buttonLock)
@@ -101,8 +101,8 @@ namespace KCDriver.Droid
         /// <summary>
         /// Function to request a particular permission enumerated by the Permissions Plugin.
         /// </summary>
-        /// <param name="permission"></param>
-        /// <returns></returns>
+        /// <param name="permission">The permission to be requested.</param>
+        /// <returns>A task containing either true if the permission is granted or false otherwise.</returns>
         public async Task<bool> RequestPermission(Plugin.Permissions.Abstractions.Permission permission)
         {
             try
@@ -127,8 +127,8 @@ namespace KCDriver.Droid
         /// <summary>
         /// Opens the phone app to call the K.C. Cab company.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event args.</param>
         private void CallSelect(object sender, EventArgs e)
         {
             Device.OpenUri(new Uri("tel:" + "5099293055"));
