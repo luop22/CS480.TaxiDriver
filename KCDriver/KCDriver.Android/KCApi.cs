@@ -250,6 +250,10 @@ namespace KCDriver.Droid
             }
         }
 
+        /// <summary>
+        /// Checks if the location permission is active, if not then returns false.
+        /// </summary>
+        /// <returns></returns>
         public static bool CheckLocationPermission()
         {
             try

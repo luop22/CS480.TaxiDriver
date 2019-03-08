@@ -35,6 +35,7 @@ namespace KCDriver.Droid {
 
         /// <summary>
         /// Executes everytime the page appears.
+        /// Changes the app state and starts the update timer.
         /// </summary>
         protected override async void OnAppearing() {
             base.OnAppearing();

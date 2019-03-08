@@ -32,6 +32,9 @@ namespace KCDriver.Droid
         public static double ScreenHeight;
         public static double ScreenWidth;
 
+        /// <summary>
+        /// initilises the KCApp class.
+        /// </summary>
         public KCApp()
         { 
             var navPage = new NavigationPage(new SignInPage())
