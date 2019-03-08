@@ -44,9 +44,6 @@ namespace KCDriver.Droid {
 
         #endregion
 
-        /* public SignInPage signInPage = new SignInPage();
-        public AcceptPage acceptPage = new AcceptPage();
-        public MapPage mapPage = new MapPage(); */
 
         #region AppState
         public enum AppState

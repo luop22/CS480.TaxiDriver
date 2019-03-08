@@ -19,11 +19,11 @@ namespace KCDriver.Droid {
         /// Attempts to authenticate the user. Returns true if the user 
         /// is authenticated with the server, false upon error or rejection.
         /// </summary>
-        /// <param name="password"></param>
-        /// <param name="userName"></param>
-        /// <returns>returns true if the user is authenticated correctly otherwise reterns false.</returns>
-        public static bool Authenticate(String password, String userName) {
-
+        /// <param name="password">Password to include in the query.</param>
+        /// <param name="userName">Username to include in the query.</param>
+        /// <returns></returns>
+        public static bool Authenticate(string password, string userName)
+        {
             string message = "http://" + ip + "/driver/auth/authenticate.php?username=" + userName + "&pwHsh=" + GetHash(password, userName);
             string responseFromServer = "";
             try
@@ -71,8 +71,7 @@ namespace KCDriver.Droid {
             {
                 KCApi.OutputException(e);
                 return false;
-            }
-                
+            }             
         }
 
         /// <summary>
@@ -80,37 +79,39 @@ namespace KCDriver.Droid {
         /// </summary>
         /// <param name="input"></param>
         /// <param name="userName"></param>
-        /// <returns>Returns the has from the given username nad password.</returns>
-        private static string GetHash(string input, String userName) {
+        /// <returns></returns>
+        private static string GetHash(string input, string userName)
+        {
             using (SHA256 sha256Hash = SHA256.Create())
             {
                 HashAlgorithm hashAlgorithm = sha256Hash;
                 // Convert the input string to a byte array and compute the hash.
                 byte[] data = hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(GetSalt(userName) + input));
 
-                // Create a new Stringbuilder to collect the bytes
+                // Create a new stringbuilder to collect the bytes
                 // and create a string.
-                var sBuilder = new StringBuilder();
+                var sBuilder = new stringBuilder();
 
                 // Loop through each byte of the hashed data 
                 // and format each one as a hexadecimal string.
                 for (int i = 0; i < data.Length; i++)
                 {
-                    sBuilder.Append(data[i].ToString("x2"));
+                    sBuilder.Append(data[i].Tostring("x2"));
                 }
                 // Return the hexadecimal string.
-                return sBuilder.ToString();
+                return sBuilder.Tostring();
             }
         }
 
         /// <summary>
         /// Gets the salt for a user in order to hash their password.
         /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        public static String GetSalt(String userName) {
-            String message = "http://" + ip + "/driver/auth/getSalt.php?username=" + userName;
-            String responseFromServer = "";
+        /// <param name="userName">Username from which to get the salt.</param>
+        /// <returns>string containing the salt.</returns>
+        public static string GetSalt(string userName)
+        {
+            string message = "http://" + ip + "/driver/auth/getSalt.php?username=" + userName;
+            string responseFromServer = "";
             try
             {
                 // Create a request for the URL. 		
@@ -157,10 +158,10 @@ namespace KCDriver.Droid {
         /// Checks if there are any rides in the queue. Returns a
         /// string which represents the status of the server.
         /// </summary>
-        /// <returns></returns>
-        public static String CheckQueue()
+        /// <returns>String containing the status of the queue.</returns>
+        public static string CheckQueue()
         {
-            String message = "http://" + ip + "/driver/checkQueue.php";
+            string message = "http://" + ip + "/driver/checkQueue.php";
             string responseFromServer = "";
             // Create a request for the URL. 		
             WebRequest request = WebRequest.Create(message);
@@ -186,7 +187,7 @@ namespace KCDriver.Droid {
                 dynamic jObject = null;
                 if (!responseFromServer.Contains("Failure")) {
                     jObject = JObject.Parse(responseFromServer);
-                    String result = (string)jObject.result;
+                    string result = (string)jObject.result;
                     if (result.Equals("Rides are available")) {
                         return "Rides are available";
                     } else if (result.Equals("No available rides")) {
@@ -216,8 +217,8 @@ namespace KCDriver.Droid {
         /// <summary>
         /// Takes a Ride ref and binds a driver to the ride on the remote server.
         /// </summary>
-        /// <param name="ride"></param>
-        /// <returns></returns>
+        /// <param name="ride">The ride object to store the active ride info in.</param>
+        /// <returns>True if a ride is accepted, false otherwise.</returns>
         public static bool AcceptNextRide(Ride ride)
         {
             string message = "http://" + ip + "/driver/acceptRide.php?token=" + Driver_Id.token + "&driverID=" + Driver_Id.driver_Id;
@@ -277,9 +278,9 @@ namespace KCDriver.Droid {
         /// Sets the clients postion in the given Ride by querying
         /// the remote server
         /// </summary>
-        /// <param name="ride"></param>
-        /// <param name="latitude"></param>
-        /// <param name="longitude"></param>
+        /// <param name="ride">The ride to store the location retrieved in.</param>
+        /// <param name="latitude">Current latitude of the driver.</param>
+        /// <param name="longitude">Current longitude of the driver.</param>
         /// <returns>True upon success, false upon failure</returns>
         public static bool SetRideLocation(Ride ride, double latitude = 0, double longitude = 0)
         {
@@ -340,8 +341,8 @@ namespace KCDriver.Droid {
                     //If there are no errors add the lat and long to the ride class and return true.\
                     dynamic jObject = JObject.Parse(responseFromServer);
                     
-                    double rideLat = Double.Parse((String)jObject.result.lat);
-                    double rideLong = Double.Parse((String)jObject.result.lon);
+                    double rideLat = Double.Parse((string)jObject.result.lat);
+                    double rideLong = Double.Parse((string)jObject.result.lon);
 
                     ride.SetPosition(rideLat, rideLong);
                     return true;
@@ -360,8 +361,8 @@ namespace KCDriver.Droid {
         /// Decouples the driver from a ride and completes it by querying
         /// the remote server.
         /// </summary>
-        /// <param name="ride"></param>
-        /// <returns></returns>
+        /// <param name="ride">Ride object to complete.</param>
+        /// <returns>True if a success response was recieved, false otherwise.</returns>
         public static bool CompleteRide(Ride ride)
         {
             string message = "http://" + ip + "/driver/completeRide.php?token=" + Driver_Id.token + "&driverID=" 
@@ -406,10 +407,10 @@ namespace KCDriver.Droid {
         }
 
         /// <summary>
-        /// Updates the remote server on the current location of the driver.
+        /// Updates the remote server on the current location of the driver without getting ride info.
         /// </summary>
-        /// <param name="latitude"></param>
-        /// <param name="longitude"></param>
+        /// <param name="latitude">Current latitude of the driver.</param>
+        /// <param name="longitude">Current longitude of the driver.</param>
         /// <returns></returns>
         public static bool SetDriverLocation(double latitude, double longitude)
         {
@@ -464,8 +465,8 @@ namespace KCDriver.Droid {
         /// <summary>
         /// Decouples the driver from the ride and puts the ride back in the queue.
         /// </summary>
-        /// <param name="ride"></param>
-        /// <returns></returns>
+        /// <param name="ride">Ride object to cancel.</param>
+        /// <returns>True upon receipt of a success response, false otherwise.</returns>
         public static bool CancelRide(Ride ride)
         {
             string message = "http://" + ip + "/driver/decouple.php?" + "rideID=" + ride.RideId + "&token=" + Driver_Id.token +
@@ -516,8 +517,8 @@ namespace KCDriver.Droid {
         /// If the driver already has a ride it sets the ride id to that ride
         /// in case of failure or lost connection.
         /// </summary>
-        /// <param name="ride"></param>
-        /// <returns></returns>
+        /// <param name="ride">Ride object to store recovery info in.</param>
+        /// <returns>True upon receipt of a success response, false otherwise.</returns>
         public static bool RecoveryCheck(Ride ride) {
             string message = "http://" + ip + "/driver/recoveryCheck.php?token=" + Driver_Id.token + "&driverID=" + Driver_Id.driver_Id;
             // Create a request for the URL. 		

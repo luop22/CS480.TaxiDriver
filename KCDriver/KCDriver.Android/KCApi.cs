@@ -45,8 +45,8 @@ namespace KCDriver.Droid
         /// A timer calls this 10 times per second. Updates the db on where the driver is
         /// and updates the driver (device) on where the rider is.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="e"></param>
+        /// <param name="source">Event source.</param>
+        /// <param name="e">Event arguments.</param>
         public static void UpdatePosition(Object source, ElapsedEventArgs e)
         {
             updatePositionTimer.Interval = 500.0f;
@@ -89,8 +89,8 @@ namespace KCDriver.Droid
         /// Function to keep camera locked on correct location on them map or
         /// allow the user to scroll.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="e"></param>
+        /// <param name="source">Event source.</param>
+        /// <param name="e">Event arguments.</param>
         public static void UpdateCamera(Object source, ElapsedEventArgs e)
         {
             updateCameraTimer.Interval = 16.66f;
@@ -125,7 +125,7 @@ namespace KCDriver.Droid
         /// <summary>
         /// Starts navigation functions. Takes riders position and destination address string.
         /// </summary>
-        /// <param name="ride"></param>
+        /// <param name="ride">Ride object wtih active ride information.</param>
         public static void Start(Ride ride)
         {
             Properties.CurrentRide = ride;
@@ -177,7 +177,8 @@ namespace KCDriver.Droid
         /// <summary>
         /// Function to get the current position. Returns 0,0 on failure.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="timeoutSeconds">Timeout for the GPS call. Default 20 seconds.</param>
+        /// <returns>Current position of the device.</returns>
         public static async Task<Position> GetCurrentPosition(int timeoutSeconds = 20)
         {
 
@@ -215,8 +216,8 @@ namespace KCDriver.Droid
         /// Takes a geographical location and returns an address using
         /// Google's Geocoding API.
         /// </summary>
-        /// <param name="pos"></param>
-        /// <returns></returns>
+        /// <param name="pos">Position from which to get an address.</param>
+        /// <returns>A string containing the address or an error message.</returns>
         public static string GetAddressFromPosition(Position pos)
         {
             try
@@ -242,10 +243,10 @@ namespace KCDriver.Droid
         }
 
         /// <summary>
-        /// Write the exception to the log and saves it to output 
+        /// Writes the exception to the Debug log and saves it to output 
         /// again later.
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">Exception to output.</param>
         public static void OutputException(Exception e)
         {
             lock(exceptionsLock)
@@ -255,9 +256,9 @@ namespace KCDriver.Droid
         }
 
         /// <summary>
-        /// Checks if the location permission is active, if not then returns false.
+        /// Checks whether the current user has given location permissions.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if permissions have been granted, false otherwise.</returns>
         public static bool CheckLocationPermission()
         {
             try

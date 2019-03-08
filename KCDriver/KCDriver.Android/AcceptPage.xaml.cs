@@ -70,7 +70,7 @@ namespace KCDriver.Droid {
 
                     await Navigation.PopAsync();
                 }
-                // Driver has entered the Accept screen for the first time since logging in
+                // Driver has entered the Accept screen for the first time since logging in as CurrentRide is null
                 else if (KCApi.Properties.RideStatus != KCProperties.RideStatuses.Active && KCApi.Properties.CurrentRide == null)
                 {
                     Ride ride = new Ride();
