@@ -1,7 +1,12 @@
-﻿using Android.Widget;
+﻿using Android.Media;
+using Android.Widget;
 using Plugin.CurrentActivity;
 using Plugin.Geolocator;
+using Plugin.MediaManager;
+using Plugin.MediaManager.Abstractions.Enums;
+using Plugin.MediaManager.Abstractions.Implementations;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -171,10 +176,9 @@ namespace KCDriver.Droid {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void signOut(object sender, EventArgs e) {
-
+        public void signOut(object sender, EventArgs e)
+        {
             OnBackButtonPressed();
-
         }
 
         /// <summary>
@@ -205,12 +209,12 @@ namespace KCDriver.Droid {
 
                 if (KCApi.RecoveryCheck(new Ride()))
                 {
-                    status = "Active ride ongoing";
+                    status = "Active ride ongoing...";
                 }
 
                 if (KCApi.Properties.NetState == KCProperties.NetworkState.Disconnected)
                 {
-                    var text = "Internet connection lost.";
+                    var text = "Internet connection lost...";
 
                     lock (KCApi.Properties.StateLock)
                     {
@@ -226,11 +230,25 @@ namespace KCDriver.Droid {
                     }
                 }
 
-                Device.BeginInvokeOnMainThread(() =>
+                Device.BeginInvokeOnMainThread( () =>
                 {
+                    bool noneToSome = false;
+                    if (Status.Text == "No available rides." 
+                        && status.Equals("Rides are available."))
+                    {
+                        noneToSome = true;
+
+                        var descriptor = CrossCurrentActivity.Current.Activity.Assets.OpenFd("bell.mp3");
+                        var mediaPlayer = new MediaPlayer();
+                        mediaPlayer.SetDataSource(descriptor.FileDescriptor, descriptor.StartOffset, descriptor.Length);
+                        mediaPlayer.Prepare();
+                        mediaPlayer.Start();
+                    }
+
                     Status.Text = status;
 
-                    if (status.Equals("Rides are available"))
+                    if (status.Equals("Rides are available.") 
+                        || status.Equals("Active ride ongoing..."))
                     {
                         StatusColor.BackgroundColor = Color.Green;
                     }

@@ -66,6 +66,9 @@
     <PackageReference Include="Plugin.CurrentActivity">
       <Version>2.1.0.4</Version>
     </PackageReference>
+    <PackageReference Include="Plugin.MediaManager">
+      <Version>0.4.5</Version>
+    </PackageReference>
     <PackageReference Include="Plugin.Permissions">
       <Version>3.0.0.12</Version>
     </PackageReference>
@@ -237,5 +240,9 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\user_pin.png" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\bell.mp3" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

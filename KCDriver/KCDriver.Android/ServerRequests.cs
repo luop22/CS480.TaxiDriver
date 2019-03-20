@@ -189,9 +189,9 @@ namespace KCDriver.Droid {
                     jObject = JObject.Parse(responseFromServer);
                     string result = (string)jObject.result;
                     if (result.Equals("Rides are available")) {
-                        return "Rides are available";
+                        return "Rides are available.";
                     } else if (result.Equals("No available rides")) {
-                        return "No available rides";
+                        return "No available rides.";
                     } else if ((result.Equals("Failure"))) {
                         return "error";
                     } else {

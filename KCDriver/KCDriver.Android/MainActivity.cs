@@ -24,8 +24,6 @@ namespace KCDriver.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(savedInstanceState);
-
             Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this, savedInstanceState);
             Forms.Init(this, savedInstanceState);
             Xamarin.FormsMaps.Init(this, savedInstanceState);
@@ -41,6 +39,8 @@ namespace KCDriver.Droid
             KCApp.ScreenHeight = (height - 0.5f) / density;
 
             KCApi.Initialize();
+
+            base.OnCreate(savedInstanceState);
 
             LoadApplication(new KCApp());
         }

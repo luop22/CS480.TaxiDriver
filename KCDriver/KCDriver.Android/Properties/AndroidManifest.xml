@@ -12,6 +12,12 @@
 	<!-- These are optional, but recommended. They will allow Maps to use the My Location provider. -->
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
+  <uses-permission android:name="android.permission.WAKE_LOCK" />
+  
 	<application android:label="KCDriver.Android">
 		<!-- Put your Google Maps V2 API Key here. -->
 		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyDku7O-5lR0g8fOx04lPSAPA5T8-JmK1a0" />
