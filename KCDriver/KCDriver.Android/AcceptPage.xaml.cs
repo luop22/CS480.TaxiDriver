@@ -2,9 +2,6 @@
 using Android.Widget;
 using Plugin.CurrentActivity;
 using Plugin.Geolocator;
-using Plugin.MediaManager;
-using Plugin.MediaManager.Abstractions.Enums;
-using Plugin.MediaManager.Abstractions.Implementations;
 using System;
 using System.IO;
 using System.Threading;

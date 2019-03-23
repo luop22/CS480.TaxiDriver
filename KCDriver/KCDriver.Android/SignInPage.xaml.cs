@@ -8,12 +8,8 @@ using Android.Widget;
 using Plugin.CurrentActivity;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
-using Plugin.MediaManager;
-using Plugin.MediaManager.Abstractions.Implementations;
-using Plugin.MediaManager.Abstractions.Enums;
 using System.IO;
 using Android.Content.Res;
-using Plugin.MediaManager.Abstractions;
 using Android.Media;
 
 namespace KCDriver.Droid

@@ -51,7 +51,7 @@
     <AndroidSupportedAbis />
     <DocumentationFile>bin\Release\KCDriver.Android.xml</DocumentationFile>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-    <AndroidLinkMode>None</AndroidLinkMode>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -67,9 +67,6 @@
     </PackageReference>
     <PackageReference Include="Plugin.CurrentActivity">
       <Version>2.1.0.4</Version>
-    </PackageReference>
-    <PackageReference Include="Plugin.MediaManager">
-      <Version>0.4.5</Version>
     </PackageReference>
     <PackageReference Include="Plugin.Permissions">
       <Version>3.0.0.12</Version>
