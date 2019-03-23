@@ -232,12 +232,9 @@ namespace KCDriver.Droid {
 
                 Device.BeginInvokeOnMainThread( () =>
                 {
-                    bool noneToSome = false;
-                    if (Status.Text == "No available rides." 
+                    if ( Status.Text != "Rides are available." 
                         && status.Equals("Rides are available."))
                     {
-                        noneToSome = true;
-
                         var descriptor = CrossCurrentActivity.Current.Activity.Assets.OpenFd("bell.mp3");
                         var mediaPlayer = new MediaPlayer();
                         mediaPlayer.SetDataSource(descriptor.FileDescriptor, descriptor.StartOffset, descriptor.Length);
